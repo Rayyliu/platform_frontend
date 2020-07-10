@@ -100,6 +100,6 @@ const tabs = {
 };
 
 export {
-    // menu,
+    menu,
     tabs
 }

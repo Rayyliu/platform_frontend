@@ -78,7 +78,7 @@ class Login extends React.Component {
                             <LoginForm toggleShow={this.toggleShow} />
                         </div>
                         {<div className={`box ${show === 'register' ? 'active' : ''}`}>
-                        <RegisterForm toggleShow={this.toggleShow} />
+                        <RegisterForm toggleShow={this.toggleShow} history={this.props.history}/>
                     </div>}
                         {/*<div className={`box ${show === 'register' ? 'active' : ''}`}>*/}
                             {/*<WxQrCodeLogin toggleShow={this.toggleShow} />*/}

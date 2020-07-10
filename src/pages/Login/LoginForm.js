@@ -8,6 +8,8 @@ import { post, get } from '../../utils/ajax'
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 import {getUser, initMenus} from "../../store/actions";
+import { menu } from '../tabs'
+
 
 const store = connect(
     (state) => ({ user: state.user}),
@@ -53,7 +55,8 @@ class LoginForm extends React.Component {
             });
             return
         }
-        const res = await get(`/session/findByUsername?username=${values.username}`);
+        console.log("values==="+JSON.stringify(values))
+        const res = await get(`/user/findByUsername?userName=${values.username}`);
         if (res.code !== 0) {
             this.props.form.setFields({
                 username: {
@@ -61,14 +64,16 @@ class LoginForm extends React.Component {
                     errors: [new Error('用户名不存在')]
                 }
             });
+            console.log("res=="+JSON.stringify(res))
             this._createCode();
             this.props.form.resetFields('captcha');
             return
         }
         const res2 = await post('/login', {
-            username: values.username,
+            email: values.username,
             password: values.password
         });
+        console.log("res2==="+JSON.stringify(res2))
         if (res2.code !== 0) {
             this.props.form.setFields({
                 password:{
@@ -81,13 +86,22 @@ class LoginForm extends React.Component {
             return
         }
         // localStorage.setItem('username', values.username);
-        await authenticateSuccess('Bearer '+res2.data);
-        this.initMenus(res2.data);
-        this.init(res2.data);
+        await authenticateSuccess('Bearer '+res2.data.token);
+        // await this.initMenus(res2.data.token);
+        this.initMenus(menu);
+        // await this.init(res2.data.token);
+        this.init({
+            email: values.username,
+            user_id:res2.data.userid,
+        });
+
         message.loading('加载中...', 1, ()=>this.props.history.push('/'));
         // this.props.history.push('/');
+        console.log("华丽的分割线")
     };
     initMenus = async (token)=>{
+        console.log("this.props==="+JSON.stringify(this.props))
+        console.log("token==="+JSON.stringify(token))
         await this.props.initMenus(token);
     };
     /**

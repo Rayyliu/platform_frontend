@@ -50,12 +50,13 @@ class MySider extends React.Component {
     };
     render() {
         const { activeMenu, theme,menus } = this.props;
+        console.log("this.props==="+JSON.stringify(this.props))
         return (
             <div className={`my-sider ${theme}`}>
                 <div className={`sider-menu-logo ${theme}`}>
                     <a href="https://www.jianshu.com/u/f45233827cc6" target="_blank" rel="noopener noreferrer">
                         <img src={require('../../assets/images/sl_logo01.jpg')} alt="" />
-                        <h1>Mr培</h1>
+                        <h1>Platform</h1>
                     </a>
                 </div>
                 <Menu theme={theme}

@@ -3,7 +3,20 @@ import { Form, Input, message } from 'antd'
 import Promptbox from '../../components/PromptBox/index'
 import { debounce, encrypt } from '../../utils/util'
 import { get, post } from '../../utils/ajax'
+import {menu} from "../tabs";
+import {connect} from "react-redux";
+import {getUser, initMenus} from "../../store/actions";
+import {bindActionCreators} from "redux";
+import {authenticateSuccess} from '../../utils/session'
 
+
+
+const store = connect(
+    (state) => ({ user: state.user}),
+    (dispatch) => bindActionCreators({ getUser,initMenus}, dispatch)
+);
+
+@store
 @Form.create()
 class RegisterForm extends React.Component {
     state = {
@@ -24,6 +37,29 @@ class RegisterForm extends React.Component {
             }
         });
     };
+
+    /**
+     * 加载菜单
+     */
+    initMenus = async (token)=>{
+        await this.props.initMenus(token);
+    };
+
+    /**
+     * 初始化信息
+     */
+    init = async (user) => {
+        await this.props.getUser(user);
+    };
+
+    /**
+     * 注册成功后直接登陆
+     */
+    login =()=>{
+        this.props.history.push('/Home/index')
+        console.log(this.props)
+    }
+
     /**
      * 注册函数
      */
@@ -39,16 +75,28 @@ class RegisterForm extends React.Component {
         //加密密码
         const ciphertext = encrypt(values.registerPassword);
         const res = await post('/user/register', {
-            username: values.registerUsername,
+            email: values.registerUsername,
             password: ciphertext,
         });
+        console.log("res==="+JSON.stringify(res))
         this.setState({
             loading: false
         });
         hide();
-        if (res.status === 0) {
+        if (res.code === 0) {
             message.success('注册成功')
         }
+        authenticateSuccess('Bearer '+ res.data.token)
+        // await this.initMenus(menu)
+        await this.initMenus(menu);
+        await this.init({
+            username: res.data.email,
+            mobile: res.data.mobile,
+            role: res.data.role
+        });
+        this.login();
+
+
     };
 
     /**

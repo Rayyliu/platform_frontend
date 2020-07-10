@@ -6,6 +6,10 @@ import MyContent from './MyContent'
 // import { getUser,initMenus} from '../../store/actions'
 import { connect} from 'react-redux'
 // import { bindActionCreators } from 'redux'
+import { Form, Input, message } from 'antd'
+import { tabs} from '../tabs'
+
+
 
 const { Header, Sider, Content } = Layout;
 
@@ -27,13 +31,10 @@ class Index extends React.Component {
         };
     }
     // componentDidMount() {
-    //     // this.initMenus();
-    //     // this.init()
-    //     /*message.loading('加载中...',
-    //         0.5,
-    //         ()=>
-    //         this.init()
-    //     );*/
+    //      this.initMenus();
+    //      this.init()
+    //     message.loading('加载中...',0.5,()=>this.init()
+    //     );
     // }
     // initMenus = async ()=>{
     //     await this.props.initMenus();
@@ -47,8 +48,23 @@ class Index extends React.Component {
     _setState = (obj) => {
         this.setState(obj)
     };
+
+    componentWillMount(){
+        this.setState({
+            panes: [
+                {
+                    name: '首页',
+                    key: 'Home',
+                    content: tabs['Home']
+                }
+            ],
+            activeMenu: 'Home'
+        })
+    }
+
     render() {
         const { collapsed, panes, activeMenu, theme } = this.state;
+        console.log("localStorage====="+JSON.stringify(localStorage))
         return (
             <Layout style={{ height: '100vh' }}>
                 <Sider trigger={null} collapsible collapsed={collapsed} theme={theme}>

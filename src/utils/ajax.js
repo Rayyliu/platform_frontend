@@ -3,7 +3,7 @@ import { message } from 'antd'
 import {isAuthenticated, logout} from '../utils/session'
 import history from './history'
 
-const BASE_URL = process.env.REACT_APP_BASE_URL || '';
+const BASE_URL = process.env.REACT_APP_BASE_URL_DEV || '';
 
 /**
  * 处理url
@@ -99,6 +99,7 @@ export async function post(url, param) {
         },
         body: JSON.stringify(param)
     });
+    console.log("post==="+JSON.stringify(response))
     const reslut = await response.json();
     if (!response.ok) {
         if(response.status === 200){

@@ -11,6 +11,13 @@ export function setUser(user) {
         user
     }
 }
+
+/**
+ * 定义一个函数（Action Creators）来生成action，此函数是一个pure function，它最后会返回一个action对象，
+ * Action 需要通过 store.dispatch() 方法来发送
+ * @param data
+ * @returns {{type: string, statistic: *}}
+ */
 function setWelcome(data) {
     return {
         type: SET_WELCOME,
@@ -26,15 +33,17 @@ function setMenus(data) {
 //异步action，从后台获取用户信息
 export function getUser(token) {
     return async function (dispatch) {
-        const res = await toeknGet('/session',token);
-        dispatch(setUser(res.data || {}))
+        // const res = await toeknGet('/session',token);
+        // dispatch(setUser(res.data || {}))
+        dispatch(setUser(token || {}))
     }
 }
 //加载菜单
 export function initMenus(token) {
     return async function (dispatch) {
-        const res = await toeknGet('/menu',token);
-        dispatch(setMenus(res.data || {}))
+        // const res = await toeknGet('/menu',token);
+        // dispatch(setMenus(res.data || {}))
+        dispatch(setMenus(token || {}))
     }
 }
 
