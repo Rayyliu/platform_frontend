@@ -19,28 +19,33 @@ const menu = [
         key: 'Home'
     },
     {
-        name: 'Banner列表',
-        icon: 'fund',
+        name: '项目管理',
+        icon: 'project',
         key: 'Banner'
     },
     {
-        name: '行业类目',
-        icon: 'bars',
+        name: '测试环境',
+        icon: 'cloud',
         key: 'Trade'
     },
     {
-        name: '订单管理',
-        icon: 'bar-chart',
+        name: '数据服务',
+        icon: 'database',
+        key: 'Trade'
+    },
+    {
+        name: '接口管理',
+        icon: 'italic',
         key: 'Order'
     },
     {
-        name: '发布信息',
-        icon: 'dot-chart',
+        name: '用例管理',
+        icon: 'copyright',
         key: 'Transfer'
     },
     {
-        name: '平台设置',
-        icon: 'chrome',
+        name: '测试计划',
+        icon: 'dashboard',
         key: 'Platform',
         children: [
             {
@@ -56,8 +61,13 @@ const menu = [
         ]
     },
     {
-        name: '系统设置',
-        icon: 'setting',
+        name: '定时任务',
+        icon: 'clock-circle',
+        key: 'Banner'
+    },
+    {
+        name: '运行报告',
+        icon: 'diff',
         key: 'Setting',
         children: [
             {
@@ -81,6 +91,16 @@ const menu = [
                 key: 'Account',
             }
         ]
+    },
+    {
+        name: '签名方式',
+        icon: 'highlight',
+        key: 'Trade'
+    },
+    {
+        name: '用户管理',
+        icon: 'team',
+        key: 'Trade'
     }
 ];
 
