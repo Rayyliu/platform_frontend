@@ -12,28 +12,20 @@ class CreateUserModal extends Component {
     onCancel = () => {
         this.props.form.resetFields();
         this.props.toggleVisible(false);
-        //删除图片
-        if (this.state.img.key && this.state.img.key.indexOf('http') === -1 ){
-            del('/upload', {key: this.state.img.key});
-        }
     };
-    handleOk = () => {
+    handleSubmit = () => {
         this.props.form.validateFields((errors, values) => {
             if (!errors) {
-                this.createBanners(values)
+                this.createProjects(values)
             }
         })
     };
-    createBanners = async (values) => {
-        const res = await post('/banners', {
+    createProjects = async (values) => {
+        const res = await post('/project/add', {
             ...values
         });
         if (res.code === 0) {
             message.success('新增成功');
-            this.setState({
-                img:{}
-                }
-            );
             this.onCancel()
         }
     };
@@ -90,59 +82,57 @@ class CreateUserModal extends Component {
                 onCancel={this.onCancel}
                 visible={visible}
                 width={550}
-                title='创建banner'
+                title='创建新项目'
                 centered
-                onOk={this.handleOk}
+                onOk={this.handleSubmit}
             >
                 <Form {...formItemLayout}>
-                    <Form.Item label={'图片'}>
-                        {getFieldDecorator('url', {
-                            rules: [{ required: true, message: '请上传图片' }],
-                            getValueFromEvent: this._normFile,
+                    <Form.Item label={'项目名称'}>
+                        {getFieldDecorator('projectName', {
+                            initialValue: '',
+                            rules: [{ required: true, message: '项目名称必填'}],
                         })(
-                            <Upload {...uploadProps} style={styles.urlUploader}>
-                                {url ? <img src={url} alt="url" style={styles.url} /> : <Icon style={styles.icon} type={uploading ? 'loading' : 'plus'} />}
-                            </Upload>
+                            <Input
+                                placeholder="请输入项目名称"
+                            />
                         )}
                     </Form.Item>
 
-                    <Form.Item label={'是否展示'}>
-                        {getFieldDecorator('isShow',{
-                            initialValue: 1
-                        })(
-                            <Switch checkedChildren="展示" unCheckedChildren="隐藏" defaultChecked/>
-                        )}
-                    </Form.Item>
-                    <Form.Item label={'是否链接'}>
-                        {getFieldDecorator('isLink',{
-                            initialValue: 0
-                        })(
-                            <Switch checkedChildren="是" unCheckedChildren="否" defaultChecked={false}/>
-                        )}
-                    </Form.Item>
-                    <Form.Item label={'链接'}>
-                        {getFieldDecorator('linkUrl',{
-                            validateFirst: getFieldValue('isLink'),
-                            rules: [
-                                { required: getFieldValue('isLink'), message: '链接不能为空' },
-                                { pattern: '^[^ ]+$', message: '链接不能有空格' }
-                            ]
+                    <Form.Item label={'项目描述'}>
+                        {getFieldDecorator('projectDescription', {
+                            initialValue: '',
+                            rules: [{ required: true, message: '项目描述必填'}],
                         })(
                             <Input
-                                maxLength={255}
-                                placeholder="请输入链接"
-                               />
+                                placeholder="简单描述项目涉及内容"
+                            />
                         )}
                     </Form.Item>
-                    <Form.Item label={'排序'}>
-                        {getFieldDecorator('sort', {
-                            validateFirst: true,
-                            rules: [
-                                { required: true, message: '排序不能为空' }
-                            ],
-                            initialValue : 0,
+                    <Form.Item label={'项目模块'}>
+                        {getFieldDecorator('projectModule', {
+                            initialValue: '',
+                            rules: [{ required: true, message: '项目模块必填'}],
                         })(
-                            <InputNumber min={0}/>
+                            <Input
+                                placeholder="项目模块"
+                            />
+                        )}
+                    </Form.Item>
+                    <Form.Item label={'测试负责人'}>
+                        {getFieldDecorator('tester', {
+                            initialValue: '',
+                            rules: [{ required: true, message: '项目模块必填'}],
+                        })(
+                            <Input
+                                placeholder="测试负责人"
+                            />
+                        )}
+                    </Form.Item>
+                    <Form.Item label={'是否启用'}>
+                        {getFieldDecorator('isValid', {
+                            initialValue: true
+                        })(
+                            <Switch checkedChildren="启用" unCheckedChildren="废弃" defaultChecked/>
                         )}
                     </Form.Item>
                 </Form>

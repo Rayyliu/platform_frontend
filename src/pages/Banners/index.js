@@ -15,8 +15,8 @@ import CreateBannerModal from "./CreateBannerModal";
 
 class Banners extends React.Component{
     state = {
-        banners: [],
-        bannersLoading: false,
+        projects: [],
+        projectsLoading: false,
         pagination: {
             total: 0,
             current: 1,
@@ -30,14 +30,14 @@ class Banners extends React.Component{
     };
 
     componentDidMount() {
-        this.getBanners()
+        this.getProjects()
     }
-    getBanners = async (page = 1) => {
+    getProjects = async (page = 1) => {
         const { pagination } = this.state;
         this.setState({
             usersLoading: true,
         });
-        const res = await get('/banners', {
+        const res = await get('/project/queryProject', {
             page: page,
             pageSize: this.state.pagination.pageSize
         });
@@ -49,10 +49,10 @@ class Banners extends React.Component{
         }
         this.setState({
             usersLoading: false,
-            banners: res.data.list,
+            projects: res.data.list,
             pagination: {
                 ...pagination,
-                total: res.data.total,
+                total: res.data.list.size,
                 current: page
             }
         })
@@ -64,7 +64,7 @@ class Banners extends React.Component{
         await this.setState({
             pagination: page
         });
-        this.getBanners(page.current)
+        this.getProjects(page.current)
     };
     /**
      * 批量删除
@@ -85,7 +85,7 @@ class Banners extends React.Component{
                     this.setState({
                         selectedRowKeys: []
                     });
-                    this.getBanners()
+                    this.getProjects()
                 }
             }
         })
@@ -103,7 +103,7 @@ class Banners extends React.Component{
             this.setState({
                 selectedRowKeys: []
             });
-            this.getBanners()
+            this.getProjects()
         }
     };
     /**
@@ -116,7 +116,7 @@ class Banners extends React.Component{
                 message: '修改成功',
                 description: res.msg,
             });
-            this.getBanners()
+            this.getProjects()
         }
     };
     /**
@@ -126,7 +126,7 @@ class Banners extends React.Component{
         this.setState({
             isShowCreateModal: visible
         });
-        this.getBanners();
+        this.getProjects();
     };
     /**
      * 修改modal
@@ -145,10 +145,10 @@ class Banners extends React.Component{
             isShowEditModal: false,
             banner: {}
         });
-        this.getBanners()
+        this.getProjects()
     };
     render() {
-        const { banners, usersLoading, pagination, banner, selectedRowKeys,isShowEditModal, isShowCreateModal } = this.state;
+        const { projects, usersLoading, pagination, banner, selectedRowKeys,isShowEditModal, isShowCreateModal } = this.state;
         const columns = [
             {
                 title: '序号',
@@ -163,35 +163,32 @@ class Banners extends React.Component{
                 }
             },
             {
-                title: '图片',
-                dataIndex: 'url',
+                title: '项目名称',
+                dataIndex: 'projectName',
                 align: 'center',
-                render: (text) => <img style={{height:'100px',width:'200px'}} src={text} alt={''}/>,
             },
             {
-                title: '是否展示',
-                dataIndex: 'isShow',
+                title: '项目描述',
+                dataIndex: 'projectDescription',
+                align: 'center',
+            },
+            {
+                title: '项目模块',
+                dataIndex: 'projectModule',
+                align: 'center',
+            },
+            {
+                title: '测试负责人',
+                dataIndex: 'tester',
+                align: 'center',
+            },
+            {
+                title: '项目是否启用',
+                dataIndex: 'isValid',
                 align: 'center',
                 render:(text, record) => (
-                    <Switch onClick = {()=>this.switch(record)} checkedChildren="展示" unCheckedChildren="隐藏" defaultChecked={text}/>
+                    <Switch onClick = {()=>this.switch(record)} checkedChildren="启用" unCheckedChildren="废弃" defaultChecked={text}/>
                 )
-            },
-            {
-                title: '是否是链接',
-                dataIndex: 'isLink',
-                align: 'center',
-                render: (text) => <Button disabled={true}>{text ? '是' : '否'}</Button>
-            },
-            {
-                title: '链接地址',
-                dataIndex: 'linkUrl',
-                align: 'center',
-                render: (text) => text ? text : '未设置',
-            },
-            {
-                title: '排序',
-                dataIndex: 'sort',
-                align: 'center'
             },
             {
                 title: '操作',
@@ -228,7 +225,7 @@ class Banners extends React.Component{
                     bordered
                     rowKey='id'
                     columns={columns}
-                    dataSource={banners}
+                    dataSource={projects}
                     loading={usersLoading}
                     rowSelection={rowSelection}
                     pagination={pagination}

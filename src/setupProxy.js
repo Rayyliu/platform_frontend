@@ -7,9 +7,14 @@ module.exports = function (app) {
             // target: 'http://localhost:8081',
             changeOrigin: true,
                 pathRewrite:{
+                //user
                 '^/platform_server/user/register' : '/user/register',
                 '^/platform_server/user/findByUsername' : '/user/findByUsername',
                 '^/platform_server/login' : '/user/login',
+
+                //project
+                '^/platform_server/project/add' : '/project/save',
+                '^/platform_server/project/queryProject' : '/project/query',
             }
         }
     ))
