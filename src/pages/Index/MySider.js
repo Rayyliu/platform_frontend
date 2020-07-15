@@ -50,7 +50,7 @@ class MySider extends React.Component {
     };
     render() {
         const { activeMenu, theme,menus } = this.props;
-        console.log("this.props==="+JSON.stringify(this.props))
+        // console.log("this.props==="+JSON.stringify(this.props))
         return (
             <div className={`my-sider ${theme}`}>
                 <div className={`sider-menu-logo ${theme}`}>

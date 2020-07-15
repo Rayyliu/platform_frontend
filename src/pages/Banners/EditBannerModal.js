@@ -1,14 +1,14 @@
 import React from 'react'
 import {Modal, Form, Upload, Icon, message, Input, Switch, InputNumber} from 'antd'
 import { isAuthenticated } from '../../utils/session'
-import {del, put} from "../../utils/ajax";
+import {del, post, put} from "../../utils/ajax";
 import {createFormField} from '../../utils/util'
 
 
 const form = Form.create({
     //表单回显
     mapPropsToFields(props) {
-        return createFormField(props.banner)
+        return createFormField(props.project)
     }
 });
 
@@ -21,7 +21,7 @@ class EditBannerModal extends React.Component {
     handleOk = () => {
         this.props.form.validateFields((errors, values) => {
             if (!errors) {
-                this.editBanner(values)
+                this.editProject(values)
             }
         })
     };
@@ -32,20 +32,32 @@ class EditBannerModal extends React.Component {
             del('/upload', {key: this.state.img.key});
         }
     };
-    editBanner = async (values) => {
+    editProject = async (values) => {
         const id = this.props.form.getFieldValue('id');
-        const res = await put('/banners', {
+        const res = await post('/project/edit', {
             ...values,
             id: id
         });
         if (res.code === 0) {
             message.success('修改成功');
-            this.setState({
-                img:{}
-            });
+            // this.setState({
+            //     img:{}
+            // });
             this.props.onCancel()
         }
     };
+
+    /***
+     * 根据projectId查询项目详情
+     */
+    // queryProject = asyn (values) =>{
+    //     const id = this.props.getFieldValue('id');
+    //     const res = await get('/project/queryById',{
+    //         ...values,
+    //         id: id
+    //     });
+    // }
+
     /**
      * 转换上传组件表单的值
      */
@@ -105,41 +117,39 @@ class EditBannerModal extends React.Component {
                 width={550}
                 centered
                 onOk={this.handleOk}
-                title='修改banner'
+                title='修改项目'
             >
                 <div style={{ height: '50vh', overflow: 'auto' }}>
                     <Form {...formItemLayout}>
-                        <Form.Item label={'图片'}>
-                            {getFieldDecorator('url', {
-                                rules: [{ required: true, message: '请上传图片' }],
-                                getValueFromEvent: this._normFile,
+                        <Form.Item label={'项目名称'}>
+                            {getFieldDecorator('projectName', {
+                                rules: [{ required: true, message: '请输入项目名称' }],
+                                initialValue: getFieldValue('projectName'),
                             })(
-                                <Upload {...uploadProps} style={styles.urlUploader}>
-                                    {url ? <img src={url} alt="url" style={styles.url} /> : <Icon style={styles.url} type={uploading ? 'loading' : 'plus'} />}
-                                </Upload>
+                                <Input
+                                />
                             )}
                         </Form.Item>
-                        <Form.Item label="是否展示">
-                            {getFieldDecorator('isShow', {
-                                initialValue: getFieldValue('isShow'),
-                                valuePropName: 'checked',
+                        <Form.Item label="项目描述">
+                            {getFieldDecorator('projectDescription', {
+                                initialValue: getFieldValue('projectDescription'),
                             })
                             (
-                                <Switch checkedChildren="展示" unCheckedChildren="隐藏" />
+                                <Input
+                                />
                             )}
                         </Form.Item>
-                        <Form.Item label="是否链接">
-                            {getFieldDecorator('isLink', {
-                                initialValue: getFieldValue('isLink'),
-                                valuePropName: 'checked',
+                        <Form.Item label="项目模块">
+                            {getFieldDecorator('projectModule', {
+                                initialValue: getFieldValue('projectModule'),
                             })
                             (
-                                <Switch checkedChildren="是" unCheckedChildren="否" />
+                                <Input/>
                             )}
                         </Form.Item>
-                        <Form.Item label="链接地址">
-                            {getFieldDecorator('linkUrl', {
-                                validateFirst: getFieldValue('isLink'),
+                        <Form.Item label="测试负责人">
+                            {getFieldDecorator('tester', {
+                                validateFirst: getFieldValue('tester'),
                                 rules: [
                                     { required: getFieldValue('isLink'), message: '地址不能为空' }
                                 ],
@@ -148,16 +158,13 @@ class EditBannerModal extends React.Component {
                                 <Input />
                             )}
                         </Form.Item>
-                        <Form.Item label="排序">
-                            {getFieldDecorator('sort', {
+                        <Form.Item label="是否启用">
+                            {getFieldDecorator('valid', {
                                 validateFirst: true,
-                                rules: [
-                                    { required: true, message: '排序不能为空' }
-                                ],
                                 initialValue: 0
                             })
                             (
-                                <InputNumber min={0}/>
+                                <Switch checkedChildren="启用" unCheckedChildren="废弃" defaultChecked/>
                             )}
                         </Form.Item>
                     </Form>

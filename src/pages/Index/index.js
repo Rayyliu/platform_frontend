@@ -64,7 +64,7 @@ class Index extends React.Component {
 
     render() {
         const { collapsed, panes, activeMenu, theme } = this.state;
-        console.log("localStorage====="+JSON.stringify(localStorage))
+        // console.log("localStorage====="+JSON.stringify(localStorage))
         return (
             <Layout style={{ height: '100vh' }}>
                 <Sider trigger={null} collapsible collapsed={collapsed} theme={theme}>

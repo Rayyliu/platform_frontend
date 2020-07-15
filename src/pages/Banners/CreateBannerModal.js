@@ -129,7 +129,7 @@ class CreateUserModal extends Component {
                         )}
                     </Form.Item>
                     <Form.Item label={'是否启用'}>
-                        {getFieldDecorator('isValid', {
+                        {getFieldDecorator('valid', {
                             initialValue: true
                         })(
                             <Switch checkedChildren="启用" unCheckedChildren="废弃" defaultChecked/>

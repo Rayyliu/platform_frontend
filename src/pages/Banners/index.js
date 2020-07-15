@@ -24,7 +24,7 @@ class Banners extends React.Component{
             showQuickJumper: true
         },
         isShowEditModal: false,
-        banner: {},
+        project: {},
         selectedRowKeys: [],
         isShowCreateModal: false
     };
@@ -47,12 +47,13 @@ class Banners extends React.Component{
             });
             return
         }
+        console.log("res.data==="+JSON.stringify(res.data))
         this.setState({
             usersLoading: false,
-            projects: res.data.list,
+            projects: res.data.entity,
             pagination: {
                 ...pagination,
-                total: res.data.list.size,
+                total: res.data.total,
                 current: page
             }
         })
@@ -74,7 +75,7 @@ class Banners extends React.Component{
             title: '提示',
             content: '您确定批量删除勾选内容吗？',
             onOk: async () => {
-                const res = await del('/banners/deletes', {
+                const res = await del('/project/deletes', {
                     ids: this.state.selectedRowKeys
                 });
                 if (res.code === 0) {
@@ -94,7 +95,7 @@ class Banners extends React.Component{
      * 单条删除
      */
     singleDelete = async (record) => {
-        const res = await del(`/banners/${record.id}`);
+        const res = await del(`/project/${record.id}`);
         if (res.code === 0) {
             notification.success({
                 message: '删除成功',
@@ -110,7 +111,7 @@ class Banners extends React.Component{
      * 开关
      * */
     switch = async (record) =>{
-        const res = await get('/banners/updateShow/'+record.id);
+        const res = await get('/project/updateShow/'+record.id);
         if (res.code === 0) {
             notification.success({
                 message: '修改成功',
@@ -134,7 +135,7 @@ class Banners extends React.Component{
     showEditModal = (visible) =>{
         this.setState({
             isShowEditModal: true,
-            banner: visible
+            project: visible,
         })
     };
     /**
@@ -143,12 +144,12 @@ class Banners extends React.Component{
     closeEditModal = () => {
         this.setState({
             isShowEditModal: false,
-            banner: {}
+            project: {}
         });
         this.getProjects()
     };
     render() {
-        const { projects, usersLoading, pagination, banner, selectedRowKeys,isShowEditModal, isShowCreateModal } = this.state;
+        const { projects, usersLoading, pagination, project, selectedRowKeys,isShowEditModal, isShowCreateModal } = this.state;
         const columns = [
             {
                 title: '序号',
@@ -184,7 +185,7 @@ class Banners extends React.Component{
             },
             {
                 title: '项目是否启用',
-                dataIndex: 'isValid',
+                dataIndex: 'valid',
                 align: 'center',
                 render:(text, record) => (
                     <Switch onClick = {()=>this.switch(record)} checkedChildren="启用" unCheckedChildren="废弃" defaultChecked={text}/>
@@ -198,7 +199,7 @@ class Banners extends React.Component{
                     <div style={{ textAlign: 'center' }}>
                         <Button type="primary" onClick={() => this.showEditModal(record)}>编辑</Button>
                         &emsp;
-                        <Popconfirm title='您确定删除当前图片吗？' onConfirm={() => this.singleDelete(record)}>
+                        <Popconfirm title='您确定删除当前项目吗？' onConfirm={() => this.singleDelete(record)}>
                             <Button type="danger">
                                 <Icon type='delete' />
                                 删除
@@ -232,7 +233,7 @@ class Banners extends React.Component{
                     onChange={this.onTableChange}
                     />
                 </Card>
-                <EditBannerModal onCancel={this.closeEditModal} visible={isShowEditModal}  banner={banner}/>
+                <EditBannerModal onCancel={this.closeEditModal} visible={isShowEditModal}  project={project}/>
                 <CreateBannerModal visible={isShowCreateModal} toggleVisible={this.toggleShowCreateModal} />
             </div>
         )

@@ -15,6 +15,7 @@ module.exports = function (app) {
                 //project
                 '^/platform_server/project/add' : '/project/save',
                 '^/platform_server/project/queryProject' : '/project/query',
+                '^/platform_server/project/edit': '/project/edit'
             }
         }
     ))
