@@ -15,7 +15,10 @@ module.exports = function (app) {
                 //project
                 '^/platform_server/project/add' : '/project/save',
                 '^/platform_server/project/queryProject' : '/project/query',
-                '^/platform_server/project/edit': '/project/edit'
+                '^/platform_server/project/edit': '/project/edit',
+                '^/platform_server/project/queryById' : '/project/queryById',
+                '^/platform_server/project/delById' : '/project/delById',
+                '^/platform_server/project/updateValid' : '/project/updateValid'
             }
         }
     ))

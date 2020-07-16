@@ -95,7 +95,9 @@ class Banners extends React.Component{
      * 单条删除
      */
     singleDelete = async (record) => {
-        const res = await del(`/project/${record.id}`);
+        const res = await get(`/project/delById`,{
+            projectId:record.id
+        });
         if (res.code === 0) {
             notification.success({
                 message: '删除成功',
@@ -107,15 +109,20 @@ class Banners extends React.Component{
             this.getProjects()
         }
     };
+
+
     /**
      * 开关
      * */
     switch = async (record) =>{
-        const res = await get('/project/updateShow/'+record.id);
+        const res = await get('/project/updateValid',{
+            projectId: record.id,
+            valid: record.valid
+        });
         if (res.code === 0) {
             notification.success({
                 message: '修改成功',
-                description: res.msg,
+                description: res.message,
             });
             this.getProjects()
         }
@@ -188,7 +195,7 @@ class Banners extends React.Component{
                 dataIndex: 'valid',
                 align: 'center',
                 render:(text, record) => (
-                    <Switch onClick = {()=>this.switch(record)} checkedChildren="启用" unCheckedChildren="废弃" defaultChecked={text}/>
+                    <Switch checked= {record.valid} onClick = {()=>this.switch(record)} checkedChildren="启用" unCheckedChildren="废弃" defaultChecked={text}  />
                 )
             },
             {
@@ -233,11 +240,13 @@ class Banners extends React.Component{
                     onChange={this.onTableChange}
                     />
                 </Card>
-                <EditBannerModal onCancel={this.closeEditModal} visible={isShowEditModal}  project={project}/>
+                <EditBannerModal onCancel={this.closeEditModal} visible={isShowEditModal}  project={project} getProjects={this.getProjects}/>
                 <CreateBannerModal visible={isShowCreateModal} toggleVisible={this.toggleShowCreateModal} />
             </div>
         )
     }
+
+
 }
 
 export default Banners;

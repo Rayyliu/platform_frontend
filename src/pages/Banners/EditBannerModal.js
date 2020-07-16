@@ -1,7 +1,7 @@
 import React from 'react'
 import {Modal, Form, Upload, Icon, message, Input, Switch, InputNumber} from 'antd'
 import { isAuthenticated } from '../../utils/session'
-import {del, post, put} from "../../utils/ajax";
+import {del, post, put,get} from "../../utils/ajax";
 import {createFormField} from '../../utils/util'
 
 
@@ -16,21 +16,21 @@ const form = Form.create({
 class EditBannerModal extends React.Component {
     state = {
         uploading: false,
-        img:{}
+        img:{},
+        projects:[]
     };
+
     handleOk = () => {
         this.props.form.validateFields((errors, values) => {
             if (!errors) {
+                console.log("values==="+JSON.stringify(values))
                 this.editProject(values)
+
             }
         })
     };
     onCancel = () => {
         this.props.onCancel();
-        //删除图片
-        if (this.state.img.key && this.state.img.key.indexOf('http') === -1 ){
-            del('/upload', {key: this.state.img.key});
-        }
     };
     editProject = async (values) => {
         const id = this.props.form.getFieldValue('id');
@@ -43,20 +43,37 @@ class EditBannerModal extends React.Component {
             // this.setState({
             //     img:{}
             // });
-            this.props.onCancel()
+            // await this.queryProject()
+            console.log("已进入editProject方法内，接下来调用getProjects方法")
+            // await this.props.getProjects()
+            this.props.getProjects()
+            this.onCancel()
+            // await this.getProjects()
+            // this.props.onCancel()
         }
     };
 
     /***
      * 根据projectId查询项目详情
      */
-    // queryProject = asyn (values) =>{
-    //     const id = this.props.getFieldValue('id');
-    //     const res = await get('/project/queryById',{
-    //         ...values,
-    //         id: id
-    //     });
-    // }
+    queryProject = async () =>{
+        const projectId = this.props.form.getFieldValue('id');
+        console.log("id=="+projectId)
+        const res = await get('/project/queryById',{
+            // ...values,
+            projectId: projectId
+        });
+        if(res.code === 0) {
+            message.success("查询项目成功")
+            console.log("res==="+JSON.stringify(res))
+            this.setState({
+                projects:res.data
+            })
+            // return res;
+        }else {
+            message.error("查询项目失败")
+        }
+    }
 
     /**
      * 转换上传组件表单的值
@@ -149,7 +166,7 @@ class EditBannerModal extends React.Component {
                         </Form.Item>
                         <Form.Item label="测试负责人">
                             {getFieldDecorator('tester', {
-                                validateFirst: getFieldValue('tester'),
+                                validateFirst: getFieldValue('tester'),//当某一校验规则不通过时，是否停下剩下的校验规则
                                 rules: [
                                     { required: getFieldValue('isLink'), message: '地址不能为空' }
                                 ],
@@ -160,8 +177,8 @@ class EditBannerModal extends React.Component {
                         </Form.Item>
                         <Form.Item label="是否启用">
                             {getFieldDecorator('valid', {
-                                validateFirst: true,
-                                initialValue: 0
+                                initialValue: true,
+                                valuePropName: 'checked'
                             })
                             (
                                 <Switch checkedChildren="启用" unCheckedChildren="废弃" defaultChecked/>
