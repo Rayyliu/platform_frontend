@@ -195,7 +195,7 @@ class Banners extends React.Component{
                 dataIndex: 'valid',
                 align: 'center',
                 render:(text, record) => (
-                    <Switch checked= {record.valid} onClick = {()=>this.switch(record)} checkedChildren="启用" unCheckedChildren="废弃" defaultChecked={text}  />
+                    <Switch onClick = {()=>this.switch(record)} checkedChildren="启用" unCheckedChildren="废弃" checked={record.valid}  />
                 )
             },
             {

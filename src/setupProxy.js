@@ -3,8 +3,8 @@ const {createProxyMiddleware} = require('http-proxy-middleware');
 module.exports = function (app) {
     app.use(
         createProxyMiddleware('/platform_server', {
-            target: 'http://localhost:8082',
-            // target: 'http://localhost:8081',
+            // target: 'http://localhost:8082',
+            target: 'http://localhost:8081',
             changeOrigin: true,
                 pathRewrite:{
                 //user
@@ -18,7 +18,8 @@ module.exports = function (app) {
                 '^/platform_server/project/edit': '/project/edit',
                 '^/platform_server/project/queryById' : '/project/queryById',
                 '^/platform_server/project/delById' : '/project/delById',
-                '^/platform_server/project/updateValid' : '/project/updateValid'
+                '^/platform_server/project/updateValid' : '/project/updateValid',
+                '^/platform_server/project/deletes' : '/project/deletes'
             }
         }
     ))
