@@ -53,32 +53,11 @@ class EditBannerModal extends React.Component {
         }
     };
 
-    /***
-     * 根据projectId查询项目详情
-     */
-    queryProject = async () =>{
-        const projectId = this.props.form.getFieldValue('id');
-        console.log("id=="+projectId)
-        const res = await get('/project/queryById',{
-            // ...values,
-            projectId: projectId
-        });
-        if(res.code === 0) {
-            message.success("查询项目成功")
-            console.log("res==="+JSON.stringify(res))
-            this.setState({
-                projects:res.data
-            })
-            // return res;
-        }else {
-            message.error("查询项目失败")
-        }
-    }
 
     /**
      * 转换上传组件表单的值
      */
-    _normFile = (e) => {
+     _normFile = (e) => {
         if (e.file.response && e.file.response.data) {
             return e.file.response.data.url
         } else {

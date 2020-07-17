@@ -41,7 +41,7 @@ class Index extends React.Component{
         const res = await get('/trades', {
             page: page,
             pageSize: this.state.pagination.pageSize,
-            tradeName: fields.tradeName || ''
+            envName: fields.envName || ''
         });
         if (res.code !== 0) {
             this.setState({
@@ -185,23 +185,32 @@ class Index extends React.Component{
                 }
             },
             {
-                title: '行业名称',
-                dataIndex: 'tradeName',
+                title: '测试环境',
+                dataIndex: 'envName',
+                align: 'center'
+            },
+
+            {
+                title: 'url',
+                dataIndex: 'url',
                 align: 'center'
             },
             {
-                title: '是否启用',
-                dataIndex: 'isActive',
-                align: 'center',
-                render:(text, record) => (
-                    <Switch onClick = {()=>this.switch(record)} checkedChildren="启用" unCheckedChildren="禁用" defaultChecked={text}/>
-                )
-            },
-            {
-                title: '排序',
-                dataIndex: 'sort',
+                title: '端口号',
+                dataIndex: 'port',
                 align: 'center'
             },
+            {
+                title: '所属项目',
+                dataIndex: 'project',
+                align: 'center'
+            },
+            {
+                title: '环境描述',
+                dataIndex: 'description',
+                align: 'center'
+            },
+
             {
                 title: '操作',
                 key: 'active',
@@ -231,12 +240,12 @@ class Index extends React.Component{
                 <Card bordered={false}>
                     <Form layout='inline' style={{ marginBottom: 16 }}>
                         <Col span={6}>
-                            <Form.Item label="行业名称">
-                                {getFieldDecorator('tradeName')(
+                            <Form.Item label="测试环境">
+                                {getFieldDecorator('envName')(
                                     <Input
                                         onPressEnter={this.onSearch}
                                         style={{ width: 200 }}
-                                        placeholder="行业名称"
+                                        placeholder="测试环境"
                                     />
                                 )}
                             </Form.Item>

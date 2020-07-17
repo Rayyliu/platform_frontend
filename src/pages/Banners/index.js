@@ -75,7 +75,7 @@ class Banners extends React.Component{
             title: '提示',
             content: '您确定批量删除勾选内容吗？',
             onOk: async () => {
-                const res = await del('/project/deletes', {
+                const res = await get('/project/deletes', {
                     ids: this.state.selectedRowKeys
                 });
                 if (res.code === 0) {
