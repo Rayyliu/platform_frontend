@@ -6,7 +6,11 @@ import {get, post} from '../../utils/ajax'
 class CreateTradeModal extends Component {
 
     state = {
-        projects:{}
+        projects:[]
+    }
+
+    componentDidMount() {
+        this.queryProject();
     }
     onCancel = () => {
         this.props.form.resetFields();
@@ -26,19 +30,18 @@ class CreateTradeModal extends Component {
     queryProject = async () =>{
         const res = await get('/project/queryDistProject')
         if(res.code === 0) {
-            message.success("查询成功")
-            console.log("res==="+JSON.stringify(res))
+            this.setState({
+                projects:res.data
+            })
         }else {
-            message.error("查询项目失败")
+            message.error("调用queryDistProject接口失败，查询项目失败")
         }
-        return res.data
     }
 
 
 
-
     createTrade = async (values) => {
-        const res = await post('/trades', {
+        const res = await post('/env/add', {
             ...values
         });
         if (res.code === 0) {
@@ -47,6 +50,7 @@ class CreateTradeModal extends Component {
         this.onCancel()
     };
     render() {
+        const {projects} = this.state;
         const { visible } = this.props;
         const { getFieldDecorator } = this.props.form;
         const formItemLayout = {
@@ -67,54 +71,59 @@ class CreateTradeModal extends Component {
                         {getFieldDecorator('envName',{
                             validateFirst: true,
                             rules: [
-                                { required: true, message: '行业不能为空' },
-                                { pattern: '^[^ ]+$', message: '行业不能有空格' }
+                                { required: true, message: '测试环境不能为空' }
                             ]
                         })(
                             <Input
                                 maxLength={32}
-                                placeholder="请输入行业"
+                                placeholder="请输入测试环境"
                             />
                         )}
                     </Form.Item>
                     <Form.Item label={'url'}>
                         {getFieldDecorator('url',{
-                            initialValue: ""
+                            validateFirst: true,
+                            rules: [
+                                { required: true, message: 'url不能为空' }
+                            ]
                         })(
-                            <Input/>
+                            <Input
+                                maxLength={32}
+                                placeholder="请输入rul"
+                            />
                         )}
                     </Form.Item>
 
-                    <Form.Item label={'端口号'}>
-                        {getFieldDecorator('port', {
-                            validateFirst: true,
-                            rules: [
-                                { required: true, message: '排序不能为空' }
-                            ],
-                            initialValue : "",
-                        })(
-                            <InputNumber placeholder={"8080"}/>
-                        )}
-                    </Form.Item>
+                    {/*<Form.Item label={'端口号'}>*/}
+                        {/*{getFieldDecorator('port', {*/}
+                            {/*validateFirst: true,*/}
+                            {/*rules: [*/}
+                                {/*{ required: true, message: '端口号不能为空' }*/}
+                            {/*],*/}
+                            {/*initialValue : "",*/}
+                        {/*})(*/}
+                            {/*<InputNumber placeholder={"8080"}/>*/}
+                        {/*)}*/}
+                    {/*</Form.Item>*/}
                     <Form.Item label={'所属项目'}>
                         {getFieldDecorator('project', {
                             validateFirst: true,
                             rules: [
-                                { required: true, message: '排序不能为空' }
+                                { required: true, message: '项目不能为空' }
                             ],
                             initialValue : "",
                         })(
                             <Select placeholder="请选择" style={{width:"29%"}}>
-                                {this.queryProject.map((item) => {
+                                {projects.map((item) => {
                                 return <option value={item}>{item}</option>})}
                             </Select>
                         )}
                     </Form.Item>
                     <Form.Item label={'环境描述'}>
-                        {getFieldDecorator('description', {
+                        {getFieldDecorator('envDescription', {
                             validateFirst: true,
                             rules: [
-                                { required: true, message: '排序不能为空' }
+                                { required: true, message: '环境描述不能为空' }
                             ],
                             initialValue : "",
                         })(

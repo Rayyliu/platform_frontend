@@ -20,7 +20,13 @@ module.exports = function (app) {
                 '^/platform_server/project/delById' : '/project/delById',
                 '^/platform_server/project/updateValid' : '/project/updateValid',
                 '^/platform_server/project/deletes' : '/project/deletes',
-                '^/platform_server/project/queryDistProject' : '/project/queryDistProject'
+                '^/platform_server/project/queryDistProject' : '/project/queryDistProject',
+
+                //env
+                '^/platform_server/env/add' : '/env/add',
+                '^/platform_server/env/queryPage' : '/env/queryPage',
+                '^/platform_server/env/singleDelet' : '/env/singleDelet',
+                '^/platform_server/env/deletes' : '/env/deletes'
             }
         }
     ))

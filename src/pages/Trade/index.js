@@ -32,14 +32,14 @@ class Index extends React.Component{
     componentDidMount() {
         this.getTrades()
     }
-    getTrades = async (page = 1) => {
+    getTrades = async (pageNum = 1) => {
         const { pagination } = this.state;
         const fields = this.props.form.getFieldsValue();
         this.setState({
             tradesLoading: true,
         });
-        const res = await get('/trades', {
-            page: page,
+        const res = await get('/env/queryPage', {
+            pageNum: pageNum,
             pageSize: this.state.pagination.pageSize,
             envName: fields.envName || ''
         });
@@ -51,22 +51,22 @@ class Index extends React.Component{
         }
         this.setState({
             tradesLoading: false,
-            trades: res.data.list,
+            trades: res.data.entity,
             pagination: {
                 ...pagination,
                 total: res.data.total,
-                current: page
+                current: pageNum
             }
         })
     };
     /**
      * table分页
      */
-    onTableChange = async (page) => {
+    onTableChange = async (pageNum) => {
         await this.setState({
-            pagination: page
+            pagination: pageNum
         });
-        this.getTrades(page.current)
+        this.getTrades(pageNum.current)
     };
     /**
      * 批量删除
@@ -76,7 +76,7 @@ class Index extends React.Component{
             title: '提示',
             content: '您确定批量删除勾选内容吗？',
             onOk: async () => {
-                const res = await del('/trades', {
+                const res = await get('/env/deletes', {
                     ids: this.state.selectedRowKeys
                 });
                 if (res.code === 0) {
@@ -96,8 +96,8 @@ class Index extends React.Component{
      * 单条删除
      */
     singleDelete = async (record) => {
-        const res = await del('/trades',{
-            ids: record.id
+        const res = await get('/env/singleDelet',{
+            envId: record.id
         });
         if (res.code === 0) {
             notification.success({
@@ -195,11 +195,11 @@ class Index extends React.Component{
                 dataIndex: 'url',
                 align: 'center'
             },
-            {
-                title: '端口号',
-                dataIndex: 'port',
-                align: 'center'
-            },
+            // {
+            //     title: '端口号',
+            //     dataIndex: 'port',
+            //     align: 'center'
+            // },
             {
                 title: '所属项目',
                 dataIndex: 'project',
@@ -207,7 +207,7 @@ class Index extends React.Component{
             },
             {
                 title: '环境描述',
-                dataIndex: 'description',
+                dataIndex: 'envDescription',
                 align: 'center'
             },
 
