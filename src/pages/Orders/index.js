@@ -224,7 +224,7 @@ class Order extends React.Component{
             },
             {
                 title: '请求方式',
-                dataIndex: 'mode',
+                dataIndex: 'method',
                 align: 'center',
                 sorter: (a, b) => a.orderAmount - b.orderAmount
             },

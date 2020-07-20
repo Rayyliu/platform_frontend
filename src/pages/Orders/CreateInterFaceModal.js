@@ -1,12 +1,19 @@
 import React, { Component } from 'react';
-import {Modal, Form, Input, message, Switch, InputNumber, Select} from 'antd'
+import {Modal, Form, Input, message, Switch, InputNumber, Select,Radio} from 'antd'
 import {get, post} from '../../utils/ajax'
+import RadioGroup from "antd/es/radio/group";
 
 @Form.create()
 class CreateInterFaceModal extends Component {
 
     state = {
-        projects:[]
+        projects:[],
+        mode:{
+            method:"",
+            sign:false,
+            header:false,
+            mock:false
+        }
     }
 
     componentDidMount() {
@@ -23,6 +30,42 @@ class CreateInterFaceModal extends Component {
             }
         })
     };
+
+    onChange=e=>{
+        console.log('radio2 checked', e.target.value);
+        this.setState({
+            mode:{
+                method:e.target.value
+            }
+        })
+}
+
+    onChangeSign=e=>{
+        console.log('radio2 checked', e.target.value);
+        this.setState({
+            mode:{
+                sign: e.target.value
+            }
+        })
+    }
+
+    onChangeHeader=e=>{
+        console.log('radio2 checked', e.target.value);
+        this.setState({
+            mode:{
+                header: e.target.value
+            }
+        })
+    }
+
+    onChangeMock=e=>{
+        console.log('radio2 checked', e.target.value);
+        this.setState({
+            mode:{
+                mock: e.target.value
+            }
+        })
+    }
 
     /***
      * 去重查询项目名称
@@ -81,16 +124,17 @@ class CreateInterFaceModal extends Component {
                         )}
                     </Form.Item>
                     <Form.Item label={'所属项目'}>
-                        {getFieldDecorator('project',{
+                        {getFieldDecorator('project', {
                             validateFirst: true,
                             rules: [
-                                { required: true, message: 'url不能为空' }
-                            ]
+                                { required: true, message: '项目不能为空' }
+                            ],
+                            initialValue : "",
                         })(
-                            <Input
-                                maxLength={32}
-                                placeholder="请输入rul"
-                            />
+                            <Select placeholder="请选择" style={{width:"29%"}}>
+                                {projects.map((item) => {
+                                    return <option value={item}>{item}</option>})}
+                            </Select>
                         )}
                     </Form.Item>
 
@@ -109,16 +153,18 @@ class CreateInterFaceModal extends Component {
                     </Form.Item>
 
                     <Form.Item label={'请求方式'}>
-                        {getFieldDecorator('mode',{
+                        {getFieldDecorator('method',{
                             validateFirst: true,
                             rules: [
                                 { required: true, message: 'url不能为空' }
                             ]
                         })(
-                            <Input
-                                maxLength={32}
-                                placeholder="请输入rul"
-                            />
+                           <RadioGroup name="moderation" onChange={this.onChange} value={this.state.mode} defaultValue={1}>
+                               <Radio value={1}>get</Radio>
+                               <Radio value={2}>post</Radio>
+                               <Radio value={3}>delete</Radio>
+                               <Radio value={4}>put</Radio>
+                           </RadioGroup>
                         )}
                     </Form.Item>
 
@@ -133,11 +179,11 @@ class CreateInterFaceModal extends Component {
                     {/*<InputNumber placeholder={"8080"}/>*/}
                     {/*)}*/}
                     {/*</Form.Item>*/}
-                    <Form.Item label={'所属项目'}>
-                        {getFieldDecorator('project', {
+                    <Form.Item label={'数据传输方式'}>
+                        {getFieldDecorator('mode', {
                             validateFirst: true,
                             rules: [
-                                { required: true, message: '项目不能为空' }
+                                { required: true, message: '数据传输方式不能为空' }
                             ],
                             initialValue : "",
                         })(
@@ -147,11 +193,65 @@ class CreateInterFaceModal extends Component {
                             </Select>
                         )}
                     </Form.Item>
-                    <Form.Item label={'环境描述'}>
-                        {getFieldDecorator('envDescription', {
+                    <Form.Item label={'跳过'}>
+                        {getFieldDecorator('jump', {
                             validateFirst: true,
                             rules: [
                                 { required: true, message: '环境描述不能为空' }
+                            ],
+                            initialValue : "",
+                        })(
+                            <Input/>
+                        )}
+                    </Form.Item>
+
+                    <Form.Item label={'是否签名'}>
+                        {getFieldDecorator('sign',{
+                            validateFirst: true,
+                            rules: [
+                                { required: true, message: 'url不能为空' }
+                            ]
+                        })(
+                            <RadioGroup name="signradio" onChange={this.onChangeSign} value={this.state.mode} defaultValue={1}>
+                                <Radio value={1}>签名</Radio>
+                                <Radio value={2}>不签名</Radio>
+                            </RadioGroup>
+                        )}
+                    </Form.Item>
+
+                    <Form.Item label={'设置header'}>
+                        {getFieldDecorator('header',{
+                            validateFirst: true,
+                            rules: [
+                                { required: true, message: 'url不能为空' }
+                            ]
+                        })(
+                            <RadioGroup name="headerradio" onChange={this.onChangeHeader} value={this.state.mode} defaultValue={1}>
+                                <Radio value={1}>设置</Radio>
+                                <Radio value={2}>不设置</Radio>
+                            </RadioGroup>
+                        )}
+                    </Form.Item>
+
+                    <Form.Item label={'是否mock'}>
+                        {getFieldDecorator('mock',{
+                            validateFirst: true,
+                            rules: [
+                                { required: true, message: 'url不能为空' }
+                            ]
+                        })(
+                            <RadioGroup name="mockradio" onChange={this.onChangeMock} value={this.state.mode} defaultValue={1}>
+                                <Radio value={1}>是</Radio>
+                                <Radio value={2}>不是</Radio>
+                            </RadioGroup>
+                        )}
+                    </Form.Item>
+
+                    <Form.Item label={'接口描述'}>
+                        {getFieldDecorator('description', {
+                            validateFirst: true,
+                            rules: [
+                                { required: true, message: '接口描述不能为空' }
                             ],
                             initialValue : "",
                         })(
