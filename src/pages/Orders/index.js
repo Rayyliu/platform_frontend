@@ -3,11 +3,13 @@ import {
     Table,
     Card,
     Button,
-    message, Col, Input, Form, Tag
+    message, Col, Input, Form, Tag,Popconfirm,Icon,notification,
 } from 'antd'
 import moment from 'moment'
 import ExportJsonExcel from "js-export-excel"
 import {get} from "../../utils/ajax";
+import CreateInterFaceModal from "./CreateInterFaceModal";
+import {Modal} from "antd/lib/index";
 
 @Form.create()
 class Order extends React.Component{
@@ -21,6 +23,8 @@ class Order extends React.Component{
             showQuickJumper: true
         },
         order: {},
+        isShowCreateModal: false,
+        selectedRowKeys: []
     };
     componentDidMount() {
         this.getOrders()
@@ -52,6 +56,42 @@ class Order extends React.Component{
             }
         })
     };
+
+    /**
+     * 批量删除
+     */
+    batchDelete = () => {
+        Modal.confirm({
+            title: '提示',
+            content: '您确定批量删除勾选内容吗？',
+            onOk: async () => {
+                const res = await get('/env/deletes', {
+                    ids: this.state.selectedRowKeys
+                });
+                if (res.code === 0) {
+                    notification.success({
+                        message: '删除成功',
+                        description: res.msg,
+                    });
+                    this.setState({
+                        selectedRowKeys: []
+                    });
+                    this.getOrders()
+                }
+            }
+        })
+    };
+
+    /**
+     * 创建modal
+     * */
+    toggleShowCreateModal=(visible)=>{
+        this.setState({
+            isShowCreateModal: visible
+        });
+        // this.getOrders()
+}
+
     /**
      * table分页
      */
@@ -135,12 +175,25 @@ class Order extends React.Component{
         toExcel.saveExcel();
     };
     render() {
-        const { orders,ordersLoading, pagination} = this.state;
+        const { selectedRowKeys,isShowCreateModal,orders,ordersLoading, pagination} = this.state;
         const { getFieldDecorator } = this.props.form;
         const columns = [
             {
-                title: '订单类型',
-                dataIndex: 'orderType',
+                title: '序号',
+                key: 'id',
+                align: 'center',
+                width:'8%',
+                render :(text, record, index)=>{
+                    let num = (pagination.current - 1) * pagination.pageSize + index + 1;
+                    if (num < pagination.pageSize) {
+                        num = '0' + num
+                    }
+                    return num
+                }
+            },
+            {
+                title: '接口名称',
+                dataIndex: 'interfaceName',
                 align: 'center',
                 render: (text) => {
                     if (text === 1) {
@@ -153,8 +206,15 @@ class Order extends React.Component{
                 }
             },
             {
-                title: '订单状态',
-                dataIndex: 'orderStatus',
+                title: '接口路径',
+                dataIndex: 'path',
+                align: 'center',
+                render: (text) => text && moment(text).format('YYYY-MM-DD HH:mm:ss'),
+                sorter: (a, b) => a.payedAt - b.payedAt
+            },
+            {
+                title: '所属项目',
+                dataIndex: 'project',
                 align: 'center',
                 render: (text) => {if (text) {
                     return <Tag color="#2db7f5">支付成功</Tag>
@@ -163,14 +223,14 @@ class Order extends React.Component{
                 }}
             },
             {
-                title: '订单金额(/元)',
-                dataIndex: 'orderAmount',
+                title: '请求方式',
+                dataIndex: 'mode',
                 align: 'center',
                 sorter: (a, b) => a.orderAmount - b.orderAmount
             },
             {
-                title: '置顶天数(/天)',
-                dataIndex: 'stickDay',
+                title: '数据传输方式',
+                dataIndex: 'mode',
                 align: 'center',
                 sorter: (a, b) => a.stickDay - b.stickDay,
                 render: (text, record) =>{
@@ -184,35 +244,67 @@ class Order extends React.Component{
                 }
             },
             {
-                title: '支付时间',
-                dataIndex: 'payedAt',
+                title: '是否签名',
+                dataIndex: 'sign',
                 align: 'center',
                 render: (text) => text && moment(text).format('YYYY-MM-DD HH:mm:ss'),
                 sorter: (a, b) => a.payedAt - b.payedAt
             },
             {
-                title: '付款用户',
-                dataIndex: 'nickname',
+                title: '描述',
+                dataIndex: 'description',
                 align: 'center',
             },
             {
-                title: '用户头像',
+                title: 'tags',
                 dataIndex: 'avatar',
                 align: 'center',
                 render: (text) => <img style={{height:'50px',width:'50px'}} src={text} alt={''}/>,
-            }
+            },
+            {
+                title: '更新时间',
+                dataIndex: 'createTime',
+                align: 'center',
+                sorter: (a, b) => a.orderAmount - b.orderAmount,
+                render: (text) => <img style={{height:'50px',width:'50px'}} src={text} alt={''}/>,
+            },
+            {
+                title: '更新用户',
+                dataIndex: 'user',
+                align: 'center',
+                render: (text) => <img style={{height:'50px',width:'50px'}} src={text} alt={''}/>,
+            },
+            {
+                title: '操作',
+                key: 'active',
+                align: 'center',
+                width: '20%',
+                render: (text, record) => (
+                    <div style={{ textAlign: 'center' }}>
+                        <Button type="primary" onClick={() => this.showEditModal(record)}>编辑</Button>
+                        &emsp;
+                        <Popconfirm title='您确定删除当前数据吗？' onConfirm={() => this.singleDelete(record)}>
+                            <Button type="danger">
+                                <Icon type='delete' />
+                                删除
+                            </Button>
+                        </Popconfirm>
+                    </div>
+                )
+            },
+
         ];
         return(
             <div style={{ padding: 5 }}>
                 <Card bordered={false}>
                     <Form layout='inline' style={{ marginBottom: 16 }}>
                         <Col span={6}>
-                            <Form.Item label="综合搜索">
-                                {getFieldDecorator('tradeName')(
+                            <Form.Item label="接口搜索">
+                                {getFieldDecorator('interfaceName')(
                                     <Input
                                         onPressEnter={this.onSearch}
                                         style={{ width: 200 }}
-                                        placeholder="综合搜索"
+                                        placeholder="接口名称"
                                     />
                                 )}
                             </Form.Item>
@@ -226,6 +318,10 @@ class Order extends React.Component{
                             </Form.Item>
                         </Col>
                     </Form>
+                    <div style={{ marginBottom: 16, textAlign: 'right' }}>
+                        <Button type='primary' icon='plus' onClick={()=>this.toggleShowCreateModal(true)}>新增</Button>
+                        <Button type='danger' icon='delete' disabled={!selectedRowKeys.length} onClick={this.batchDelete}>批量删除</Button>
+                    </div>
                     {/*<div style={{ marginBottom: 16, textAlign: 'right' }}>
                         <Button type="primary" icon='export' onClick={this.handleExport}>导出</Button>
                     </div>*/}
@@ -240,6 +336,7 @@ class Order extends React.Component{
                         onChange={this.onTableChange}
                     />
                 </Card>
+                <CreateInterFaceModal visible ={isShowCreateModal} toggleVisible={this.toggleShowCreateModal}></CreateInterFaceModal>
             </div>
         )
     }
