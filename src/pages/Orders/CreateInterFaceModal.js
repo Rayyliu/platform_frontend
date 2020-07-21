@@ -292,7 +292,7 @@ class CreateInterFaceModal extends Component {
                             <Button shape='primary' icon='plus-square' >添加JSON</Button>
                     </Form.Item>
 
-                    <Form.Item label={'请求boby'}>
+                    <Form.Item label={'请求body'}>
 
                         <Button type='primary' icon='plus-square' onClick={()=>this.toggleShowCreateModal(true)}>添加行</Button>
                         &emsp;

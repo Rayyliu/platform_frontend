@@ -20,7 +20,7 @@ class CreateHeaderModal extends Component {
     handleOk = () => {
         this.props.form.validateFields((errors, values) => {
             if (!errors) {
-                this.createTrade(values)
+                this.createHeader(values)
             }
         })
     };
@@ -44,8 +44,8 @@ class CreateHeaderModal extends Component {
 
 
 
-    createTrade = async (values) => {
-        const res = await post('/env/add', {
+    createHeader = async (values) => {
+        const res = await post('/interface/add', {
             ...values
         });
         if (res.code === 0) {

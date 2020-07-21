@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import {Modal, Form, Input, message, Switch, InputNumber, Select, Radio, Button,Table} from 'antd'
 import {get, post} from '../../utils/ajax'
-import RadioGroup from "antd/es/radio/group";
 import CreateHeaderModal from "./CreateHeaderModal";
 
 @Form.create()
