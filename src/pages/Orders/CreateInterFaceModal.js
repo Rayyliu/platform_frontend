@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import {Modal, Form, Input, message, Switch, InputNumber, Select,Radio} from 'antd'
+import {Modal, Form, Input, message, Switch, InputNumber, Select, Radio, Button} from 'antd'
 import {get, post} from '../../utils/ajax'
 import RadioGroup from "antd/es/radio/group";
+import HeaderModal from "../header/HeaderModal";
 
 @Form.create()
 class CreateInterFaceModal extends Component {
@@ -13,7 +14,8 @@ class CreateInterFaceModal extends Component {
             sign:false,
             header:false,
             mock:false
-        }
+        },
+        isShowCreateModal:false
     }
 
     componentDidMount() {
@@ -66,6 +68,16 @@ class CreateInterFaceModal extends Component {
             }
         })
     }
+    /**
+     * 创建modal
+     * */
+    toggleShowCreateModal=(visible)=>{
+        this.setState({
+        isShowCreateModal: visible
+    });
+}
+
+
 
     /***
      * 去重查询项目名称
@@ -93,7 +105,7 @@ class CreateInterFaceModal extends Component {
         this.onCancel()
     };
     render() {
-        const {projects} = this.state;
+        const {projects,isShowCreateModal} = this.state;
         const { visible } = this.props;
         const { getFieldDecorator } = this.props.form;
         const formItemLayout = {
@@ -159,7 +171,7 @@ class CreateInterFaceModal extends Component {
                                 { required: true, message: 'url不能为空' }
                             ]
                         })(
-                           <RadioGroup name="moderation" onChange={this.onChange} value={this.state.mode} defaultValue={1}>
+                           <RadioGroup  onChange={this.onChange} value={this.state.mode} defaultValue={1}>
                                <Radio value={1}>get</Radio>
                                <Radio value={2}>post</Radio>
                                <Radio value={3}>delete</Radio>
@@ -179,7 +191,7 @@ class CreateInterFaceModal extends Component {
                     {/*<InputNumber placeholder={"8080"}/>*/}
                     {/*)}*/}
                     {/*</Form.Item>*/}
-                    <Form.Item label={'数据传输方式'}>
+                    <Form.Item label={'传输方式'}>
                         {getFieldDecorator('mode', {
                             validateFirst: true,
                             rules: [
@@ -212,23 +224,37 @@ class CreateInterFaceModal extends Component {
                                 { required: true, message: 'url不能为空' }
                             ]
                         })(
-                            <RadioGroup name="signradio" onChange={this.onChangeSign} value={this.state.mode} defaultValue={1}>
-                                <Radio value={1}>签名</Radio>
-                                <Radio value={2}>不签名</Radio>
+                            <RadioGroup  onChange={this.onChangeSign} value={this.state.mode}>
+                                <Radio key="签名" value={1}>签名</Radio>
+                                <Radio key="不签名" value={2}>不签名</Radio>
                             </RadioGroup>
                         )}
                     </Form.Item>
 
-                    <Form.Item label={'设置header'}>
+                    {/*<Form.Item label={'设置header'}>*/}
+                        {/*{getFieldDecorator('header',{*/}
+                            {/*validateFirst: true,*/}
+                            {/*rules: [*/}
+                                {/*{ required: true, message: 'url不能为空' }*/}
+                            {/*]*/}
+                        {/*})(*/}
+                            {/*<RadioGroup  onChange={this.onChangeHeader} value={this.state.mode} >*/}
+                                {/*<Radio key="设置" value={1}>设置</Radio>*/}
+                                {/*<Radio key="不设置" value={2}>不设置</Radio>*/}
+                            {/*</RadioGroup>*/}
+                        {/*)}*/}
+                    {/*</Form.Item>*/}
+
+                    <Form.Item label={'header'}>
                         {getFieldDecorator('header',{
                             validateFirst: true,
                             rules: [
                                 { required: true, message: 'url不能为空' }
                             ]
                         })(
-                            <RadioGroup name="headerradio" onChange={this.onChangeHeader} value={this.state.mode} defaultValue={1}>
-                                <Radio value={1}>设置</Radio>
-                                <Radio value={2}>不设置</Radio>
+                            <RadioGroup  onChange={this.onChangeHeader} value={this.state.mode} >
+                                <Radio key="设置"value={1}>设置</Radio>
+                                <Radio key="不设置" value={2}>不设置</Radio>
                             </RadioGroup>
                         )}
                     </Form.Item>
@@ -240,9 +266,9 @@ class CreateInterFaceModal extends Component {
                                 { required: true, message: 'url不能为空' }
                             ]
                         })(
-                            <RadioGroup name="mockradio" onChange={this.onChangeMock} value={this.state.mode} defaultValue={1}>
-                                <Radio value={1}>是</Radio>
-                                <Radio value={2}>不是</Radio>
+                            <RadioGroup  onChange={this.onChangeMock} value={this.state.mode} >
+                                <Radio key="是"value={1}>是</Radio>
+                                <Radio key="不是" value={2}>不是</Radio>
                             </RadioGroup>
                         )}
                     </Form.Item>
@@ -259,6 +285,20 @@ class CreateInterFaceModal extends Component {
                         )}
                     </Form.Item>
 
+                    <Form.Item label={'请求header'}>
+
+                            <Button type='primary' icon='plus-square' onClick={()=>this.toggleShowCreateModal(true)}>添加行</Button>
+                            &emsp;
+                            <Button shape='primary' icon='plus-square' >添加JSON</Button>
+                    </Form.Item>
+
+                    <Form.Item label={'请求boby'}>
+
+                        <Button type='primary' icon='plus-square' onClick={()=>this.toggleShowCreateModal(true)}>添加行</Button>
+                        &emsp;
+                        <Button shape='primary' icon='plus-square' >添加JSON</Button>
+                    </Form.Item>
+                    <HeaderModal visible = {isShowCreateModal} toggleVisible={this.toggleShowCreateModal}/>
                 </Form>
             </Modal>
         );
