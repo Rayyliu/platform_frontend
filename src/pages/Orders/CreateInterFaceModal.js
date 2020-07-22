@@ -78,6 +78,17 @@ class CreateInterFaceModal extends Component {
 }
 
 
+    addline=()=>{
+        let id = 1000;
+        const { form } = this.props;
+        const keys = form.getFieldValue("keys");
+        const nextKeys = keys.concat(id);
+        id++;
+        form.setFieldsValue({
+            keys: nextKeys,
+        });
+    }
+
 
     /***
      * 去重查询项目名称
@@ -273,7 +284,7 @@ class CreateInterFaceModal extends Component {
                         )}
                     </Form.Item>
 
-                    <Form.Item label={'接口描述'}>
+                    <Form.Item label="接口描述"  help="对接口功能进行描述">
                         {getFieldDecorator('description', {
                             validateFirst: true,
                             rules: [
@@ -281,13 +292,13 @@ class CreateInterFaceModal extends Component {
                             ],
                             initialValue : "",
                         })(
-                            <Input/>
+                            <Input type="textarea" placeholder="随便写" {...getFieldDecorator('description')}/>
                         )}
                     </Form.Item>
 
                     <Form.Item label={'请求header'}>
 
-                            <Button type='primary' icon='plus-square' onClick={()=>this.toggleShowCreateModal(true)}>添加行</Button>
+                            <Button type='primary' icon='plus-square' onClick={this.addline}>添加行</Button>
                             &emsp;
                             <Button shape='primary' icon='plus-square' >添加JSON</Button>
                     </Form.Item>
