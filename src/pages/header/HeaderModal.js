@@ -7,7 +7,6 @@ import CreateHeaderModal from "./CreateHeaderModal";
 class HeaderModal extends Component {
 
     state = {
-
         dataSource :[],
         isShowCreateModal:false
     }

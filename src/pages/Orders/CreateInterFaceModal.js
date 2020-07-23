@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Modal, Form, Input, message, Switch, InputNumber, Select, Radio, Button} from 'antd'
+import {Modal, Form, Input, message, Switch, InputNumber, Select, Radio, Button,Row,Col} from 'antd'
 import {get, post} from '../../utils/ajax'
 import RadioGroup from "antd/es/radio/group";
 import HeaderModal from "../header/HeaderModal";
@@ -7,7 +7,13 @@ import HeaderModal from "../header/HeaderModal";
 @Form.create()
 class CreateInterFaceModal extends Component {
 
-    state = {
+    constructor(props){
+    super(props);
+    this.state = {
+        headerList:[{
+            parameter: "",
+            value: ""
+        }],
         projects:[],
         mode:{
             method:"",
@@ -16,7 +22,7 @@ class CreateInterFaceModal extends Component {
             mock:false
         },
         isShowCreateModal:false
-    }
+    }}
 
     componentDidMount() {
         this.queryProject();
@@ -81,6 +87,7 @@ class CreateInterFaceModal extends Component {
     addline=()=>{
         let id = 1000;
         const { form } = this.props;
+        console.log("form=="+JSON.stringify(this.props.form))
         const keys = form.getFieldValue("keys");
         const nextKeys = keys.concat(id);
         id++;
@@ -115,6 +122,37 @@ class CreateInterFaceModal extends Component {
         }
         this.onCancel()
     };
+
+    collectManager = () =>{
+        const {getFieldValue, resetFields} = this.props.form;
+        const headerList = [];
+        let headerNumber = this.state.headerList.length;
+        for (let i = 0; i < headerNumber; i++){
+            let parameter = getFieldValue(`parameter${i}`);
+            let value = getFieldValue(`value${i}`);
+            //！！！！重要，如果不加此方法，则会在删除元素时，getFieldDecorator的initalValue属性不生效的问题
+            resetFields([`parameter${i}`,`value${i}`]);
+            headerList.push({parameter: parameter, value: value});
+        }
+        return headerList;
+    }
+
+    addManager = () =>{
+        let headerList = this.collectManager();
+        headerList.push({parameter: "", value: ""});
+        this.setState({headerList});
+    }
+
+    delManager = (index) =>{
+        let headerList = this.collectManager();
+        //删除指定index的元素
+        headerList.splice(index,1);
+        this.setState({headerList});
+    }
+
+
+
+
     render() {
         const {projects,isShowCreateModal} = this.state;
         const { visible } = this.props;
@@ -123,6 +161,56 @@ class CreateInterFaceModal extends Component {
             labelCol: { span: 4 },
             wrapperCol: { span: 15 },
         };
+
+        const formItemLayoutText = {
+            labelCol: { span: 6 },
+            wrapperCol: { span: 14 },
+        };
+        const { getFieldProps } = this.props.form;
+        let {headerList} = this.state;
+        let headerNumber = headerList.length;
+        let  headerComps = headerList.map((el,index)=>{
+            return(
+                <span key={index}>
+                <Row span={24}>
+                <Col span={8}>
+                <Form.Item label="参数：" labelCol={{span: 10}} wrapperCol={{span: 12}}>
+                {getFieldDecorator(`parameter${index}`,{
+                    initialValue: el.parameter,
+                    rules: [{
+                        required: true,
+                        message: '请填写header参数'
+                    }]
+                })(
+                    <Input
+                        {...getFieldProps('parameter')}
+                    />
+                )}
+                </Form.Item>
+                </Col>
+                    <Col span={8}>
+                    <Form.Item label="值：" labelCol={{span: 8}} wrapperCol={{span: 12}}>
+                        {getFieldDecorator(`value${index}`,{
+                            initialValue: el.value,
+                            rules: [{
+                                required: true,
+                                message: '请填写参数值'
+                            }],
+                        })(
+                            <Input />
+                        )}
+                    </Form.Item>
+            </Col>
+                    <Col span={4} style={{marginTop:6}}>
+             {index === 0 && headerNumber < 5 && <Button shape="circle" size="small" icon="plus" type="primary" style={{marginRight:10}} onClick={() => this.addManager()} />}
+                        {((headerNumber > 1 && index === 0) || index > 0)  && <Button shape="circle" size="small" icon="minus" type="default" onClick={() => this.delManager(index)} />}
+           </Col>
+           </Row>
+        </span>
+            )
+
+        });
+
         return (
             <Modal
                 onCancel={this.onCancel}
@@ -296,12 +384,37 @@ class CreateInterFaceModal extends Component {
                         )}
                     </Form.Item>
 
-                    <Form.Item label={'请求header'}>
+                    {/*<Form.Item label={'请求header'}>*/}
 
-                            <Button type='primary' icon='plus-square' onClick={this.addline}>添加行</Button>
-                            &emsp;
-                            <Button shape='primary' icon='plus-square' >添加JSON</Button>
+                        {/*/!*<div className="header">*!/*/}
+                            {/*/!*header参数及值*!/*/}
+                        {/*/!*</div>*!/*/}
+                        {/*<div>*/}
+                    {/*<div>*/}
+                            {/*{headerComps}*/}
+                        {/*</div>*/}
+                    {/*</div>*/}
+                            {/*/!*<Button type='primary' icon='plus-square' onClick={this.addline}>添加行</Button>*!/*/}
+                            {/*/!*&emsp;*!/*/}
+                            {/*/!*<Button shape='primary' icon='plus-square' >添加JSON</Button>*!/*/}
+
+                    {/*</Form.Item>*/}
+
+                    {/*<Form >*/}
+                        {/*<div className="ant-descriptions-title">*/}
+                            {/*请求header*/}
+                        {/*</div>*/}
+                        {/*<div>*/}
+                            {/*<div>*/}
+                                {/*{headerComps}*/}
+                            {/*</div>*/}
+                        {/*</div>*/}
+                    {/*</Form>*/}
+
+                    <Form.Item  label='请求header' labelCol={{ span: 6 }} wrapperCol={{ span: 14 }}>
+                        <Input type="textarea" placeholder="备注"/>
                     </Form.Item>
+
 
                     <Form.Item label={'请求body'}>
 
@@ -309,8 +422,12 @@ class CreateInterFaceModal extends Component {
                         &emsp;
                         <Button shape='primary' icon='plus-square' >添加JSON</Button>
                     </Form.Item>
+
+                    <Form.Item label={'测试大小'} >
+                        <Input />
+                    </Form.Item>
                     <HeaderModal visible = {isShowCreateModal} toggleVisible={this.toggleShowCreateModal}/>
-                </Form>
+            </Form>
             </Modal>
         );
     }
