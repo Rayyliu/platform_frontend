@@ -29,17 +29,19 @@ class Order extends React.Component{
     componentDidMount() {
         this.getOrders()
     }
-    getOrders = async (page = 1) => {
+    getOrders = async (pageNum = 1) => {
         const { pagination } = this.state;
         const fields = this.props.form.getFieldsValue();
         this.setState({
             ordersLoading: true,
         });
-        const res = await get('/orders', {
-            page: page,
+        const res = await get('/interface/queryPage', {
+            pageNum: pageNum,
             pageSize: this.state.pagination.pageSize,
-            search: fields.search || ''
+            // search: fields.search || ''
+            interfaceName: fields.interfaceName || ''
         });
+        console.log("res==="+JSON.stringify(res))
         if (res.code !== 0) {
             this.setState({
                 ordersLoading: false,
@@ -48,11 +50,11 @@ class Order extends React.Component{
         }
         this.setState({
             ordersLoading: false,
-            orders: res.data.list,
+            orders: res.data.entity,
             pagination: {
                 ...pagination,
                 total: res.data.total,
-                current: page
+                current: pageNum
             }
         })
     };
@@ -95,11 +97,11 @@ class Order extends React.Component{
     /**
      * table分页
      */
-    onTableChange = async (page) => {
+    onTableChange = async (pageNum) => {
         await this.setState({
-            pagination: page
+            pagination: pageNum
         });
-        this.getOrders(page.current)
+        this.getOrders(pageNum.current)
     };
     /**
      * 搜索函数
@@ -195,60 +197,60 @@ class Order extends React.Component{
                 title: '接口名称',
                 dataIndex: 'interfaceName',
                 align: 'center',
-                render: (text) => {
-                    if (text === 1) {
-                        return <Tag color="#2db7f5">置顶</Tag>
-                    } else if (text === 0) {
-                        return <Tag color="#87d068">推广</Tag>
-                    }else if (text === 2){
-                        return <Tag color="#108ee9">发布缴费</Tag>
-                    }
-                }
+                // render: (text) => {
+                //     if (text === 1) {
+                //         return <Tag color="#2db7f5">置顶</Tag>
+                //     } else if (text === 0) {
+                //         return <Tag color="#87d068">推广</Tag>
+                //     }else if (text === 2){
+                //         return <Tag color="#108ee9">发布缴费</Tag>
+                //     }
+                // }
             },
             {
                 title: '接口路径',
                 dataIndex: 'path',
                 align: 'center',
-                render: (text) => text && moment(text).format('YYYY-MM-DD HH:mm:ss'),
-                sorter: (a, b) => a.payedAt - b.payedAt
+                // render: (text) => text && moment(text).format('YYYY-MM-DD HH:mm:ss'),
+                // sorter: (a, b) => a.payedAt - b.payedAt
             },
             {
                 title: '所属项目',
                 dataIndex: 'project',
                 align: 'center',
-                render: (text) => {if (text) {
-                    return <Tag color="#2db7f5">支付成功</Tag>
-                } else {
-                    return <Tag color="#87d068">等待支付</Tag>
-                }}
+                // render: (text) => {if (text) {
+                //     return <Tag color="#2db7f5">支付成功</Tag>
+                // } else {
+                //     return <Tag color="#87d068">等待支付</Tag>
+                // }}
             },
             {
                 title: '请求方式',
                 dataIndex: 'method',
                 align: 'center',
-                sorter: (a, b) => a.orderAmount - b.orderAmount
+                // sorter: (a, b) => a.orderAmount - b.orderAmount
             },
             {
                 title: '数据传输方式',
                 dataIndex: 'mode',
                 align: 'center',
-                sorter: (a, b) => a.stickDay - b.stickDay,
-                render: (text, record) =>{
-                    if (record.orderType === 1) {
-                        return text
-                    } else if (record.orderType === 0) {
-                        return <Tag color="#87d068">推广订单</Tag>
-                    }else if (record.orderType === 2){
-                        return <Tag color="#108ee9">发布缴费订单</Tag>
-                    }
-                }
+                // sorter: (a, b) => a.stickDay - b.stickDay,
+                // render: (text, record) =>{
+                //     if (record.orderType === 1) {
+                //         return text
+                //     } else if (record.orderType === 0) {
+                //         return <Tag color="#87d068">推广订单</Tag>
+                //     }else if (record.orderType === 2){
+                //         return <Tag color="#108ee9">发布缴费订单</Tag>
+                //     }
+                // }
             },
             {
                 title: '是否签名',
-                dataIndex: 'sign',
+                dataIndex:'sign',
                 align: 'center',
-                render: (text) => text && moment(text).format('YYYY-MM-DD HH:mm:ss'),
-                sorter: (a, b) => a.payedAt - b.payedAt
+                // render: (text) => text && moment(text).format('YYYY-MM-DD HH:mm:ss'),
+                // sorter: (a, b) => a.payedAt - b.payedAt
             },
             {
                 title: '描述',
@@ -257,22 +259,40 @@ class Order extends React.Component{
             },
             {
                 title: 'tags',
-                dataIndex: 'avatar',
+                dataIndex: 'tags',
                 align: 'center',
-                render: (text) => <img style={{height:'50px',width:'50px'}} src={text} alt={''}/>,
+                // render: (text) => <img style={{height:'50px',width:'50px'}} src={text} alt={''}/>,
+            },
+            {
+                title: 'header',
+                dataIndex: 'header',
+                align: 'center',
+                // render: (text) => <img style={{height:'50px',width:'50px'}} src={text} alt={''}/>,
+            },
+            {
+                title: 'header详情',
+                dataIndex: 'headerDetail',
+                align: 'center',
+                // render: (text) => <img style={{height:'50px',width:'50px'}} src={text} alt={''}/>,
+            },
+            {
+                title: '是否mock',
+                dataIndex: 'mock',
+                align: 'center',
+                // render: (text) => <img style={{height:'50px',width:'50px'}} src={text} alt={''}/>,
             },
             {
                 title: '更新时间',
                 dataIndex: 'createTime',
                 align: 'center',
-                sorter: (a, b) => a.orderAmount - b.orderAmount,
-                render: (text) => <img style={{height:'50px',width:'50px'}} src={text} alt={''}/>,
+                // sorter: (a, b) => a.orderAmount - b.orderAmount,
+                // render: (text) => <img style={{height:'50px',width:'50px'}} src={text} alt={''}/>,
             },
             {
                 title: '更新用户',
                 dataIndex: 'user',
                 align: 'center',
-                render: (text) => <img style={{height:'50px',width:'50px'}} src={text} alt={''}/>,
+                // render: (text) => <img style={{height:'50px',width:'50px'}} src={text} alt={''}/>,
             },
             {
                 title: '操作',
