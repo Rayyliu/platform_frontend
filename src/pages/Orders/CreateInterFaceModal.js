@@ -23,7 +23,7 @@ class CreateInterFaceModal extends Component {
             header:false,
             mock:false
         },
-        isShowCreateModal:false,
+        // isShowCreateModal:false,
         interFace:[]
     }}
 
@@ -32,6 +32,7 @@ class CreateInterFaceModal extends Component {
         // this.queryInterFace()
     }
     onCancel = () => {
+        console.log("关闭操作")
         this.props.form.resetFields();
         this.props.toggleVisible(false);
     };
@@ -136,10 +137,11 @@ class CreateInterFaceModal extends Component {
             ...values
         });
         if (res.code === 0) {
-            message.success('新增成功');
-        }
-        this.onCancel()
-    };
+            message.success('新增接口成功');
+            this.onCancel()
+        };
+    }
+
 
     collectManager = () =>{
         const {getFieldValue, resetFields} = this.props.form;
@@ -455,7 +457,7 @@ class CreateInterFaceModal extends Component {
                             <TextArea/>
                         )}
                     </Form.Item>
-                    <HeaderModal visible = {isShowCreateModal} toggleVisible={this.toggleShowCreateModal}/>
+                    {/*<HeaderModal visible = {isShowCreateModal} toggleVisible={this.toggleShowCreateModal}/>*/}
             </Form>
             </Modal>
         );

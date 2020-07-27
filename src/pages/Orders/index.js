@@ -3,7 +3,7 @@ import {
     Table,
     Card,
     Button,
-    message, Col, Input, Form, Tag,Popconfirm,Icon,notification,
+    message, Col, Input, Form, Tag,Popconfirm,Icon,notification,Switch,
 } from 'antd'
 import moment from 'moment'
 import ExportJsonExcel from "js-export-excel"
@@ -41,7 +41,7 @@ class Order extends React.Component{
             // search: fields.search || ''
             interfaceName: fields.interfaceName || ''
         });
-        console.log("res==="+JSON.stringify(res))
+        console.log("entity==="+JSON.stringify(res.data.entity))
         if (res.code !== 0) {
             this.setState({
                 ordersLoading: false,
@@ -55,9 +55,19 @@ class Order extends React.Component{
                 ...pagination,
                 total: res.data.total,
                 current: pageNum
+
             }
+
         })
+        console.log("orders==="+JSON.stringify(this.orders))
     };
+
+
+    expandedRowRender() {
+        return <Table
+
+        />
+    }
 
     /**
      * 批量删除
@@ -249,6 +259,9 @@ class Order extends React.Component{
                 title: '是否签名',
                 dataIndex:'sign',
                 align: 'center',
+                render:(text, record) => (
+                    <Switch onClick = {()=>this.switch(record)} checkedChildren="签名" unCheckedChildren="不签名" checked={record.sign}  />
+                )
                 // render: (text) => text && moment(text).format('YYYY-MM-DD HH:mm:ss'),
                 // sorter: (a, b) => a.payedAt - b.payedAt
             },
@@ -267,11 +280,14 @@ class Order extends React.Component{
                 title: 'header',
                 dataIndex: 'header',
                 align: 'center',
+                render:(text, record) => (
+                    <Switch onClick = {()=>this.switch(record)} checkedChildren="设置" unCheckedChildren="不设置" checked={record.header}  />
+                )
                 // render: (text) => <img style={{height:'50px',width:'50px'}} src={text} alt={''}/>,
             },
             {
                 title: 'header详情',
-                dataIndex: 'headerDetail',
+                dataIndex: 'headerdetail',
                 align: 'center',
                 // render: (text) => <img style={{height:'50px',width:'50px'}} src={text} alt={''}/>,
             },
@@ -279,11 +295,14 @@ class Order extends React.Component{
                 title: '是否mock',
                 dataIndex: 'mock',
                 align: 'center',
+                render:(text, record) => (
+                    <Switch onClick = {()=>this.switch(record)} checkedChildren="有" unCheckedChildren="无" checked={record.mock}  />
+                )
                 // render: (text) => <img style={{height:'50px',width:'50px'}} src={text} alt={''}/>,
             },
             {
                 title: '更新时间',
-                dataIndex: 'createTime',
+                dataIndex: 'updateAt',
                 align: 'center',
                 // sorter: (a, b) => a.orderAmount - b.orderAmount,
                 // render: (text) => <img style={{height:'50px',width:'50px'}} src={text} alt={''}/>,
@@ -349,11 +368,14 @@ class Order extends React.Component{
                         style={{marginTop: '50px'}}
                         rowKey='orderNo'
                         bordered
+                        mountNode
+                        expandedRowRender={this.expandedRowRender}
                         columns={columns}
                         dataSource={orders}
                         loading={ordersLoading}
                         pagination={pagination}
                         onChange={this.onTableChange}
+                        scroll={{ x: 2600}}
                     />
                 </Card>
                 <CreateInterFaceModal visible ={isShowCreateModal} toggleVisible={this.toggleShowCreateModal}></CreateInterFaceModal>
