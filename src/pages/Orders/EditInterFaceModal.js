@@ -1,236 +1,105 @@
-import React, { Component } from 'react';
-import {Modal, Form, Input, message, Switch, InputNumber, Select, Radio, Button,Row,Col} from 'antd'
-import {get, post} from '../../utils/ajax'
+import React from 'react'
+import {Modal, Form, Upload, Icon, message, Input, Switch, InputNumber, Radio,Select} from 'antd'
+import {del, post, put,get} from "../../utils/ajax";
+import {createFormField} from '../../utils/util'
 import RadioGroup from "antd/es/radio/group";
-import HeaderModal from "../header/HeaderModal";
 
 
-const {TextArea} = Input
-@Form.create()
-class CreateInterFaceModal extends Component {
-
-    constructor(props){
-    super(props);
-    this.state = {
-        headerList:[{
-            parameter: "",
-            value: ""
-        }],
-        projects:[],
-        mode:{
-            method:"",
-            sign:false,
-            header:false,
-            mock:false
-        },
-        isShowCreateModal:false,
-        interFace:[]
-    }}
-
-    componentDidMount() {
-        this.queryProject();
-        // this.queryInterFace()
+const form = Form.create({
+    //表单回显
+    mapPropsToFields(props) {
+        return createFormField(props.interFace)
     }
-    onCancel = () => {
-        this.props.form.resetFields();
-        this.props.toggleVisible(false);
+});
+
+@form
+class EditInterFaceModal extends React.Component {
+    state = {
+        uploading: false,
+        img:{},
+        interfaces:[]
     };
+
     handleOk = () => {
         this.props.form.validateFields((errors, values) => {
-            console.log("标记处一")
             if (!errors) {
-                console.log("标记处二")
-                this.createTrade(values)
-            }else{
-                alert('失败')
-                console.log(values)
+                console.log("values==="+JSON.stringify(values))
+                this.editInterFace(values)
+
             }
         })
     };
+    onCancel = () => {
+        this.props.onCancel();
+    };
+    editInterFace = async (values) => {
+        const id = this.props.form.getFieldValue('id');
+        const res = await post('/project/edit', {
+            ...values,
+            id: id
+        });
+        if (res.code === 0) {
+            message.success('修改成功');
+            // this.setState({
+            //     img:{}
+            // });
+            // await this.queryProject()
+            console.log("已进入editProject方法内，接下来调用getProjects方法")
+            // await this.props.getProjects()
+            this.props.getProjects()
+            this.onCancel()
+            // await this.getProjects()
+            // this.props.onCancel()
+        }
+    };
 
-    onChange=e=>{
-        console.log('radio2 checked', e.target.value);
-        this.setState({
-            mode:{
-                method:e.target.value
-            }
-        })
-}
-
-    onChangeSign=e=>{
-        console.log('radio2 checked', e.target.value);
-        this.setState({
-            mode:{
-                sign: e.target.value
-            }
-        })
-    }
-
-    onChangeHeader=e=>{
-        console.log('radio2 checked', e.target.value);
-        this.setState({
-            mode:{
-                header: e.target.value
-            }
-        })
-    }
-
-    onChangeMock=e=>{
-        console.log('radio2 checked', e.target.value);
-        this.setState({
-            mode:{
-                mock: e.target.value
-            }
-        })
-    }
-    /**
-     * 创建modal
-     * */
-    toggleShowCreateModal=(visible)=>{
-        this.setState({
-        isShowCreateModal: visible
-    });
-}
-
-
-    addline=()=>{
-            return (<div>
-            <TextArea/>
-        </div>)
+    componentDidMount() {
+        this.queryInterFaces();
+        // this.queryInterFace()
     }
 
 
     /***
      * 去重查询项目名称
      */
-    queryProject = async () =>{
+    queryInterFaces = async () =>{
         const res = await get('/project/queryDistProject')
         if(res.code === 0) {
             this.setState({
-                projects:res.data
+                interfaces:res.data
             })
         }else {
             message.error("调用queryDistProject接口失败，查询项目失败")
         }
     }
 
-    /***
-     * 查询接口
+
+    /**
+     * 转换上传组件表单的值
      */
-    // queryInterFace = async () =>{
-    //     const res = await get('/interface/queryAll')
-    //     if(res.code === 0) {
-    //         this.setState({
-    //             interFace:res.data
-    //         })
-    //     }else {
-    //         message.error("调用queryAll接口失败，查询接口数失败")
-    //     }
-    // }
-
-
-
-    createTrade = async (values) => {
-        console.log("开始调用interface接口")
-        const res = await post('/interface/add', {
-            ...values
-        });
-        if (res.code === 0) {
-            message.success('新增接口成功');
-            this.onCancel()
-        };
-    }
-
-
-    collectManager = () =>{
-        const {getFieldValue, resetFields} = this.props.form;
-        const headerList = [];
-        let headerNumber = this.state.headerList.length;
-        for (let i = 0; i < headerNumber; i++){
-            let parameter = getFieldValue(`parameter${i}`);
-            let value = getFieldValue(`value${i}`);
-            //！！！！重要，如果不加此方法，则会在删除元素时，getFieldDecorator的initalValue属性不生效的问题
-            resetFields([`parameter${i}`,`value${i}`]);
-            headerList.push({parameter: parameter, value: value});
+     _normFile = (e) => {
+        if (e.file.response && e.file.response.data) {
+            return e.file.response.data.url
+        } else {
+            return ''
         }
-        return headerList;
-    }
-
-    addManager = () =>{
-        let headerList = this.collectManager();
-        headerList.push({parameter: "", value: ""});
-        this.setState({headerList});
-    }
-
-    delManager = (index) =>{
-        let headerList = this.collectManager();
-        //删除指定index的元素
-        headerList.splice(index,1);
-        this.setState({headerList});
-    }
-
-
-
-
+    };
     render() {
-        const {projects,isShowCreateModal} = this.state;
+        const {TextArea} = Input
+        const {interfaces} = this.state;
 
         const { visible } = this.props;
-        const { getFieldDecorator } = this.props.form;
+        const { getFieldDecorator, getFieldValue } = this.props.form;
         const formItemLayout = {
             labelCol: { span: 4 },
             wrapperCol: { span: 15 },
         };
-        const { getFieldProps } = this.props.form;
-        // let {headerList} = this.state;
-        // let headerNumber = headerList.length;
-        // let  headerComps = headerList.map((el,index)=>{
-        //     return(
-        //         <span key={index}>
-        //         <Row span={24}>
-        //         <Col span={8}>
-        //         <Form.Item label="参数：" labelCol={{span: 10}} wrapperCol={{span: 12}}>
-        //         {getFieldDecorator(`parameter${index}`,{
-        //             initialValue: el.parameter,
-        //             rules: [{
-        //                 required: true,
-        //                 message: '请填写header参数'
-        //             }]
-        //         })(
-        //             <Input
-        //                 {...getFieldProps('parameter')}
-        //             />
-        //         )}
-        //         </Form.Item>
-        //         </Col>
-        //             <Col span={8}>
-        //             <Form.Item label="值：" labelCol={{span: 8}} wrapperCol={{span: 12}}>
-        //                 {getFieldDecorator(`value${index}`,{
-        //                     initialValue: el.value,
-        //                     rules: [{
-        //                         required: true,
-        //                         message: '请填写参数值'
-        //                     }],
-        //                 })(
-        //                     <Input />
-        //                 )}
-        //             </Form.Item>
-        //     </Col>
-        //             <Col span={4} style={{marginTop:6}}>
-        //      {index === 0 && headerNumber < 5 && <Button shape="circle" size="small" icon="plus" type="primary" style={{marginRight:10}} onClick={() => this.addManager()} />}
-        //                 {((headerNumber > 1 && index === 0) || index > 0)  && <Button shape="circle" size="small" icon="minus" type="default" onClick={() => this.delManager(index)} />}
-        //    </Col>
-        //    </Row>
-        // </span>
-        //     )
-        // });
-
         return (
             <Modal
                 onCancel={this.onCancel}
                 visible={visible}
                 width={550}
-                title='新增接口'
+                title='编辑接口'
                 centered
                 onOk={this.handleOk}
             >
@@ -257,7 +126,7 @@ class CreateInterFaceModal extends Component {
                             initialValue : "",
                         })(
                             <Select placeholder="请选择" style={{width:"29%"}}>
-                                {projects.map((item) => {
+                                {interfaces.map((item) => {
                                     return <Select.Option value={item}>{item}</Select.Option>})}
                             </Select>
                         )}
@@ -284,12 +153,12 @@ class CreateInterFaceModal extends Component {
                                 { required: true, message: 'url不能为空' }
                             ]
                         })(
-                           <RadioGroup  onChange={this.onChange} value={this.state.mode} defaultValue={1}>
-                               <Radio value={1}>get</Radio>
-                               <Radio value={2}>post</Radio>
-                               <Radio value={3}>delete</Radio>
-                               <Radio value={4}>put</Radio>
-                           </RadioGroup>
+                            <RadioGroup  onChange={this.onChange} >
+                                <Radio value={1}>get</Radio>
+                                <Radio value={2}>post</Radio>
+                                <Radio value={3}>delete</Radio>
+                                <Radio value={4}>put</Radio>
+                            </RadioGroup>
                         )}
                     </Form.Item>
 
@@ -319,15 +188,15 @@ class CreateInterFaceModal extends Component {
                         )}
                     </Form.Item>
                     {/*<Form.Item label={'跳过'}>*/}
-                        {/*{getFieldDecorator('jump', {*/}
-                            {/*// validateFirst: true,*/}
-                            {/*// rules: [*/}
-                            {/*//     { required: true, message: '环境描述不能为空' }*/}
-                            {/*// ],*/}
-                            {/*initialValue : "",*/}
-                        {/*})(*/}
-                            {/*<Input/>*/}
-                        {/*)}*/}
+                    {/*{getFieldDecorator('jump', {*/}
+                    {/*// validateFirst: true,*/}
+                    {/*// rules: [*/}
+                    {/*//     { required: true, message: '环境描述不能为空' }*/}
+                    {/*// ],*/}
+                    {/*initialValue : "",*/}
+                    {/*})(*/}
+                    {/*<Input/>*/}
+                    {/*)}*/}
                     {/*</Form.Item>*/}
 
                     <Form.Item label={'是否签名'}>
@@ -345,17 +214,17 @@ class CreateInterFaceModal extends Component {
                     </Form.Item>
 
                     {/*<Form.Item label={'设置header'}>*/}
-                        {/*{getFieldDecorator('header',{*/}
-                            {/*validateFirst: true,*/}
-                            {/*rules: [*/}
-                                {/*{ required: true, message: 'url不能为空' }*/}
-                            {/*]*/}
-                        {/*})(*/}
-                            {/*<RadioGroup  onChange={this.onChangeHeader} value={this.state.mode} >*/}
-                                {/*<Radio key="设置" value={1}>设置</Radio>*/}
-                                {/*<Radio key="不设置" value={2}>不设置</Radio>*/}
-                            {/*</RadioGroup>*/}
-                        {/*)}*/}
+                    {/*{getFieldDecorator('header',{*/}
+                    {/*validateFirst: true,*/}
+                    {/*rules: [*/}
+                    {/*{ required: true, message: 'url不能为空' }*/}
+                    {/*]*/}
+                    {/*})(*/}
+                    {/*<RadioGroup  onChange={this.onChangeHeader} value={this.state.mode} >*/}
+                    {/*<Radio key="设置" value={1}>设置</Radio>*/}
+                    {/*<Radio key="不设置" value={2}>不设置</Radio>*/}
+                    {/*</RadioGroup>*/}
+                    {/*)}*/}
                     {/*</Form.Item>*/}
 
                     <Form.Item label={'header'}>
@@ -400,33 +269,33 @@ class CreateInterFaceModal extends Component {
 
                     {/*<Form.Item label={'请求header'}>*/}
 
-                        {/*/!*<div className="header">*!/*/}
-                            {/*/!*header参数及值*!/*/}
-                        {/*/!*</div>*!/*/}
-                        {/*<div>*/}
+                    {/*/!*<div className="header">*!/*/}
+                    {/*/!*header参数及值*!/*/}
+                    {/*/!*</div>*!/*/}
                     {/*<div>*/}
-                            {/*{headerComps}*/}
-                        {/*</div>*/}
+                    {/*<div>*/}
+                    {/*{headerComps}*/}
                     {/*</div>*/}
-                            {/*/!*<Button type='primary' icon='plus-square' onClick={this.addline}>添加行</Button>*!/*/}
-                            {/*/!*&emsp;*!/*/}
-                            {/*/!*<Button shape='primary' icon='plus-square' >添加JSON</Button>*!/*/}
+                    {/*</div>*/}
+                    {/*/!*<Button type='primary' icon='plus-square' onClick={this.addline}>添加行</Button>*!/*/}
+                    {/*/!*&emsp;*!/*/}
+                    {/*/!*<Button shape='primary' icon='plus-square' >添加JSON</Button>*!/*/}
 
                     {/*</Form.Item>*/}
 
                     {/*<Form >*/}
-                        {/*<div className="ant-descriptions-title">*/}
-                            {/*请求header*/}
-                        {/*</div>*/}
-                        {/*<div>*/}
-                            {/*<div>*/}
-                                {/*{headerComps}*/}
-                            {/*</div>*/}
-                        {/*</div>*/}
+                    {/*<div className="ant-descriptions-title">*/}
+                    {/*请求header*/}
+                    {/*</div>*/}
+                    {/*<div>*/}
+                    {/*<div>*/}
+                    {/*{headerComps}*/}
+                    {/*</div>*/}
+                    {/*</div>*/}
                     {/*</Form>*/}
 
                     <Form.Item  label='请求header'>
-                        {getFieldDecorator('headerDetail', {
+                        {getFieldDecorator('headerdetail', {
                             validateFirst: true,
                             // rules: [
                             //     { required: true, message: '接口描述不能为空' }
@@ -457,10 +326,30 @@ class CreateInterFaceModal extends Component {
                         )}
                     </Form.Item>
                     {/*<HeaderModal visible = {isShowCreateModal} toggleVisible={this.toggleShowCreateModal}/>*/}
-            </Form>
+                </Form>
             </Modal>
+
         );
     }
 }
 
-export default CreateInterFaceModal;
+const styles = {
+    urlUploader: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 250,
+        height: 150,
+        backgroundColor: '#fff'
+    },
+    icon: {
+        fontSize: 28,
+        color: '#999'
+    },
+    url: {
+        maxWidth: '100%',
+        maxHeight: '100%',
+    },
+};
+
+export default EditInterFaceModal

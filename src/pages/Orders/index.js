@@ -10,30 +10,32 @@ import ExportJsonExcel from "js-export-excel"
 import {get} from "../../utils/ajax";
 import CreateInterFaceModal from "./CreateInterFaceModal";
 import {Modal} from "antd/lib/index";
+import EditInterFaceModal from "./EditInterFaceModal";
 
 @Form.create()
-class Order extends React.Component{
+class Interfaces extends React.Component{
     state = {
-        orders: [],
-        ordersLoading: false,
+        interfaces: [],
+        interfacesLoading: false,
         pagination: {
             total: 0,
             current: 1,
             pageSize: 10,
             showQuickJumper: true
         },
-        order: {},
+        interFace: {},
         isShowCreateModal: false,
+        isShowEditModal:false,
         selectedRowKeys: []
     };
     componentDidMount() {
-        this.getOrders()
+        this.getInterfaces()
     }
-    getOrders = async (pageNum = 1) => {
+    getInterfaces = async (pageNum = 1) => {
         const { pagination } = this.state;
         const fields = this.props.form.getFieldsValue();
         this.setState({
-            ordersLoading: true,
+            interfacesLoading: true,
         });
         const res = await get('/interface/queryPage', {
             pageNum: pageNum,
@@ -44,13 +46,13 @@ class Order extends React.Component{
         console.log("entity==="+JSON.stringify(res.data.entity))
         if (res.code !== 0) {
             this.setState({
-                ordersLoading: false,
+                interfacesLoading: false,
             });
             return
         }
         this.setState({
-            ordersLoading: false,
-            orders: res.data.entity,
+            interfacesLoading: false,
+            interfaces: res.data.entity,
             pagination: {
                 ...pagination,
                 total: res.data.total,
@@ -59,7 +61,7 @@ class Order extends React.Component{
             }
 
         })
-        console.log("orders==="+JSON.stringify(this.orders))
+        console.log("interfaces==="+JSON.stringify(this.interfaces))
     };
 
 
@@ -88,7 +90,7 @@ class Order extends React.Component{
                     this.setState({
                         selectedRowKeys: []
                     });
-                    this.getOrders()
+                    this.getInterfaces()
                 }
             }
         })
@@ -101,8 +103,27 @@ class Order extends React.Component{
         this.setState({
             isShowCreateModal: visible
         });
-        // this.getOrders()
+        this.getInterfaces()
 }
+
+    /**
+     * 关闭修改模态框
+     */
+    closeEditModal = () => {
+        this.setState({
+            isShowEditModal: false,
+            interFace: {}
+        });
+        this.getInterfaces()
+    };
+
+    showEditModal=(visible)=>{
+        console.log("visible==="+JSON.stringify(visible))
+        this.setState({
+            isShowEditModal:true,
+            interFace:visible
+        })
+    }
 
     /**
      * table分页
@@ -111,27 +132,27 @@ class Order extends React.Component{
         await this.setState({
             pagination: pageNum
         });
-        this.getOrders(pageNum.current)
+        this.getInterfaces(pageNum.current)
     };
     /**
      * 搜索函数
      */
     onSearch = () => {
-        this.getOrders()
+        this.getInterfaces()
     };
     /**
      * 重置函数
      */
     onReset = () => {
         this.props.form.resetFields();
-        this.getOrders();
+        this.getInterfaces();
         message.success('重置成功')
     };
     /**
      * 订单导出
      * */
     handleExport = () => {
-        const { orders } = this.state;
+        const { interfaces } = this.state;
         const option = {};
         const columns = [
             {
@@ -140,7 +161,7 @@ class Order extends React.Component{
             },
             {
                 title: '订单状态',
-                dataIndex: 'orderStatus',
+                dataIndex: 'interfacestatus',
             },
             {
                 title: '订单金额(/元)',
@@ -159,15 +180,15 @@ class Order extends React.Component{
                 dataIndex: 'nickname',
             }
             ];
-        option.fileName = 'orders';
+        option.fileName = 'interfaces';
         option.datas = [
             {
-                sheetData: orders.map(item => {
+                sheetData: interfaces.map(item => {
                     const result = {};
                     columns.forEach(c => {
                         if (c.dataIndex === 'orderType'){
                             result[c.dataIndex] = item[c.dataIndex] ? '置顶':'推广';
-                        }else if (c.dataIndex === 'orderStatus'){
+                        }else if (c.dataIndex === 'interfaceStatus'){
                             result[c.dataIndex] = item[c.dataIndex] ? '支付成功':'等待支付';
                         } else if (c.dataIndex === 'payedAt'){
                             result[c.dataIndex] = moment(item[c.dataIndex]).format('YYYY-MM-DD HH:mm:ss');
@@ -177,7 +198,7 @@ class Order extends React.Component{
                     });
                     return result;
                 }),
-                sheetName: 'orders',     // Excel文件名称
+                sheetName: 'interfaces',     // Excel文件名称
                 sheetFilter: columns.map(item => item.dataIndex),
                 sheetHeader: columns.map(item => item.title),
                 columnWidths: columns.map(() => 10),
@@ -187,7 +208,7 @@ class Order extends React.Component{
         toExcel.saveExcel();
     };
     render() {
-        const { selectedRowKeys,isShowCreateModal,orders,ordersLoading, pagination} = this.state;
+        const { interFace,selectedRowKeys,isShowCreateModal,interfaces,interfacesLoading, pagination,isShowEditModal} = this.state;
         const { getFieldDecorator } = this.props.form;
         const columns = [
             {
@@ -366,22 +387,23 @@ class Order extends React.Component{
                     </div>*/}
                     <Table
                         style={{marginTop: '50px'}}
-                        rowKey='orderNo'
+                        rowKey='interfaceNo'
                         bordered
                         mountNode
                         expandedRowRender={this.expandedRowRender}
                         columns={columns}
-                        dataSource={orders}
-                        loading={ordersLoading}
+                        dataSource={interfaces}
+                        loading={interfacesLoading}
                         pagination={pagination}
                         onChange={this.onTableChange}
                         scroll={{ x: 2600}}
                     />
                 </Card>
-                <CreateInterFaceModal visible ={isShowCreateModal} toggleVisible={this.toggleShowCreateModal}></CreateInterFaceModal>
+                <CreateInterFaceModal visible ={isShowCreateModal} toggleVisible={this.toggleShowCreateModal}/>
+                <EditInterFaceModal visible ={isShowEditModal} onCancel={this.closeEditModal} interFace={interFace}/>
             </div>
         )
     }
 }
 
-export default Order;
+export default Interfaces;

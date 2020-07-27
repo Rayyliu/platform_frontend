@@ -240,8 +240,8 @@ class Banners extends React.Component{
                     onChange={this.onTableChange}
                     />
                 </Card>
-                <EditBannerModal onCancel={this.closeEditModal} visible={isShowEditModal}  project={project} getProjects={this.getProjects}/>
                 <CreateBannerModal visible={isShowCreateModal} toggleVisible={this.toggleShowCreateModal} />
+                <EditBannerModal onCancel={this.closeEditModal} visible={isShowEditModal}  project={project} getProjects={this.getProjects}/>
             </div>
         )
     }
