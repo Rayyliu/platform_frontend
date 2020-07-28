@@ -22,6 +22,7 @@ function _getCookie(name) {
       if (end === -1) {
         end = document.cookie.length
       }
+      console.log("document.cookie==="+JSON.stringify(document.cookie))
       return unescape(document.cookie.substring(start, end))
     }
   }

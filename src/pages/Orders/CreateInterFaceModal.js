@@ -17,12 +17,13 @@ class CreateInterFaceModal extends Component {
             value: ""
         }],
         projects:[],
-        mode:{
-            method:"",
+        boolean:{
             sign:false,
             header:false,
             mock:false
         },
+        method:"",
+        mode:"",
         isShowCreateModal:false,
         interFace:[]
     }}
@@ -48,14 +49,18 @@ class CreateInterFaceModal extends Component {
         })
     };
 
-    onChange=e=>{
-        console.log('radio2 checked', e.target.value);
+    onModeChange=e=>{
+        console.log('ModeRadio2 checked', e.target.value);
         this.setState({
-            mode:{
-                method:e.target.value
-            }
+            mode:e.target.value
         })
 }
+    onMethodChange=e=>{
+        console.log('MethodRadio2 checked', e.target.value);
+        this.setState({
+            method:e.target.value
+        })
+    }
 
     onChangeSign=e=>{
         console.log('radio2 checked', e.target.value);
@@ -83,6 +88,8 @@ class CreateInterFaceModal extends Component {
             }
         })
     }
+
+
     /**
      * 创建modal
      * */
@@ -284,11 +291,11 @@ class CreateInterFaceModal extends Component {
                                 { required: true, message: 'url不能为空' }
                             ]
                         })(
-                           <RadioGroup  onChange={this.onChange} value={this.state.mode} defaultValue={1}>
-                               <Radio value={1}>get</Radio>
-                               <Radio value={2}>post</Radio>
-                               <Radio value={3}>delete</Radio>
-                               <Radio value={4}>put</Radio>
+                           <RadioGroup  onChange={this.onMethodChange} value={this.state.value} defaultValue={1}>
+                               <Radio value={"get"}>get</Radio>
+                               <Radio value={"post"}>post</Radio>
+                               <Radio value={"delete"}>delete</Radio>
+                               <Radio value={"put"}>put</Radio>
                            </RadioGroup>
                         )}
                     </Form.Item>
@@ -312,9 +319,9 @@ class CreateInterFaceModal extends Component {
                             ],
                             initialValue : "",
                         })(
-                            <RadioGroup  onChange={this.onChange} value={this.state.mode} defaultValue={1}>
-                                <Radio value={1}>json</Radio>
-                                <Radio value={2}>data</Radio>
+                            <RadioGroup  onChange={this.onModeChange} value={this.state.value} >
+                                <Radio key="json" value="json">json</Radio>
+                                <Radio key="data" value="data">data</Radio>
                             </RadioGroup>
                         )}
                     </Form.Item>
@@ -332,16 +339,11 @@ class CreateInterFaceModal extends Component {
 
                     <Form.Item label={'是否签名'}>
                         {getFieldDecorator('sign',{
-                            validateFirst: true,
-                            rules: [
-                                { required: true, message: 'url不能为空' }
-                            ]
+                            initialValue: true
                         })(
-                            <RadioGroup  onChange={this.onChangeSign} value={this.state.mode}>
-                                <Radio key="签名" value={1}>签名</Radio>
-                                <Radio key="不签名" value={2}>不签名</Radio>
-                            </RadioGroup>
-                        )}
+                            <Switch checkedChildren="签名" unCheckedChildren="不签名" defaultChecked/>
+                        )
+                        }
                     </Form.Item>
 
                     {/*<Form.Item label={'设置header'}>*/}
@@ -360,29 +362,17 @@ class CreateInterFaceModal extends Component {
 
                     <Form.Item label={'header'}>
                         {getFieldDecorator('header',{
-                            validateFirst: true,
-                            rules: [
-                                { required: true, message: 'url不能为空' }
-                            ]
+                            initialValue: true
                         })(
-                            <RadioGroup  onChange={this.onChangeHeader} value={this.state.mode} >
-                                <Radio key="设置"value={1}>设置</Radio>
-                                <Radio key="不设置" value={2}>不设置</Radio>
-                            </RadioGroup>
+                            <Switch checkedChildren="设置" unCheckedChildren="不设置" defaultChecked/>
                         )}
                     </Form.Item>
 
                     <Form.Item label={'是否mock'}>
                         {getFieldDecorator('mock',{
-                            validateFirst: true,
-                            rules: [
-                                { required: true, message: 'url不能为空' }
-                            ]
+                            initialValue: true
                         })(
-                            <RadioGroup  onChange={this.onChangeMock} value={this.state.mode} >
-                                <Radio key="是"value={1}>是</Radio>
-                                <Radio key="不是" value={2}>不是</Radio>
-                            </RadioGroup>
+                            <Switch checkedChildren="mock" unCheckedChildren="不mock" defaultChecked/>
                         )}
                     </Form.Item>
 

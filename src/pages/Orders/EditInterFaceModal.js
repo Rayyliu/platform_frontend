@@ -3,6 +3,7 @@ import {Modal, Form, Upload, Icon, message, Input, Switch, InputNumber, Radio,Se
 import {del, post, put,get} from "../../utils/ajax";
 import {createFormField} from '../../utils/util'
 import RadioGroup from "antd/es/radio/group";
+import {isAuthenticated} from "../../utils/session";
 
 
 const form = Form.create({
@@ -17,7 +18,7 @@ class EditInterFaceModal extends React.Component {
     state = {
         uploading: false,
         img:{},
-        interfaces:[]
+        interfaces:[],
     };
 
     handleOk = () => {
@@ -34,9 +35,12 @@ class EditInterFaceModal extends React.Component {
     };
     editInterFace = async (values) => {
         const id = this.props.form.getFieldValue('id');
-        const res = await post('/project/edit', {
+        let cook =isAuthenticated();
+        console.log("cook==="+JSON.stringify(cook))
+        const res = await post('/interface/edit', {
             ...values,
-            id: id
+            id: id,
+            // Authorization: `${isAuthenticated()}`,
         });
         if (res.code === 0) {
             message.success('修改成功');
@@ -46,7 +50,7 @@ class EditInterFaceModal extends React.Component {
             // await this.queryProject()
             console.log("已进入editProject方法内，接下来调用getProjects方法")
             // await this.props.getProjects()
-            this.props.getProjects()
+            this.props.getInterfaces()
             this.onCancel()
             // await this.getProjects()
             // this.props.onCancel()
@@ -148,16 +152,17 @@ class EditInterFaceModal extends React.Component {
 
                     <Form.Item label={'请求方式'}>
                         {getFieldDecorator('method',{
+                            // getValueFromEvent:this._normFile(),
                             validateFirst: true,
                             rules: [
-                                { required: true, message: 'url不能为空' }
-                            ]
+                                { required: true, message: '请求方式必填' }
+                            ],
                         })(
-                            <RadioGroup  onChange={this.onChange} >
-                                <Radio value={1}>get</Radio>
-                                <Radio value={2}>post</Radio>
-                                <Radio value={3}>delete</Radio>
-                                <Radio value={4}>put</Radio>
+                            <RadioGroup  onChange={this.onMethodChange} value={this.state.method}>
+                                <Radio key="get" value={"get"}>get</Radio>
+                                <Radio key="post" value={"post"}>post</Radio>
+                                <Radio key="delete" value={"delete"}>delete</Radio>
+                                <Radio key="put" value={"put"}>put</Radio>
                             </RadioGroup>
                         )}
                     </Form.Item>
@@ -181,9 +186,9 @@ class EditInterFaceModal extends React.Component {
                             ],
                             initialValue : "",
                         })(
-                            <RadioGroup  onChange={this.onChange} value={this.state.mode} defaultValue={1}>
-                                <Radio value={1}>json</Radio>
-                                <Radio value={2}>data</Radio>
+                            <RadioGroup  onChange={this.onModeChange} value={this.state.mode} defaultValue={1}>
+                                <Radio key="json" value="json">json</Radio>
+                                <Radio key="data" value="data">data</Radio>
                             </RadioGroup>
                         )}
                     </Form.Item>
@@ -201,15 +206,10 @@ class EditInterFaceModal extends React.Component {
 
                     <Form.Item label={'是否签名'}>
                         {getFieldDecorator('sign',{
-                            validateFirst: true,
-                            rules: [
-                                { required: true, message: 'url不能为空' }
-                            ]
+                            // initialValue: true,
+                            valuePropName: 'checked'
                         })(
-                            <RadioGroup  onChange={this.onChangeSign} value={this.state.mode}>
-                                <Radio key="签名" value={1}>签名</Radio>
-                                <Radio key="不签名" value={2}>不签名</Radio>
-                            </RadioGroup>
+                            <Switch checkedChildren="签名" unCheckedChildren="不签名" defaultChecked/>
                         )}
                     </Form.Item>
 
@@ -229,29 +229,17 @@ class EditInterFaceModal extends React.Component {
 
                     <Form.Item label={'header'}>
                         {getFieldDecorator('header',{
-                            validateFirst: true,
-                            rules: [
-                                { required: true, message: 'url不能为空' }
-                            ]
+                            valuePropName: 'checked'
                         })(
-                            <RadioGroup  onChange={this.onChangeHeader} value={this.state.mode} >
-                                <Radio key="设置"value={1}>设置</Radio>
-                                <Radio key="不设置" value={2}>不设置</Radio>
-                            </RadioGroup>
+                            <Switch checkedChildren="设置" unCheckedChildren="不设置" defaultChecked/>
                         )}
                     </Form.Item>
 
                     <Form.Item label={'是否mock'}>
                         {getFieldDecorator('mock',{
-                            validateFirst: true,
-                            rules: [
-                                { required: true, message: 'url不能为空' }
-                            ]
+                            valuePropName: 'checked'
                         })(
-                            <RadioGroup  onChange={this.onChangeMock} value={this.state.mode} >
-                                <Radio key="是"value={1}>是</Radio>
-                                <Radio key="不是" value={2}>不是</Radio>
-                            </RadioGroup>
+                            <Switch checkedChildren="是" unCheckedChildren="否" defaultChecked/>
                         )}
                     </Form.Item>
 

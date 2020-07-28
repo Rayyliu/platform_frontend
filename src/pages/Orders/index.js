@@ -400,7 +400,7 @@ class Interfaces extends React.Component{
                     />
                 </Card>
                 <CreateInterFaceModal visible ={isShowCreateModal} toggleVisible={this.toggleShowCreateModal}/>
-                <EditInterFaceModal visible ={isShowEditModal} onCancel={this.closeEditModal} interFace={interFace}/>
+                <EditInterFaceModal getInterfaces={this.getInterfaces} visible ={isShowEditModal} onCancel={this.closeEditModal} interFace={interFace}/>
             </div>
         )
     }
