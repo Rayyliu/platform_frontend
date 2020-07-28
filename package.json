@@ -17,6 +17,7 @@
     "history": "^4.10.1",
     "http-proxy-middleware": "^1.0.4",
     "js-export-excel": "^1.1.2",
+    "jwt-decode": "^2.2.0",
     "moment": "^2.24.0",
     "prismjs": "^1.16.0",
     "prop-types": "^15.7.2",

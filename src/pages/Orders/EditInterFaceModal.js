@@ -4,6 +4,7 @@ import {del, post, put,get} from "../../utils/ajax";
 import {createFormField} from '../../utils/util'
 import RadioGroup from "antd/es/radio/group";
 import {isAuthenticated} from "../../utils/session";
+import jwt_decode from "jwt-decode";
 
 
 const form = Form.create({
@@ -12,6 +13,9 @@ const form = Form.create({
         return createFormField(props.interFace)
     }
 });
+
+// const jwt = require('jsonwebtoken');
+
 
 @form
 class EditInterFaceModal extends React.Component {
@@ -36,7 +40,9 @@ class EditInterFaceModal extends React.Component {
     editInterFace = async (values) => {
         const id = this.props.form.getFieldValue('id');
         let cook =isAuthenticated();
+        var decoded = jwt_decode(cook)
         console.log("cook==="+JSON.stringify(cook))
+        console.log("decoded==="+JSON.stringify(decoded))
         const res = await post('/interface/edit', {
             ...values,
             id: id,
