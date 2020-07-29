@@ -8,7 +8,7 @@ const Home = LoadableComponent(import('./Home/index'), true);
 const Banners = LoadableComponent(import('./Banners/index'), true);
 const Generalize = LoadableComponent(import('./Platform/Generalize'), true);
 const Stick = LoadableComponent(import('./Platform/Stick/index'), true);
-const Trade = LoadableComponent(import('./Trade/index'), true);
+const Trade = LoadableComponent(import('./Env/index'), true);
 const Order = LoadableComponent(import('./Orders/index'), true);
 const Transfer = LoadableComponent(import('./Transfer/index'), true);
 

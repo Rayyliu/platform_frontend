@@ -330,7 +330,7 @@ class Interfaces extends React.Component{
             },
             {
                 title: '更新用户',
-                dataIndex: 'user',
+                dataIndex: 'lastUpdateUser',
                 align: 'center',
                 // render: (text) => <img style={{height:'50px',width:'50px'}} src={text} alt={''}/>,
             },

@@ -1,8 +1,7 @@
 import React from 'react'
-import {Modal, Form, Upload, Icon, message, Input, Switch, InputNumber} from 'antd'
-import {get, put} from "../../utils/ajax";
+import {Modal, Form, Upload, Icon, message, Input, Switch, InputNumber,Select} from 'antd'
+import {get, post, put} from "../../utils/ajax";
 import {createFormField} from '../../utils/util'
-import Select from "antd/es/select";
 
 
 const form = Form.create({
@@ -40,16 +39,16 @@ class EditTradeModal extends React.Component {
     handleOk = () => {
         this.props.form.validateFields((errors, values) => {
             if (!errors) {
-                this.editTrade(values)
+                this.editEnv(values)
             }
         })
     };
     onCancel = () => {
         this.props.onCancel();
     };
-    editTrade = async (values) => {
+    editEnv = async (values) => {
         const id = this.props.form.getFieldValue('id');
-        const res = await put('/trades', {
+        const res = await post('/env/edit', {
             ...values,
             id: id
         });
@@ -110,7 +109,7 @@ class EditTradeModal extends React.Component {
                             })
                             (
                                 <Select placeholder="请选择" style={{width:"29%"}}>
-                                    {projects.map(item=>{return <option value = {item}>{item}</option>})}
+                                    {projects.map(item=>{return <Select.Option value = {item}>{item}</Select.Option>})}
                                 </Select>
                             )}
                         </Form.Item>

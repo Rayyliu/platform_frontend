@@ -3,6 +3,8 @@ import {Modal, Form, Input, message, Switch, InputNumber, Select, Radio, Button,
 import {get, post} from '../../utils/ajax'
 import RadioGroup from "antd/es/radio/group";
 import HeaderModal from "../header/HeaderModal";
+import {isAuthenticated} from "../../utils/session";
+import jwt_decode from "jwt-decode";
 
 
 const {TextArea} = Input
@@ -138,9 +140,14 @@ class CreateInterFaceModal extends Component {
 
 
     createTrade = async (values) => {
+        let cook =isAuthenticated();
+        var user = jwt_decode(cook)
+        var email = JSON.stringify(user.sub)
         console.log("开始调用interface接口")
         const res = await post('/interface/add', {
-            ...values
+            ...values,
+            lastUpdateUser:email
+
         });
         if (res.code === 0) {
             message.success('新增接口成功');

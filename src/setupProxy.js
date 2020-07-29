@@ -27,6 +27,8 @@ module.exports = function (app) {
                 '^/platform_server/env/queryPage' : '/env/queryPage',
                 '^/platform_server/env/singleDelet' : '/env/singleDelet',
                 '^/platform_server/env/deletes' : '/env/deletes',
+                '^/platform_server/env/edit' : '/env/edit',
+
 
                 //interface
                 '^/platform_server/interface/add' : '/interface/add',

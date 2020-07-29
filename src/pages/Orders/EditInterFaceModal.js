@@ -40,12 +40,27 @@ class EditInterFaceModal extends React.Component {
     editInterFace = async (values) => {
         const id = this.props.form.getFieldValue('id');
         let cook =isAuthenticated();
-        var decoded = jwt_decode(cook)
+        var user = jwt_decode(cook)
         console.log("cook==="+JSON.stringify(cook))
-        console.log("decoded==="+JSON.stringify(decoded))
+        var email = JSON.stringify(user.sub)
+        console.log("email==="+email)
+        //遍历decoded
+        // let temArr = Object.keys(user)
+        // console.log(temArr)
+        // for(let key in decoded){
+        //     console.log("key==="+key)
+        //     console.log("value==="+decoded[key])
+        // }
+
+
+        // var username=""
+        // for(){
+        //
+        // }
         const res = await post('/interface/edit', {
             ...values,
             id: id,
+            lastUpdateUser:email
             // Authorization: `${isAuthenticated()}`,
         });
         if (res.code === 0) {
