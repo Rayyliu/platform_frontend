@@ -212,29 +212,35 @@ class Index extends React.Component{
         const option = {};
         const columns = [
             {
-                title: '标题',
-                dataIndex: 'title',
+                title: '用例名称',
+                dataIndex: 'caseName',
             },
             {
-                title: '行业名称',
-                dataIndex: 'tradeName',
+                title: '所属项目',
+                dataIndex: 'project',
             },
             {
-                title: '面积',
-                dataIndex: 'area',
+                title: '描述',
+                dataIndex: 'description',
             },
             {
-                title: '发布人',
-                dataIndex: 'nickname',
+                title: '操作',
+                key: 'active',
+                align: 'center',
+                width: '20%',
+                render: (text, record) => (
+                    <div style={{ textAlign: 'center' }}>
+                        <Button type="primary" onClick={() => this.showEditModal(record)}>编辑</Button>
+                        &emsp;
+                        <Popconfirm title='您确定删除当前数据吗？' onConfirm={() => this.singleDelete(record)}>
+                            <Button type="danger">
+                                <Icon type='delete' />
+                                删除
+                            </Button>
+                        </Popconfirm>
+                    </div>
+                )
             },
-            {
-                title: '联系人',
-                dataIndex: 'linkman',
-            },
-            {
-                title: '联系电话',
-                dataIndex: 'phone',
-            }
         ];
         option.fileName = 'transfers';
         option.datas = [
@@ -264,56 +270,19 @@ class Index extends React.Component{
         const { getFieldDecorator } = this.props.form;
         const columns = [
             {
-                title: '店铺详情',
-                dataIndex: 'storeImgS',
+                title: '用例名称',
+                dataIndex: 'caseName',
                 align: 'center',
-                render: storeImgS =>
-                storeImgS.length ?
-                    <div>
-                        <Carousel
-                            autoplay={true}
-                        >
-                            {storeImgS.map(storeImg =>{
-                                return <img key={storeImg.id} style={{height:'100px',width:'200px'}} src={storeImg.imgUrl} alt={''}/>
-                            })}
-                        </Carousel>
-                    </div>
-                    :
-                    <Empty/>
             },
             {
-                title: '图标',
-                dataIndex: 'icon',
+                title: '所属项目',
+                dataIndex: 'project',
                 align: 'center',
-                render: (text) => <img style={{height:'100px',width:'200px'}} src={text} alt={''}/>,
             },
             {
-                title: '行业名称',
-                dataIndex: 'tradeName',
+                title: '用例描述',
+                dataIndex: 'description',
                 align: 'center'
-            },
-            {
-                title: '标题',
-                dataIndex: 'title',
-                align: 'center'
-            },
-            {
-                title: '面积',
-                dataIndex: 'area',
-                align: 'center',
-                sorter: (a, b) => a.area - b.area
-            },
-            {
-                title: '租金',
-                dataIndex: 'rent',
-                align: 'center',
-                sorter: (a, b) => a.rent - b.rent
-            },
-            {
-                title: '转让费',
-                dataIndex: 'transferPrice',
-                align: 'center',
-                sorter: (a, b) => a.transferPrice - b.transferPrice
             },
             {
                 title: '操作',
@@ -323,6 +292,8 @@ class Index extends React.Component{
                 render: (text, record) => (
                     <div style={{ textAlign: 'center' }}>
                         <Button type="primary" onClick={() => this.editTransferInfo(record)}>编辑</Button>
+                        &emsp;
+                        <Button type="primary" onClick={() => this.editTransferInfo(record)}>运行</Button>
                         &emsp;
                         <Button type="default" onClick={() => this.editStick(record)}>编辑置顶</Button>
                         &emsp;

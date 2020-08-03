@@ -1,9 +1,8 @@
 import React from "react";
-import {Button, Cascader, Form,Select, Icon, Input, InputNumber, message, Modal, Upload} from "antd";
+import {Button, Cascader, Form,Select, Icon, Input, InputNumber, message, Modal} from "antd";
 import {del, get, post} from "../../utils/ajax";
 import {isAuthenticated} from "../../utils/session";
 import options from './cities'
-const { TextArea } = Input;
 const { Option } = Select;
 
 function getBase64(file) {
@@ -18,6 +17,11 @@ function getBase64(file) {
 @Form.create()
 class CreateTransferIndex extends React.Component{
     state = {
+        projects:[],
+        interfaces:[],
+
+
+
         uploading: false,
         img:{},
         //多图上传
@@ -29,8 +33,38 @@ class CreateTransferIndex extends React.Component{
         tradeList:[]
     };
     componentDidMount() {
-        this.findAllTradeInfos();
+        this.queryInterFaces();
+        this.queryProject()
     }
+
+    /***
+     * 去重查询项目名称
+     */
+    queryProject = async () =>{
+        const res = await get('/project/queryDistProject')
+        if(res.code === 0) {
+            this.setState({
+                projects:res.data
+            })
+        }else {
+            message.error("调用queryDistProject接口失败，查询项目失败")
+        }
+    }
+
+    /***
+     * 查询接口详细信息
+     */
+    queryInterFaces = async () =>{
+        const res = await get('/interface/queryDistInterFace')
+        if(res.code === 0) {
+            this.setState({
+                interfaces:res.data
+            })
+        }else {
+            message.error("调用queryDistInterFace接口失败，查询接口失败")
+        }
+    }
+
     findAllTradeInfos = async ()=>{
         const res = await get('/trades/findAllTradeInfos');
         if (res.code === 0){
@@ -150,6 +184,8 @@ class CreateTransferIndex extends React.Component{
         del('/upload', {key: e.response.data.key});
     };
     render() {
+        const {TextArea} = Input
+
         /**
          * 单图上传
          * */
@@ -215,7 +251,7 @@ class CreateTransferIndex extends React.Component{
             },
         };
 
-        const { previewVisible, previewImage, fileList } = this.state;
+        const { previewVisible, previewImage, fileList,projects,interfaces } = this.state;
         const { uploading } = this.state;
         const { getFieldDecorator, getFieldValue } = this.props.form;
         const  icon = getFieldValue('icon');
@@ -244,62 +280,48 @@ class CreateTransferIndex extends React.Component{
         return(
             <div style={{marginTop:'10px'}}>
                 <Form {...formItemLayout}>
-                    <Form.Item label={'图标'}>
-                        {getFieldDecorator('icon', {
-                            rules: [{ required: true, message: '请上传图片' }],
-                            getValueFromEvent: this._normFile,
+                    <Form.Item label={'用例名称'}>
+                        {getFieldDecorator('caseName', {
+                            rules: [{ required: true, message: '请输入用例名称' }],
                         })(
-                            <Upload {...uploadProps} style={styles.urlUploader}>
-                                {icon ? <img src={icon} alt="icon" style={styles.url} /> : <Icon style={styles.icon} type={uploading ? 'loading' : 'plus'} />}
-                            </Upload>
+                            <Input placeholder={"用例名称"}/>
                         )}
                     </Form.Item>
-                    <Form.Item label="详情图片">
-                        {getFieldDecorator('storeImgS', {
-                            rules: [{ required: true, message: '请上传图片' }]
+                    <Form.Item label="所属项目">
+                        {getFieldDecorator('project', {
+                            rules: [{ required: true, message: '请选择所属项目' }]
                         })(
-                            <div className="clearfix">
-                                <Upload {...uploadImgs}>
-                                    {fileList.length >= 12 ? null : uploadButton}
-                                </Upload>
-                                <Modal visible={previewVisible}
-                                       onCancel={this.handleModalCancel}
-                                       closable={false}
-                                       onOk={this.handleModalCancel}
-                                >
-                                    <img alt="example" style={{width:'100%'}} src={previewImage} />
-                                </Modal>
-                            </div>
+                            <Select placeholder="请选择" style={{width:"29%"}}>
+                                {projects.map((item) => {
+                                    return <Select.Option value={item}>{item}</Select.Option>})}
+                            </Select>
                         )}
                     </Form.Item>
-                    <Form.Item label={'标题'}>
-                        {getFieldDecorator('title', {
+                    <Form.Item label={'用例描述'}>
+                        {getFieldDecorator('description', {
                             rules: [
-                                { required: true, message: '请输入标题!', whitespace: true}
+                                { required: true, message: '描述用例设计的场景!'}
                                 ],
                         })(
-                            <Input style={{width:'300px'}} placeholder="请输入标题" />
+                            <TextArea/>
                             )
                         }
                     </Form.Item>
-                    <Form.Item label={'所属行业'}>
-                        {getFieldDecorator('tradeName', {
+                    <Form.Item label={'添加步骤'}>
+                        {getFieldDecorator('caseStep', {
                             rules: [
-                                { required: true, message: '请选择!', whitespace: true}
+                                { required: true, message: '请选择接口!', whitespace: true}
                             ],
                         })(
                             <Select
                                 showSearch
                                 style={{ width: 200 }}
-                                placeholder="请选择!"
+                                placeholder="请选择接口!"
                                 optionFilterProp="children"
-                                filterOption={(input, option) =>
-                                    option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                }
+
                             >
-                                {this.state.tradeList.map(item =>{
-                                    return <Option key={item.id} value={item.tradeName}>{item.tradeName}</Option>
-                                })}
+                                {interfaces.map((item) => {
+                                    return <Select.Option value={item}>{item}</Select.Option>})}
                             </Select>,
                         )
                         }

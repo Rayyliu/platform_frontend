@@ -34,7 +34,8 @@ module.exports = function (app) {
                 '^/platform_server/interface/add' : '/interface/add',
                 '^/platform_server/interface/queryAll' : '/interface/queryAll',
                 '^/platform_server/interface/queryPage' : '/interface/queryPage',
-                '^/platform_server/interface/edit' : '/interface/edit'
+                '^/platform_server/interface/edit' : '/interface/edit',
+                '^/platform_server/interface/queryDistInterFace' : '/interface/queryDistInterFace'
 
                 }
         }
