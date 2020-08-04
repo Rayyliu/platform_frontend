@@ -15,19 +15,31 @@ class InterFaceDetail extends React.Component{
         //     interfaces:[],
         // };
 
+        // fields: {
+        //     header: {
+        //         value: '',
+        //     },
+        //     body: {
+        //         value: '',
+        //     },
+        // },
         fields: {
-            header: {
-                value: '',
-            },
-            body: {
-                value: '',
-            },
+            header: '',
+            body: '',
         },
     }
 
-    /***
-     * 去重查询项目名称
-     */
+    componentDidMount() {
+        this.initState();
+    }
+
+    initState=()=>{
+        console.log("Detail组件里的interfaceName==="+JSON.stringify(this.props.fields.interfaceName))
+        this.setState({
+            header:this.props.fields.interfaceName,
+            body:this.props.fields.body,
+        })
+    }
 
 
     /**
@@ -78,21 +90,12 @@ class InterFaceDetail extends React.Component{
     };
 
 
-    onFieldsChange(props, changedFields) {
-        props.onChange(changedFields);
-    }
-    mapPropsToFields(props) {
-        return {
-            username: Form.createFormField({
-                ...props.username,
-                value: props.username.value,
-            }),
-            pwd: Form.createFormField({
-                ...props.pwd,
-                value: props.pwd.value,
-            }),
-        };
-    }
+    handleFormChange = changedFields => {
+        this.setState(({ fields }) => ({
+            fields: { ...fields, ...changedFields },
+        }));
+    };
+
     onValuesChange(_, values) {
         console.log(values);
     }
@@ -100,6 +103,7 @@ class InterFaceDetail extends React.Component{
     render() {
         const { getFieldDecorator} = this.props.form;
         const { fields } = this.state;
+        const { Panel } = Collapse;
 
         const CustomizedForm = Form.create({
             name: 'global_state',
@@ -111,11 +115,11 @@ class InterFaceDetail extends React.Component{
                 return {
                     header: Form.createFormField({
                         ...props.header,
-                        value: props.header.value,
+                        value: props.header,
                     }),
                     body: Form.createFormField({
                         ...props.body,
-                        value: props.body.value,
+                        value: props.body,
                     }),
                 };
             },
@@ -126,7 +130,9 @@ class InterFaceDetail extends React.Component{
             props => {
                 const { getFieldDecorator } = props.form;
                 return (
-                    <Form layout="inline">
+                    <Collapse bordered="true">
+                        <Panel header="#{接口名}">
+                    {/*<Form layout="inline">*/}
                         <Form.Item label="Header">
                             {getFieldDecorator('header', {
                                 rules: [{ required: true, message: 'Username is required!' }],
@@ -139,7 +145,24 @@ class InterFaceDetail extends React.Component{
                             })(<Input />)}
                         </Form.Item>
 
-                    </Form>
+                        <Form.Item label="提取参数Parameter">
+                                {getFieldDecorator('parameter', {
+                                    // rules: [{ required: true, message: 'parameter is required!' }],
+                                    initialValue:''
+                                })(<Input />)}
+                        </Form.Item>
+
+                        <Form.Item label="断言字段Assertion">
+                                {getFieldDecorator('assertion', {
+                                    // rules: [{ required: true, message: 'Assertion is required!' }],
+                                    initialValue:''
+                                })(<Input />)}
+                        </Form.Item>
+
+
+                    {/*</Form>*/}
+                        </Panel>
+                    </Collapse>
                 );
             });
         return(

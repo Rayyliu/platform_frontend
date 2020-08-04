@@ -22,6 +22,8 @@ class CreateTransferIndex extends React.Component{
     state = {
         projects:[],
         interfaces:[],
+        fields:{},
+        interfaceName:'',
 
         uploading: false,
         img:{},
@@ -45,7 +47,7 @@ class CreateTransferIndex extends React.Component{
         const res = await get('/project/queryDistProject')
         if(res.code === 0) {
             this.setState({
-                projects:res.data
+                fields:res.data
             })
         }else {
             message.error("调用queryDistProject接口失败，查询项目失败")
@@ -66,18 +68,23 @@ class CreateTransferIndex extends React.Component{
         }
     }
 
-    handleFormChange = changedFields => {
-        this.setState(({ fields }) => ({
-            fields: { ...fields, ...changedFields },
-        }));
-    };
+    handleChange=(value)=>{
+        console.log("value==="+JSON.stringify(value))
+        this.setState({
+            interfaceName:value
+        })
+}
 
-    findAllTradeInfos = async ()=>{
-        const res = await get('/trades/findAllTradeInfos');
+    onGetValue = async ()=>{
+        console.log("interfaceName==="+JSON.stringify(this.state.interfaceName))
+        const res = await get('/interface/findByName',{
+            interfaceName:this.state.interfaceName
+        });
         if (res.code === 0){
             this.setState({
-                tradeList: res.data
+                fields: res.data
             })
+            console.log("fields=="+JSON.stringify(this.state.fields))
         }else{
             message.error(res.msg || '没有行业信息，无法新增')
         }
@@ -142,7 +149,7 @@ class CreateTransferIndex extends React.Component{
             },
         };
 
-        const { previewVisible, previewImage, fileList,projects,interfaces } = this.state;
+        const { previewVisible, previewImage,projects,interfaces } = this.state;
         const { uploading } = this.state;
         const { getFieldDecorator, getFieldValue } = this.props.form;
 
@@ -187,6 +194,7 @@ class CreateTransferIndex extends React.Component{
                                 style={{ width: 200 }}
                                 placeholder="请选择接口!"
                                 optionFilterProp="children"
+                                onChange={this.handleChange}
 
                             >
                                 {interfaces.map((item) => {
@@ -196,10 +204,10 @@ class CreateTransferIndex extends React.Component{
 
                         }
                         <div>
-                            <Button type='primary' >选择</Button>
+                            <Button type='primary' onClick={this.onGetValue}>选择</Button>
                         </div>
                     </Form.Item>
-                    <InterFaceDetail/>
+                    <InterFaceDetail fields={fields}/>
 
 
                     {/*<div>*/}
