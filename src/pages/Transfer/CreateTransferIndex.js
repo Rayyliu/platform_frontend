@@ -1,9 +1,12 @@
 import React from "react";
-import {Button, Cascader, Form,Select, Icon, Input, InputNumber, message, Modal} from "antd";
+import {Button, Cascader, Form,Select, Icon, Input, InputNumber, message, Collapse} from "antd";
 import {del, get, post} from "../../utils/ajax";
 import {isAuthenticated} from "../../utils/session";
 import options from './cities'
+import InterFaceDetail from "./InterFaceDetail";
 const { Option } = Select;
+// import { CaretRightOutlined } from '@ant-design/icons';
+
 
 function getBase64(file) {
     return new Promise((resolve, reject) => {
@@ -19,8 +22,6 @@ class CreateTransferIndex extends React.Component{
     state = {
         projects:[],
         interfaces:[],
-
-
 
         uploading: false,
         img:{},
@@ -65,6 +66,12 @@ class CreateTransferIndex extends React.Component{
         }
     }
 
+    handleFormChange = changedFields => {
+        this.setState(({ fields }) => ({
+            fields: { ...fields, ...changedFields },
+        }));
+    };
+
     findAllTradeInfos = async ()=>{
         const res = await get('/trades/findAllTradeInfos');
         if (res.code === 0){
@@ -103,131 +110,15 @@ class CreateTransferIndex extends React.Component{
             this.props.transferList();
         }
     };
-    /**
-     * 表单取消
-     * */
-    handleCancel= ()=>{
-        //删除已经上传的所有图片
-        if (JSON.stringify(this.state.img) !== '{}'){
-            this.removeImg(this.state.img.key);
-        }
-        const imgs = this.state.imgs;
-        if (imgs.length !== 0){
-            const keys = [];
-            for(let i = 0; i < imgs.length; i++){
-                keys.push(imgs[i].key);
-            }
-            del('/upload/deletes', {keys: keys});
-        }
-        this.props.transferList();
-    };
-    /**
-     * 单图上传 转换上传组件表单的值
-     */
-    _normFile = (e) => {
-        if (e.file.response && e.file.response.data) {
-            return e.file.response.data.url
-        } else {
-            return ''
-        }
-    };
-    /**
-     * 单图删除
-     * */
-    removeImg = (key)=>{
-        del('/upload', {key: key});
-    };
-    /**
-     * 多图上传相关
-     * */
-    handleModalCancel = () => this.setState({ previewVisible: false });
-    /**
-     * 点击文件链接或预览图标时的回调
-     * */
-    handlePreview = async file => {
-        if (!file.url && !file.preview) {
-            file.preview = await getBase64(file.originFileObj);
-        }
-        this.setState({
-            previewImage: file.url || file.preview,
-            previewVisible: true,
-        });
-    };
-    /**
-     * 上传文件改变时的状态
-     * */
-    handleChange = ({ fileList }) =>{
-        const imgs = [];
-        for(let i = 0; i < fileList.length; i++){
-            if (fileList[i].response !== undefined) {
-                imgs.push(fileList[i].response.data);
-            }
-        }
-        const storeImgs = [];
-        if (imgs !== undefined){
-            for(let i = 0; i < imgs.length; i++){
-                storeImgs.push(imgs[i].url)
-            }
-        }
-        this.setState(
-            {
-                    fileList ,
-                    imgs,
-                    storeImgs
-                }
-            );
-    };
-    /**
-     * 删除图片
-     * */
-    onRemove = (e) => {
-        del('/upload', {key: e.response.data.key});
-    };
+
+
+
     render() {
         const {TextArea} = Input
+        const { Panel } = Collapse;
+        const { fields } = this.state;
 
-        /**
-         * 单图上传
-         * */
-        const uploadProps = {
-            name: "file",
-            listType: "picture-card",
-            headers: {
-                Authorization: `${isAuthenticated()}`,
-            },
-            action: `${process.env.REACT_APP_BASE_URL}/upload?type=0`,
-            showUploadList: false,
-            accept: "image/*",
-            onChange: (info) => {
-                if (info.file.status !== 'uploading') {
-                    this.setState({
-                        uploading: true
-                    })
-                }
-                if (info.file.status === 'done') {
-                    if (info.file.response.code === 0){
-                        if (JSON.stringify(this.state.img) !== '{}'){
-                            this.removeImg(this.state.img.key);
-                        }
-                        this.setState({
-                            uploading: false,
-                            img: info.file.response.data
-                        });
-                        message.success('上传图片成功')
-                    } else{
-                        this.setState({
-                            uploading: false
-                        });
-                        message.error(info.file.response.msg)
-                    }
-                } else if (info.file.status === 'error') {
-                    this.setState({
-                        uploading: false
-                    });
-                    message.error(info.file.response.message || '上传图片失败')
-                }
-            }
-        };
+
         const formItemLayout = {
             labelCol: {
                 xs: { span: 24 },
@@ -254,29 +145,7 @@ class CreateTransferIndex extends React.Component{
         const { previewVisible, previewImage, fileList,projects,interfaces } = this.state;
         const { uploading } = this.state;
         const { getFieldDecorator, getFieldValue } = this.props.form;
-        const  icon = getFieldValue('icon');
-        const uploadButton = (
-            <div>
-                <Icon type="plus" />
-                <div className="ant-upload-text">上传</div>
-            </div>
-        );
-        /**
-         * 多图上传
-         * */
-        const uploadImgs = {
-            name: "file",
-            listType: "picture-card",
-            fileList: fileList,
-            headers: {
-                Authorization: `${isAuthenticated()}`,
-            },
-            action: `${process.env.REACT_APP_BASE_URL}/upload?type=2`,
-            accept: "image/*",
-            onChange: this.handleChange,
-            onPreview: this.handlePreview,
-            onRemove: this.onRemove
-        };
+
         return(
             <div style={{marginTop:'10px'}}>
                 <Form {...formItemLayout}>
@@ -324,98 +193,83 @@ class CreateTransferIndex extends React.Component{
                                     return <Select.Option value={item}>{item}</Select.Option>})}
                             </Select>,
                         )
+
                         }
+                        <div>
+                            <Button type='primary' >选择</Button>
+                        </div>
                     </Form.Item>
-                    <Form.Item label={'面积(/m²)'}>
-                        {getFieldDecorator('area', {
-                            rules: [
-                                { required: true, message: '请输入面积!'}
-                            ],
-                            initialValue : 0,
-                        })(
-                            <InputNumber style={{width:'200px'}} min={0} />
-                        )
-                        }
-                    </Form.Item>
-                    <Form.Item label={'转让费(/元)'}>
-                        {getFieldDecorator('transferPrice', {
-                            rules: [
-                                { required: true, message: '请输入转让费' }
-                            ],
-                            initialValue : 0,
-                        })(
-                            <InputNumber style={{width:'200px'}} min={0}/>
-                        )}
-                    </Form.Item>
-                    <Form.Item label={'租金(/元/月)'}>
-                        {getFieldDecorator('rent', {
-                            rules: [
-                                { required: true, message: '请输入租金'}
-                            ],
-                            initialValue : 0,
-                        })(
-                            <InputNumber style={{width:'200px'}} min={0} />
-                        )
-                        }
-                    </Form.Item>
-                    <Form.Item label={'联系人'}>
-                        {getFieldDecorator('linkman', {
-                            rules: [
-                                { required: true, message: '请输入联系人', whitespace: true }
-                            ],
-                        })(
-                            <Input placeholder="请输入联系人" style={{width:'200px'}} />
-                        )
-                        }
-                    </Form.Item>
-                    <Form.Item label={'联系电话'}>
-                        {getFieldDecorator('phone', {
-                            rules: [
-                                { required: true,
-                                    pattern:'^1(3|4|5|7|8)\\d{9}$',
-                                  message: '请正确输入联系电话', whitespace: true }
-                            ],
-                        })(
-                            <Input placeholder="请输入联系电话" style={{width:'200px'}} />
-                        )
-                        }
-                    </Form.Item>
-                    <Form.Item label={'省市区'}>
-                        {getFieldDecorator('cityDistrict', {
-                            rules: [
-                                { required: true, message: '请选择'}
-                            ],
-                        })(
-                            <Cascader
-                                options={options}
-                                placeholder={'请选择'}
-                                expandTrigger="hover"
-                                style={{width:'250px'}}
-                                // changeOnSelect
-                            />
-                        )
-                        }
-                    </Form.Item>
-                    <Form.Item label={'地址'}>
-                        {getFieldDecorator('address', {
-                            rules: [
-                                { required: true, message: '请输入地址'}
-                            ],
-                        })(
-                            <Input style={{width:'400px'}} size="large" placeholder="请输入门店地址" />
-                        )
-                        }
-                    </Form.Item>
-                    <Form.Item label={'描述'}>
-                        {getFieldDecorator('description', {})
-                        (
-                            <TextArea
-                                placeholder="请输入描述"
-                                autosize={{ minRows: 5, maxRows: 30 }}
-                            />
-                        )
-                        }
-                    </Form.Item>
+                    <InterFaceDetail/>
+
+
+                    {/*<div>*/}
+                        {/*<InterFaceDetail {...fields} onChange={this.handleFormChange()}/>*/}
+                        {/*<pre className="language-bash">{JSON.stringify(fields,null,2)}</pre>*/}
+                    {/*</div>*/}
+
+                    <Collapse
+                        // bordered={true}
+                               // defaultActiveKey{['1']}
+
+                               // expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
+                               className="site-collapse-custom-collapse">
+                        <Panel header="#{接口名}" key="1" className="site-collapse-custom-panel" >
+                            <Form.Item label={'请求header'}>
+                                {getFieldDecorator('header', {
+                                    initialValue : 0,
+                                })(
+                                    <TextArea/>
+                                )
+                                }
+                            </Form.Item>
+
+                            <Form.Item label={'请求body'}>
+                                {getFieldDecorator('body', {
+                                    initialValue : 0,
+                                })(
+                                    <TextArea/>
+                                )
+                                }
+                            </Form.Item>
+
+                            <Form.Item label={'提取参数'}>
+                                {getFieldDecorator('parameters', {
+                                    initialValue : 0,
+                                })(
+                                    <TextArea/>
+                                )
+                                }
+                            </Form.Item>
+
+                            <Form.Item label={'断言字段'}>
+                                {getFieldDecorator('Assertion', {
+                                    initialValue : 0,
+                                })(
+                                    <TextArea/>
+                                )
+                                }
+                            </Form.Item>
+
+                        </Panel>
+                    </Collapse>
+
+                    <Collapse  bordered={false}
+                        // defaultActiveKey{['1']}
+
+                        // expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
+                               className="site-collapse-custom-collapse">
+                        <Panel header="#{接口名}" key="1" className="site-collapse-custom-panel" >
+                            <Form.Item label={'请求header'}>
+                                {getFieldDecorator('area', {
+                                    initialValue : 0,
+                                })(
+                                    <TextArea/>
+                                )
+                                }
+                            </Form.Item>
+                        </Panel>
+                    </Collapse>
+
                     <Form.Item {...tailFormItemLayout}>
                         <Button type="default" onClick={this.handleCancel}>
                             取消
@@ -426,6 +280,8 @@ class CreateTransferIndex extends React.Component{
                         </Button>
                     </Form.Item>
                 </Form>
+                {/*<CustomizedForm {...fields} onChange={this.handleFormChange()}/>*/}
+                {/*<pre className="language-bash">{JSON.stringify(fields,null,2)}</pre>*/}
             </div>
         )
     }
