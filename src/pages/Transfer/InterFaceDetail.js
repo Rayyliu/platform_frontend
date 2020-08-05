@@ -24,22 +24,27 @@ class InterFaceDetail extends React.Component{
         //     },
         // },
         fields: {
-            header: '',
+            headerdetail: '',
             body: '',
         },
+        // isShowPanel:false
     }
 
-    componentDidMount() {
-        this.initState();
-    }
+    // componentDidMount() {
+    //     this.initState();
+    // }
 
-    initState=()=>{
-        console.log("Detail组件里的interfaceName==="+JSON.stringify(this.props.fields.interfaceName))
-        this.setState({
-            header:this.props.fields.interfaceName,
-            body:this.props.fields.body,
-        })
-    }
+    // componentWillReceiveProps(nextProps) {
+    //     console.log("nextProps" + JSON.stringify(nextProps))
+    //         this.props.form.setFieldsValue(nextProps.defaultValue)
+    // }
+    // initState=()=>{
+    //     console.log("Detail组件里的interfaceName==="+JSON.stringify(this.props.fields.interfaceName))
+    //     this.setState({
+    //         header:this.props.fields.headerdetail,
+    //         body:this.props.fields.body,
+    //     })
+    // }
 
 
     /**
@@ -96,14 +101,12 @@ class InterFaceDetail extends React.Component{
         }));
     };
 
-    onValuesChange(_, values) {
-        console.log(values);
-    }
 
     render() {
         const { getFieldDecorator} = this.props.form;
-        const { fields } = this.state;
+        // const { fields } = this.state;
         const { Panel } = Collapse;
+        const {isShowPanel,fields} = this.props
 
         const CustomizedForm = Form.create({
             name: 'global_state',
@@ -111,11 +114,11 @@ class InterFaceDetail extends React.Component{
                 props.onChange(changedFields);
             },
             mapPropsToFields(props) {
-                console.log("props=="+JSON.stringify(props))
+                console.log("detail+props=="+JSON.stringify(props))
                 return {
-                    header: Form.createFormField({
-                        ...props.header,
-                        value: props.header,
+                    headerdetail: Form.createFormField({
+                        ...props.headerdetail,
+                        value: props.headerdetail,
                     }),
                     body: Form.createFormField({
                         ...props.body,
@@ -131,17 +134,19 @@ class InterFaceDetail extends React.Component{
                 const { getFieldDecorator } = props.form;
                 return (
                     <Collapse bordered="true">
-                        <Panel header="#{接口名}">
+                        <Panel
+                            header="#{步骤接口名}"
+                            disabled = {isShowPanel}>
                     {/*<Form layout="inline">*/}
-                        <Form.Item label="Header">
-                            {getFieldDecorator('header', {
-                                rules: [{ required: true, message: 'Username is required!' }],
+                        <Form.Item label="Headerdetail">
+                            {getFieldDecorator('headerdetail', {
+                                rules: [{ required: true, message: 'Headerdetail is required!' }],
                             })(<Input />)}
                         </Form.Item>
 
                         <Form.Item label="Body">
                             {getFieldDecorator('body', {
-                                rules: [{ required: true, message: 'Pwd is required!' }],
+                                rules: [{ required: true, message: 'Body is required!' }],
                             })(<Input />)}
                         </Form.Item>
 

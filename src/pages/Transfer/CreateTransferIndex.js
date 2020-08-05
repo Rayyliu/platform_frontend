@@ -24,6 +24,7 @@ class CreateTransferIndex extends React.Component{
         interfaces:[],
         fields:{},
         interfaceName:'',
+        isShowPanel:true,
 
         uploading: false,
         img:{},
@@ -47,7 +48,7 @@ class CreateTransferIndex extends React.Component{
         const res = await get('/project/queryDistProject')
         if(res.code === 0) {
             this.setState({
-                fields:res.data
+                projects:res.data
             })
         }else {
             message.error("调用queryDistProject接口失败，查询项目失败")
@@ -69,7 +70,7 @@ class CreateTransferIndex extends React.Component{
     }
 
     handleChange=(value)=>{
-        console.log("value==="+JSON.stringify(value))
+        console.log("handleChange+value==="+JSON.stringify(value))
         this.setState({
             interfaceName:value
         })
@@ -82,7 +83,8 @@ class CreateTransferIndex extends React.Component{
         });
         if (res.code === 0){
             this.setState({
-                fields: res.data
+                fields: res.data,
+                isShowPanel:false
             })
             console.log("fields=="+JSON.stringify(this.state.fields))
         }else{
@@ -124,6 +126,8 @@ class CreateTransferIndex extends React.Component{
         const {TextArea} = Input
         const { Panel } = Collapse;
         const { fields } = this.state;
+        const { isShowPanel } = this.state;
+
 
 
         const formItemLayout = {
@@ -207,76 +211,7 @@ class CreateTransferIndex extends React.Component{
                             <Button type='primary' onClick={this.onGetValue}>选择</Button>
                         </div>
                     </Form.Item>
-                    <InterFaceDetail fields={fields}/>
-
-
-                    {/*<div>*/}
-                        {/*<InterFaceDetail {...fields} onChange={this.handleFormChange()}/>*/}
-                        {/*<pre className="language-bash">{JSON.stringify(fields,null,2)}</pre>*/}
-                    {/*</div>*/}
-
-                    <Collapse
-                        // bordered={true}
-                               // defaultActiveKey{['1']}
-
-                               // expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
-                               className="site-collapse-custom-collapse">
-                        <Panel header="#{接口名}" key="1" className="site-collapse-custom-panel" >
-                            <Form.Item label={'请求header'}>
-                                {getFieldDecorator('header', {
-                                    initialValue : 0,
-                                })(
-                                    <TextArea/>
-                                )
-                                }
-                            </Form.Item>
-
-                            <Form.Item label={'请求body'}>
-                                {getFieldDecorator('body', {
-                                    initialValue : 0,
-                                })(
-                                    <TextArea/>
-                                )
-                                }
-                            </Form.Item>
-
-                            <Form.Item label={'提取参数'}>
-                                {getFieldDecorator('parameters', {
-                                    initialValue : 0,
-                                })(
-                                    <TextArea/>
-                                )
-                                }
-                            </Form.Item>
-
-                            <Form.Item label={'断言字段'}>
-                                {getFieldDecorator('Assertion', {
-                                    initialValue : 0,
-                                })(
-                                    <TextArea/>
-                                )
-                                }
-                            </Form.Item>
-
-                        </Panel>
-                    </Collapse>
-
-                    <Collapse  bordered={false}
-                        // defaultActiveKey{['1']}
-
-                        // expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
-                               className="site-collapse-custom-collapse">
-                        <Panel header="#{接口名}" key="1" className="site-collapse-custom-panel" >
-                            <Form.Item label={'请求header'}>
-                                {getFieldDecorator('area', {
-                                    initialValue : 0,
-                                })(
-                                    <TextArea/>
-                                )
-                                }
-                            </Form.Item>
-                        </Panel>
-                    </Collapse>
+                    <InterFaceDetail isShowPanel={isShowPanel}  fields={fields}/>
 
                     <Form.Item {...tailFormItemLayout}>
                         <Button type="default" onClick={this.handleCancel}>
