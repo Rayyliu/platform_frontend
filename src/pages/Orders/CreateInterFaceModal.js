@@ -257,7 +257,7 @@ class CreateInterFaceModal extends Component {
                             ]
                         })(
                             <Input
-                                maxLength={32}
+                                maxLength={256}
                                 placeholder="请输入测试环境"
                             />
                         )}
@@ -285,7 +285,7 @@ class CreateInterFaceModal extends Component {
                             ]
                         })(
                             <Input
-                                maxLength={32}
+                                maxLength={256}
                                 placeholder="请输入rul"
                             />
                         )}

@@ -354,6 +354,10 @@ class Interfaces extends React.Component{
             },
 
         ];
+        const rowSelection = {
+            selectedRowKeys: selectedRowKeys,
+            onChange: (selectedRowKeys) => this.setState({ selectedRowKeys }),
+        };
         return(
             <div style={{ padding: 5 }}>
                 <Card bordered={false}>
@@ -389,14 +393,15 @@ class Interfaces extends React.Component{
                         style={{marginTop: '50px'}}
                         rowKey='interfaceNo'
                         bordered
-                        mountNode
-                        expandedRowRender={this.expandedRowRender}
+                        // mountNode
+                        // expandedRowRender={this.expandedRowRender}
                         columns={columns}
                         dataSource={interfaces}
                         loading={interfacesLoading}
                         pagination={pagination}
                         onChange={this.onTableChange}
                         scroll={{ x: 2600}}
+                        rowSelection={rowSelection}
                     />
                 </Card>
                 <CreateInterFaceModal visible ={isShowCreateModal} toggleVisible={this.toggleShowCreateModal}/>

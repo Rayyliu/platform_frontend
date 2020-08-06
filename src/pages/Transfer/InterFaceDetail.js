@@ -1,6 +1,8 @@
 import React from "react";
-import {Button, Cascader, Form,Select, Icon, Input, InputNumber, message, Collapse} from "antd";
+import {Button, Cascader, Form,Select, Icon, Input, InputNumber, message, Collapse,Radio} from "antd";
 import {del, get, post} from "../../utils/ajax";
+import RadioGroup from "antd/es/radio/group";
+
 import {isAuthenticated} from "../../utils/session";
 import options from './cities'
 const { Option } = Select;
@@ -24,9 +26,12 @@ class InterFaceDetail extends React.Component{
         //     },
         // },
         fields: {
-            headerdetail: '',
+            headerDetail: '',
             body: '',
+            path:'',
+            method:'',
         },
+        comps:[]
         // isShowPanel:false
     }
 
@@ -95,6 +100,11 @@ class InterFaceDetail extends React.Component{
     };
 
 
+    // getItemsValue = ()=>{    //3、自定义方法，用来传递数据（需要在父组件中调用获取数据）
+    //     const valus= this.props.form.getFieldsValue();       //4、getFieldsValue：获取一组输入控件的值，如不传入参数，则获取全部组件的值
+    //     return valus;
+    // }
+
     handleFormChange = changedFields => {
         this.setState(({ fields }) => ({
             fields: { ...fields, ...changedFields },
@@ -104,7 +114,7 @@ class InterFaceDetail extends React.Component{
 
     render() {
         const { getFieldDecorator} = this.props.form;
-        // const { fields } = this.state;
+        const { comps } = this.state;
         const { Panel } = Collapse;
         const {isShowPanel,fields} = this.props
 
@@ -116,13 +126,21 @@ class InterFaceDetail extends React.Component{
             mapPropsToFields(props) {
                 console.log("detail+props=="+JSON.stringify(props))
                 return {
-                    headerdetail: Form.createFormField({
-                        ...props.headerdetail,
-                        value: props.headerdetail,
+                    headerDetail: Form.createFormField({
+                        ...props.headerDetail,
+                        value: props.headerDetail,
                     }),
                     body: Form.createFormField({
                         ...props.body,
                         value: props.body,
+                    }),
+                    path: Form.createFormField({
+                        ...props.path,
+                        value: props.path,
+                    }),
+                    method: Form.createFormField({
+                        ...props.method,
+                        value: props.method,
                     }),
                 };
             },
@@ -135,12 +153,18 @@ class InterFaceDetail extends React.Component{
                 return (
                     <Collapse bordered="true">
                         <Panel
-                            header="#{步骤接口名}"
+                            header={fields.interfaceName}
                             disabled = {isShowPanel}>
                     {/*<Form layout="inline">*/}
-                        <Form.Item label="Headerdetail">
-                            {getFieldDecorator('headerdetail', {
-                                rules: [{ required: true, message: 'Headerdetail is required!' }],
+                        <Form.Item label="HeaderDetail">
+                            {getFieldDecorator('headerDetail', {
+                                rules: [{ required: true, message: 'HeaderDetail is required!' }],
+                            })(<Input />)}
+                        </Form.Item>
+
+                        <Form.Item label="Path">
+                            {getFieldDecorator('path', {
+                                rules: [{ required: true, message: 'Path is required!' }],
                             })(<Input />)}
                         </Form.Item>
 
@@ -164,6 +188,22 @@ class InterFaceDetail extends React.Component{
                                 })(<Input />)}
                         </Form.Item>
 
+                        <Form.Item label={'请求方式'}>
+                            {getFieldDecorator('method', {
+                                validateFirst: true,
+                                rules: [
+                                    { required: true, message: '请求方式必选!'}
+                                ],
+                            })(
+                                <RadioGroup  onChange={this.onMethodChange} value={fields.method}>
+                                    <Radio key="get" value={"get"}>get</Radio>
+                                    <Radio key="post" value={"post"}>post</Radio>
+                                    <Radio key="delete" value={"delete"}>delete</Radio>
+                                    <Radio key="put" value={"put"}>put</Radio>
+                                </RadioGroup>
+                            )
+                            }
+                        </Form.Item>
 
                     {/*</Form>*/}
                         </Panel>
@@ -172,8 +212,14 @@ class InterFaceDetail extends React.Component{
             });
         return(
             <div>
+                {/*{comps.map(comp =>{*/}
+                    {/*return <CustomizedForm key={comp} {...fields} />*/}
+                {/*})}*/}
+                {/*<Button onClick={()=>this.setState({comps:comps.concat([Date.now()])})}>加组件</Button>*/}
                 <CustomizedForm {...fields} onChange={this.handleFormChange}/>
             </div>
+
+
         )
     }
 }

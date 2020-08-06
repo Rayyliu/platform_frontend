@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Cascader, Form,Select, Icon, Input, InputNumber, message, Collapse} from "antd";
+import {Button, Cascader, Form,Select, Icon, Input, InputNumber, message, Collapse,Radio} from "antd";
 import {del, get, post} from "../../utils/ajax";
 import {isAuthenticated} from "../../utils/session";
 import options from './cities'
@@ -97,13 +97,14 @@ class CreateTransferIndex extends React.Component{
     handleSubmit = () => {
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
-                this.createTransfer(values)
+                this.createCaseAndExecute(values)
             }
         });
     };
-    createTransfer = async (values) => {
+    createCaseAndExecute = async (values) => {
+        console.log("values==="+JSON.stringify(values))
         values.storeImgS = this.state.storeImgs;
-        const res = await post('/transfers', {
+        const res = await post('/single/case/execute', {
             ...values
         });
         if (res.code === 0) {
@@ -120,6 +121,11 @@ class CreateTransferIndex extends React.Component{
         }
     };
 
+    // handleCreate = () => {
+    //     console.log(this.formRef.getItemsValue());     //6、调用子组件的自定义方法getItemsValue。注意：通过this.formRef 才能拿到数据
+    //     this.props.getFormRef(this.formRef.getItemsValue());
+    //     this.props.closeModal(false);
+    // }
 
 
     render() {
@@ -178,7 +184,7 @@ class CreateTransferIndex extends React.Component{
                         )}
                     </Form.Item>
                     <Form.Item label={'用例描述'}>
-                        {getFieldDecorator('description', {
+                        {getFieldDecorator('caseDescription', {
                             rules: [
                                 { required: true, message: '描述用例设计的场景!'}
                                 ],
@@ -187,6 +193,9 @@ class CreateTransferIndex extends React.Component{
                             )
                         }
                     </Form.Item>
+
+
+
                     <Form.Item label={'添加步骤'}>
                         {getFieldDecorator('caseStep', {
                             rules: [
@@ -211,7 +220,10 @@ class CreateTransferIndex extends React.Component{
                             <Button type='primary' onClick={this.onGetValue}>选择</Button>
                         </div>
                     </Form.Item>
-                    <InterFaceDetail isShowPanel={isShowPanel}  fields={fields}/>
+                    <InterFaceDetail isShowPanel={isShowPanel}
+                                     fields={fields}
+                                     // wrappedComponentRef={(form) => this.formRef = form}
+                    />
 
                     <Form.Item {...tailFormItemLayout}>
                         <Button type="default" onClick={this.handleCancel}>
@@ -219,7 +231,7 @@ class CreateTransferIndex extends React.Component{
                         </Button>
                         &emsp;
                         <Button type="primary" onClick={this.handleSubmit}>
-                            提交
+                            调试
                         </Button>
                     </Form.Item>
                 </Form>

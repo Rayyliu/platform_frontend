@@ -285,6 +285,11 @@ class Index extends React.Component{
                 align: 'center'
             },
             {
+                title: '执行结果',
+                dataIndex: 'result',
+                align: 'center'
+            },
+            {
                 title: '操作',
                 key: 'active',
                 align: 'center',
