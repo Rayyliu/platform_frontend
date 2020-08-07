@@ -151,11 +151,11 @@ class InterFaceDetail extends React.Component{
             props => {
                 const { getFieldDecorator } = props.form;
                 return (
-                    <Collapse bordered="true">
+                    <Collapse bordered="true" >
                         <Panel
                             header={fields.interfaceName}
                             disabled = {isShowPanel}>
-                    {/*<Form layout="inline">*/}
+                    {/*<Form layout="inline" onClick={this.handleSubmit}>*/}
                         <Form.Item label="HeaderDetail">
                             {getFieldDecorator('headerDetail', {
                                 rules: [{ required: true, message: 'HeaderDetail is required!' }],
