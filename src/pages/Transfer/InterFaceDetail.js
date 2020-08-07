@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Cascader, Form,Select, Icon, Input, InputNumber, message, Collapse,Radio} from "antd";
+import {Button, Cascader, Form,Select, Icon, Input, InputNumber, message, Collapse,Radio,Switch} from "antd";
 import {del, get, post} from "../../utils/ajax";
 import RadioGroup from "antd/es/radio/group";
 
@@ -30,6 +30,7 @@ class InterFaceDetail extends React.Component{
             body: '',
             path:'',
             method:'',
+            sign:false,
         },
         comps:[]
         // isShowPanel:false
@@ -142,6 +143,10 @@ class InterFaceDetail extends React.Component{
                         ...props.method,
                         value: props.method,
                     }),
+                    sign: Form.createFormField({
+                        ...props.sign,
+                        value: props.sign,
+                    }),
                 };
             },
             onValuesChange(_, values) {
@@ -186,6 +191,15 @@ class InterFaceDetail extends React.Component{
                                     // rules: [{ required: true, message: 'Assertion is required!' }],
                                     initialValue:''
                                 })(<Input />)}
+                        </Form.Item>
+
+                        <Form.Item label="签名">
+                            {getFieldDecorator('sign', {
+                                // rules: [{ required: true, message: 'Assertion is required!' }],
+                                initialValue:''
+                            })(
+                                <Switch  checkedChildren="启用" unCheckedChildren="废弃" checked={fields.sign}  />
+                            )}
                         </Form.Item>
 
                         <Form.Item label={'请求方式'}>

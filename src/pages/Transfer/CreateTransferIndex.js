@@ -95,17 +95,18 @@ class CreateTransferIndex extends React.Component{
      * 表单提交
      * */
     handleSubmit = () => {
-
         this.props.form.validateFieldsAndScroll((err, values) => {
-            console.log("values==="+JSON.stringify(values))
             if (!err) {
-                console.log("this.fields==="+JSON.stringify( this.state.fields))
-                values.body=JSON.stringify(this.state.fields.body)
-                values.headerdetail = JSON.stringify(this.state.fields.headerdetail)
+                values.headerDetail = this.state.fields.headerdetail
+                values.body = this.state.fields.body
+                values.path = this.state.fields.path
+                values.method = this.state.fields.method
+                values.interFaceName = this.state.fields.interfaceName
+                values.sign = this.state.fields.sign
                 this.createCaseAndExecute(values)
-                console.log("新的values=="+JSON.stringify(values))
             }
         });
+
     };
     createCaseAndExecute = async (values) => {
         console.log("values==="+JSON.stringify(values))
@@ -132,6 +133,10 @@ class CreateTransferIndex extends React.Component{
     //     this.props.getFormRef(this.formRef.getItemsValue());
     //     this.props.closeModal(false);
     // }
+    //
+    // saveFormRef = formRef => {
+    //     this.formRef = formRef;
+    // };
 
 
     render() {
@@ -170,8 +175,8 @@ class CreateTransferIndex extends React.Component{
         const { getFieldDecorator, getFieldValue } = this.props.form;
 
         return(
-            <div style={{marginTop:'10px'}} >
-                <Form {...formItemLayout} >
+            <div style={{marginTop:'10px'}}>
+                <Form {...formItemLayout}>
                     <Form.Item label={'用例名称'}>
                         {getFieldDecorator('caseName', {
                             rules: [{ required: true, message: '请输入用例名称' }],
@@ -226,12 +231,12 @@ class CreateTransferIndex extends React.Component{
                             <Button type='primary' onClick={this.onGetValue}>选择</Button>
                         </div>
                     </Form.Item>
-                    <Form.Item label={'接口入参'}>
                     <InterFaceDetail isShowPanel={isShowPanel}
                                      fields={fields}
                                      // wrappedComponentRef={(form) => this.formRef = form}
+                                     wrappedComponentRef={this.saveFormRef}
                     />
-                    </Form.Item>
+
                     <Form.Item {...tailFormItemLayout}>
                         <Button type="default" onClick={this.handleCancel}>
                             取消
