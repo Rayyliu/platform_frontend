@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Cascader, Form,Select, Icon, Input, InputNumber, message, Collapse,Radio} from "antd";
+import {Button, Cascader, Form,Select, Icon, Input, InputNumber, message, Collapse,Radio,Spin,Alert} from "antd";
 import {del, get, post} from "../../utils/ajax";
 import {isAuthenticated} from "../../utils/session";
 import options from './cities'
@@ -25,6 +25,13 @@ class CreateTransferIndex extends React.Component{
         fields:{},
         interfaceName:'',
         isShowPanel:true,
+        result:{
+            success:false,
+            errorCode:{},
+            execute:false,
+            message:'',
+        },
+        loading:false,
 
         uploading: false,
         img:{},
@@ -95,6 +102,9 @@ class CreateTransferIndex extends React.Component{
      * 表单提交
      * */
     handleSubmit = () => {
+        this.setState({
+            loading:true
+        })
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
                 values.headerDetail = this.state.fields.headerdetail
@@ -114,17 +124,31 @@ class CreateTransferIndex extends React.Component{
         const res = await post('/single/case/execute', {
             ...values
         });
+        console.log("res==="+JSON.stringify(res))
         if (res.code === 0) {
-            message.success('新增成功');
-            this.setState({
-                    img:{},
-                    imgs:{},
-                storeImgs:[],
-                fileList:[],
-                tradeList:[]
-                }
-            );
-            this.props.transferList();
+            message.success('接口调用成功');
+            setTimeout(()=> {
+                this.setState({
+                        result:{
+                            success:res.success,
+                            errorCode:res.errorCode,
+                            execute:res.execute,
+                            message:res.message,
+                        },
+                        loading:false,
+
+                        img:{},
+                        imgs:{},
+                        storeImgs:[],
+                        fileList:[],
+                        tradeList:[]
+                    }
+                )
+                this.props.transferList();
+            },2000
+                )
+
+
         }
     };
 
@@ -176,6 +200,7 @@ class CreateTransferIndex extends React.Component{
 
         return(
             <div style={{marginTop:'10px'}}>
+                <Spin spinning={this.state.loading}>
                 <Form {...formItemLayout}>
                     <Form.Item label={'用例名称'}>
                         {getFieldDecorator('caseName', {
@@ -236,17 +261,18 @@ class CreateTransferIndex extends React.Component{
                                      // wrappedComponentRef={(form) => this.formRef = form}
                                      wrappedComponentRef={this.saveFormRef}
                     />
-
                     <Form.Item {...tailFormItemLayout}>
                         <Button type="default" onClick={this.handleCancel}>
                             取消
                         </Button>
                         &emsp;
-                        <Button type="primary" onClick={this.handleSubmit}>
+                        <Button type="primary" icon="reload"  onClick={this.handleSubmit}>
                             调试
                         </Button>
                     </Form.Item>
                 </Form>
+                </Spin>
+
                 {/*<CustomizedForm {...fields} onChange={this.handleFormChange()}/>*/}
                 {/*<pre className="language-bash">{JSON.stringify(fields,null,2)}</pre>*/}
             </div>

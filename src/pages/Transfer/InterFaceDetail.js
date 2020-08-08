@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Cascader, Form,Select, Icon, Input, InputNumber, message, Collapse,Radio,Switch} from "antd";
+import {Button, Cascader, Form,Select, Icon, Input, InputNumber, message, Collapse,Radio,Switch,Divider,Card} from "antd";
 import {del, get, post} from "../../utils/ajax";
 import RadioGroup from "antd/es/radio/group";
 
@@ -160,7 +160,7 @@ class InterFaceDetail extends React.Component{
                         <Panel
                             header={fields.interfaceName}
                             disabled = {isShowPanel}>
-                    {/*<Form layout="inline" onClick={this.handleSubmit}>*/}
+                    {/*<Form layout="inline" >*/}
                         <Form.Item label="HeaderDetail">
                             {getFieldDecorator('headerDetail', {
                                 rules: [{ required: true, message: 'HeaderDetail is required!' }],
@@ -186,11 +186,18 @@ class InterFaceDetail extends React.Component{
                                 })(<Input />)}
                         </Form.Item>
 
-                        <Form.Item label="断言字段Assertion">
+                        <Form.Item label="断言">
                                 {getFieldDecorator('assertion', {
                                     // rules: [{ required: true, message: 'Assertion is required!' }],
                                     initialValue:''
-                                })(<Input />)}
+                                })(
+                                   <div>
+                                       <Card title="参数名" bordered={false}>
+                                           Card content
+                                       </Card>
+                                   </div>
+
+                                )}
                         </Form.Item>
 
                         <Form.Item label="签名">
