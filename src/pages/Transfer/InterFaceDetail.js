@@ -32,7 +32,8 @@ class InterFaceDetail extends React.Component{
             method:'',
             sign:false,
         },
-        comps:[]
+        comps:[],
+        key: 'parameter',
         // isShowPanel:false
     }
 
@@ -111,9 +112,27 @@ class InterFaceDetail extends React.Component{
             fields: { ...fields, ...changedFields },
         }));
     };
-
+    onTabChange = (key, type) => {
+        console.log(key, type);
+        this.setState({ [type]: key });
+    };
 
     render() {
+        const tabList=[
+            {
+                key: 'parameter',
+                tab: 'parameter',
+            },
+            {
+                key: 'expected',
+                tab: 'expected',
+
+        }]
+
+        const contentList = {
+            tab1: <p>content1</p>,
+            tab2: <p>content2</p>,
+        };
         const { getFieldDecorator} = this.props.form;
         const { comps } = this.state;
         const { Panel } = Collapse;
@@ -192,8 +211,15 @@ class InterFaceDetail extends React.Component{
                                     initialValue:''
                                 })(
                                    <div>
-                                       <Card title="参数名" bordered={false}>
-                                           Card content
+                                       <Card
+                                             bordered={false}
+                                             tabList={tabList}
+                                             activeTabKey={this.state.key}
+                                             onTabChange={key => {
+                                                 this.onTabChange(key, 'key');
+                                             }}
+                                       >
+                                           {contentList[this.state.key]}
                                        </Card>
                                    </div>
 
