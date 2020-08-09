@@ -259,7 +259,6 @@ class CreateTransferIndex extends React.Component{
                     <InterFaceDetail isShowPanel={isShowPanel}
                                      fields={fields}
                                      // wrappedComponentRef={(form) => this.formRef = form}
-                                     wrappedComponentRef={this.saveFormRef}
                     />
                     <Form.Item {...tailFormItemLayout}>
                         <Button type="default" onClick={this.handleCancel}>

@@ -1,30 +1,24 @@
 import React from "react";
-import {Button, Cascader, Form,Select, Icon, Input, InputNumber, message, Collapse,Radio,Switch,Divider,Card} from "antd";
+import {
+    Button,
+    Form,
+    Select,
+    Icon,
+    Input,
+    message,
+    Collapse,
+    Radio,
+    Switch,
+    Table,
+    Popconfirm,
+} from "antd";
 import {del, get, post} from "../../utils/ajax";
 import RadioGroup from "antd/es/radio/group";
-
-import {isAuthenticated} from "../../utils/session";
-import options from './cities'
-const { Option } = Select;
-// import { CaretRightOutlined } from '@ant-design/icons';
-
-
-
+import EditableCell from "./EditableCell";
+let  Option  = Select.Option;
 @Form.create()
 class InterFaceDetail extends React.Component{
     state = {
-        //     projects:[],
-        //     interfaces:[],
-        // };
-
-        // fields: {
-        //     header: {
-        //         value: '',
-        //     },
-        //     body: {
-        //         value: '',
-        //     },
-        // },
         fields: {
             headerDetail: '',
             body: '',
@@ -33,25 +27,26 @@ class InterFaceDetail extends React.Component{
             sign:false,
         },
         comps:[],
-        key: 'parameter',
         // isShowPanel:false
+        dataSource:[
+            {
+                key: '0',
+                params: 'Edward King 0',
+                except: '32',
+                rule: 'London, Park Lane no. 0',
+            },
+            {
+                key: '1',
+                params: 'Edward King 1',
+                except: '32',
+                rule: 'London, Park Lane no. 1',
+            },
+        ],
+        count: 2,
+
     }
 
-    // componentDidMount() {
-    //     this.initState();
-    // }
 
-    // componentWillReceiveProps(nextProps) {
-    //     console.log("nextProps" + JSON.stringify(nextProps))
-    //         this.props.form.setFieldsValue(nextProps.defaultValue)
-    // }
-    // initState=()=>{
-    //     console.log("Detail组件里的interfaceName==="+JSON.stringify(this.props.fields.interfaceName))
-    //     this.setState({
-    //         header:this.props.fields.headerdetail,
-    //         body:this.props.fields.body,
-    //     })
-    // }
 
 
     /**
@@ -102,10 +97,7 @@ class InterFaceDetail extends React.Component{
     };
 
 
-    // getItemsValue = ()=>{    //3、自定义方法，用来传递数据（需要在父组件中调用获取数据）
-    //     const valus= this.props.form.getFieldsValue();       //4、getFieldsValue：获取一组输入控件的值，如不传入参数，则获取全部组件的值
-    //     return valus;
-    // }
+
 
     handleFormChange = changedFields => {
         this.setState(({ fields }) => ({
@@ -114,29 +106,114 @@ class InterFaceDetail extends React.Component{
     };
     onTabChange = (key, type) => {
         console.log(key, type);
-        this.setState({ [type]: key });
+        this.setState(
+            { [type]: key }
+            );
+    };
+
+    //断言页面
+    handleDelete = key => {
+        const dataSource = [...this.state.dataSource];
+        this.setState({
+            dataSource: dataSource.filter(item => item.key !== key),
+        });
+    };
+
+    handleAdd = () => {
+        const { count, dataSource } = this.state;
+        const newData = {
+            key: count,
+            name: `Edward King ${count}`,
+            age: 32,
+            address: `London, Park Lane no. ${count}`,
+        };
+        this.setState({
+            dataSource: [...dataSource, newData],
+            count: count + 1,
+        });
+    };
+
+    handleSave = row => {
+        const newData = [...this.state.dataSource];
+        const index = newData.findIndex(item => row.key === item.key);
+        const item = newData[index];
+        newData.splice(index, 1, { ...item, ...row });
+        this.setState({
+            dataSource: newData,
+        });
     };
 
     render() {
-        const tabList=[
-            {
-                key: 'parameter',
-                tab: 'parameter',
-            },
-            {
-                key: 'expected',
-                tab: 'expected',
 
+         const columns =[{
+            title: '参数',
+            dataIndex: 'params',
+            width: '30%',
+            editable: true,
+        },{
+            title: '期望值',
+            dataIndex: 'except',
+            width: '30%',
+            editable: true,
+        },{
+            title: '校验规则',
+            dataIndex: 'rule',
+            // render:()=>
+            //     this.state.dataSource.length >= 1 ?(
+            //         <Select placeholder="请选择" style={{width: "29%"}}>
+            //             <Select.Option value="equal">equal</Select.Option>})}
+            //             <Select.Option value="contain">contain</Select.Option>})}
+            //         </Select>):null,
+        },{
+            title: 'operation',
+            dataIndex: 'operation',
+            render: (text, record) =>
+                this.state.dataSource.length >= 1 ? (
+                    <Popconfirm title="Sure to delete?" onConfirm={() => this.handleDelete(record.key)}>
+                        <a>Delete</a>
+                    </Popconfirm>
+                ) : null,
         }]
 
-        const contentList = {
-            tab1: <p>content1</p>,
-            tab2: <p>content2</p>,
-        };
+
         const { getFieldDecorator} = this.props.form;
-        const { comps } = this.state;
+        const { comps,dataSource } = this.state;
         const { Panel } = Collapse;
         const {isShowPanel,fields} = this.props
+
+
+        //编写断言页面
+        const EditableContext = React.createContext();
+        const EditableRow = ({ form, index, ...props }) => (
+            <EditableContext.Provider value={form}>
+                <tr {...props} />
+            </EditableContext.Provider>
+        );
+        const EditableFormRow = Form.create()(EditableRow);
+        const components = {
+            body: {
+                row: EditableFormRow,
+                cell: EditableCell,
+            },
+        };
+
+        const column = columns.map(col => {
+            if (!col.editable) {
+                return col;
+            }
+            return {
+                ...col,
+                onCell: record => ({
+                    record,
+                    editable: col.editable,
+                    dataIndex: col.dataIndex,
+                    title: col.title,
+                    handleSave: this.handleSave,
+                }),
+            };
+        });
+
+
 
         const CustomizedForm = Form.create({
             name: 'global_state',
@@ -210,19 +287,22 @@ class InterFaceDetail extends React.Component{
                                     // rules: [{ required: true, message: 'Assertion is required!' }],
                                     initialValue:''
                                 })(
-                                   <div>
-                                       <Card
-                                             bordered={false}
-                                             tabList={tabList}
-                                             activeTabKey={this.state.key}
-                                             onTabChange={key => {
-                                                 this.onTabChange(key, 'key');
-                                             }}
-                                       >
-                                           {contentList[this.state.key]}
-                                       </Card>
-                                   </div>
-
+                                    <div>
+                                        <Button
+                                            onClick={this.handleAdd}
+                                            type="primary"
+                                            style={{
+                                                marginBottom: 16,
+                                            }}
+                                        >add a row
+                                        </Button>
+                                    <Table components={components}
+                                           rowClassName={() => 'editable-row'}
+                                           bordered
+                                           dataSource={dataSource}
+                                           columns={column}
+                                    />
+                                    </div>
                                 )}
                         </Form.Item>
 
