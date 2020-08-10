@@ -353,19 +353,12 @@ class CreateInterFaceModal extends Component {
                         }
                     </Form.Item>
 
-                    {/*<Form.Item label={'设置header'}>*/}
-                        {/*{getFieldDecorator('header',{*/}
-                            {/*validateFirst: true,*/}
-                            {/*rules: [*/}
-                                {/*{ required: true, message: 'url不能为空' }*/}
-                            {/*]*/}
-                        {/*})(*/}
-                            {/*<RadioGroup  onChange={this.onChangeHeader} value={this.state.mode} >*/}
-                                {/*<Radio key="设置" value={1}>设置</Radio>*/}
-                                {/*<Radio key="不设置" value={2}>不设置</Radio>*/}
-                            {/*</RadioGroup>*/}
-                        {/*)}*/}
-                    {/*</Form.Item>*/}
+                    <Form.Item label={'签名字段'}>
+                        {getFieldDecorator('signKey',{
+                        })(
+                            <Input placeholder={"接口签名则需填写签名所需字段"}/>
+                        )}
+                    </Form.Item>
 
                     <Form.Item label={'header'}>
                         {getFieldDecorator('header',{

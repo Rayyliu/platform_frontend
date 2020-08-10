@@ -292,8 +292,8 @@ class Interfaces extends React.Component{
                 align: 'center',
             },
             {
-                title: 'tags',
-                dataIndex: 'tags',
+                title: '签名字段',
+                dataIndex: 'signKey',
                 align: 'center',
                 // render: (text) => <img style={{height:'50px',width:'50px'}} src={text} alt={''}/>,
             },

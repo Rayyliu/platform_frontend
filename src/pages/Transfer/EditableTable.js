@@ -28,8 +28,8 @@ class EditableTable extends React.Component {
                 editable: true
             },
             {
-                title: "address",
-                dataIndex: "address",
+                title: "校验规则",
+                dataIndex: "rule",
                 render:() =>
                     this.state.dataSource.length >= 1 ?(
                         <Select>
