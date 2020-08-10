@@ -84,7 +84,7 @@ class MyContent extends React.Component {
                                         {item.content}
                                     </div>
                                     <Footer style={{ textAlign: 'center', background: '#fff' }}>
-                                        Mr培 ©2019 Created by 798274881@qq.com <a target='_blank' href='https://www.jianshu.com/u/f45233827cc6' rel="noopener noreferrer"><Icon type="github" /></a>
+                                        测试自动化平台v1.0 <a target='_blank' href='https://www.jianshu.com/u/f45233827cc6' rel="noopener noreferrer"><Icon type="github" /></a>
                                     </Footer>
                                 </TabPane>
                             )
