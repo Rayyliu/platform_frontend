@@ -15,35 +15,26 @@ import {
 import {del, get, post} from "../../utils/ajax";
 import RadioGroup from "antd/es/radio/group";
 import EditableCell from "./EditableCell";
+import { EditableContext } from './CreateContext';
+import EditableTable from "./EditableTable";
+
 let  Option  = Select.Option;
 @Form.create()
 class InterFaceDetail extends React.Component{
-    state = {
+    constructor(props) {
+        super(props);
+    this.state = {
         fields: {
             headerDetail: '',
             body: '',
-            path:'',
-            method:'',
-            sign:false,
+            path: '',
+            method: '',
+            sign: false,
         },
-        comps:[],
-        // isShowPanel:false
-        dataSource:[
-            {
-                key: '0',
-                params: 'Edward King 0',
-                except: '32',
-                rule: 'London, Park Lane no. 0',
-            },
-            {
-                key: '1',
-                params: 'Edward King 1',
-                except: '32',
-                rule: 'London, Park Lane no. 1',
-            },
-        ],
-        count: 2,
+        // comps: [],
+        // isShowPanel:true
 
+    };
     }
 
 
@@ -111,110 +102,15 @@ class InterFaceDetail extends React.Component{
             );
     };
 
-    //断言页面
-    handleDelete = key => {
-        const dataSource = [...this.state.dataSource];
-        this.setState({
-            dataSource: dataSource.filter(item => item.key !== key),
-        });
-    };
-
-    handleAdd = () => {
-        const { count, dataSource } = this.state;
-        const newData = {
-            key: count,
-            name: `Edward King ${count}`,
-            age: 32,
-            address: `London, Park Lane no. ${count}`,
-        };
-        this.setState({
-            dataSource: [...dataSource, newData],
-            count: count + 1,
-        });
-    };
-
-    handleSave = row => {
-        const newData = [...this.state.dataSource];
-        const index = newData.findIndex(item => row.key === item.key);
-        const item = newData[index];
-        newData.splice(index, 1, { ...item, ...row });
-        this.setState({
-            dataSource: newData,
-        });
-    };
-
     render() {
 
-         const columns =[{
-            title: '参数',
-            dataIndex: 'params',
-            width: '30%',
-            editable: true,
-        },{
-            title: '期望值',
-            dataIndex: 'except',
-            width: '30%',
-            editable: true,
-        },{
-            title: '校验规则',
-            dataIndex: 'rule',
-            // render:()=>
-            //     this.state.dataSource.length >= 1 ?(
-            //         <Select placeholder="请选择" style={{width: "29%"}}>
-            //             <Select.Option value="equal">equal</Select.Option>})}
-            //             <Select.Option value="contain">contain</Select.Option>})}
-            //         </Select>):null,
-        },{
-            title: 'operation',
-            dataIndex: 'operation',
-            render: (text, record) =>
-                this.state.dataSource.length >= 1 ? (
-                    <Popconfirm title="Sure to delete?" onConfirm={() => this.handleDelete(record.key)}>
-                        <a>Delete</a>
-                    </Popconfirm>
-                ) : null,
-        }]
+
 
 
         const { getFieldDecorator} = this.props.form;
         const { comps,dataSource } = this.state;
         const { Panel } = Collapse;
         const {isShowPanel,fields} = this.props
-
-
-        //编写断言页面
-        const EditableContext = React.createContext();
-        const EditableRow = ({ form, index, ...props }) => (
-            <EditableContext.Provider value={form}>
-                <tr {...props} />
-            </EditableContext.Provider>
-        );
-        const EditableFormRow = Form.create()(EditableRow);
-        const components = {
-            body: {
-                row: EditableFormRow,
-                cell: EditableCell,
-            },
-        };
-
-        const column = columns.map(col => {
-            if (!col.editable) {
-                return col;
-            }
-            return {
-                ...col,
-                onCell: record => ({
-                    record,
-                    editable: col.editable,
-                    dataIndex: col.dataIndex,
-                    title: col.title,
-                    handleSave: this.handleSave,
-                }),
-            };
-        });
-
-
-
         const CustomizedForm = Form.create({
             name: 'global_state',
             onFieldsChange(props, changedFields) {
@@ -287,22 +183,7 @@ class InterFaceDetail extends React.Component{
                                     // rules: [{ required: true, message: 'Assertion is required!' }],
                                     initialValue:''
                                 })(
-                                    <div>
-                                        <Button
-                                            onClick={this.handleAdd}
-                                            type="primary"
-                                            style={{
-                                                marginBottom: 16,
-                                            }}
-                                        >add a row
-                                        </Button>
-                                    <Table components={components}
-                                           rowClassName={() => 'editable-row'}
-                                           bordered
-                                           dataSource={dataSource}
-                                           columns={column}
-                                    />
-                                    </div>
+                                    <EditableTable/>
                                 )}
                         </Form.Item>
 
