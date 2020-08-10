@@ -203,7 +203,9 @@ class InterFaceDetail extends React.Component{
                                     { required: true, message: '请求方式必选!'}
                                 ],
                             })(
-                                <RadioGroup  onChange={this.onMethodChange} value={fields.method}>
+                                <RadioGroup
+                                    // onChange={this.onMethodChange}
+                                    value={fields.method}>
                                     <Radio key="get" value={"get"}>get</Radio>
                                     <Radio key="post" value={"post"}>post</Radio>
                                     <Radio key="delete" value={"delete"}>delete</Radio>

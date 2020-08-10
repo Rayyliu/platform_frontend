@@ -83,19 +83,23 @@ class CreateTransferIndex extends React.Component{
         })
 }
 
-    onGetValue = async ()=>{
-        console.log("interfaceName==="+JSON.stringify(this.state.interfaceName))
-        const res = await get('/interface/findByName',{
-            interfaceName:this.state.interfaceName
-        });
-        if (res.code === 0){
-            this.setState({
-                fields: res.data,
-                isShowPanel:false
-            })
-            console.log("fields=="+JSON.stringify(this.state.fields))
-        }else{
-            message.error(res.msg || '没有行业信息，无法新增')
+    onGetValue = async ()=> {
+        console.log("interfaceName===" + JSON.stringify(this.state.interfaceName))
+        if (this.state.interfaceName == null||this.state.interfaceName =="") {
+            message.error('请先选择接口')
+        } else {
+            const res = await get('/interface/findByName', {
+                interfaceName: this.state.interfaceName
+            });
+            if (res.code === 0) {
+                this.setState({
+                    fields: res.data,
+                    isShowPanel: false
+                })
+                console.log("fields==" + JSON.stringify(this.state.fields))
+            } else {
+                message.error(res.msg || '没有行业信息，无法新增')
+            }
         }
     };
     /**
