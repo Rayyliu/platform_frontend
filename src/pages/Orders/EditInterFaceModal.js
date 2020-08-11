@@ -23,6 +23,7 @@ class EditInterFaceModal extends React.Component {
         uploading: false,
         img:{},
         interfaces:[],
+        sign:false
     };
 
     handleOk = () => {
@@ -109,6 +110,14 @@ class EditInterFaceModal extends React.Component {
             return ''
         }
     };
+
+    handleChange=(value)=> {
+        console.log("editvalue===" + JSON.stringify(value))
+        this.setState({
+            sign: value
+        })
+    }
+
     render() {
         const {TextArea} = Input
         const {interfaces} = this.state;
@@ -230,14 +239,14 @@ class EditInterFaceModal extends React.Component {
                             // initialValue: true,
                             valuePropName: 'checked'
                         })(
-                            <Switch checkedChildren="签名" unCheckedChildren="不签名" defaultChecked/>
+                            <Switch checkedChildren="签名" unCheckedChildren="不签名"  onChange={this.handleChange} />
                         )}
                     </Form.Item>
 
                     <Form.Item label={'签名字段'}>
-                        {getFieldDecorator('signKey',{
+                        {getFieldDecorator('signEntity',{
                         })(
-                            <Input placeholder={"接口签名则需填写签名所需字段"}/>
+                            <TextArea disabled={!this.state.sign} placeholder={"接口签名则需填写签名所需字段"}/>
                         )}
                     </Form.Item>
 

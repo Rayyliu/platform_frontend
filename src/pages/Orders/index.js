@@ -293,7 +293,7 @@ class Interfaces extends React.Component{
             },
             {
                 title: '签名字段',
-                dataIndex: 'signKey',
+                dataIndex: 'signEntity',
                 align: 'center',
                 // render: (text) => <img style={{height:'50px',width:'50px'}} src={text} alt={''}/>,
             },

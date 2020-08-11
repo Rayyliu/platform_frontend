@@ -102,11 +102,6 @@ class CreateInterFaceModal extends Component {
 }
 
 
-    addline=()=>{
-            return (<div>
-            <TextArea/>
-        </div>)
-    }
 
 
     /***
@@ -175,6 +170,16 @@ class CreateInterFaceModal extends Component {
         headerList.push({parameter: "", value: ""});
         this.setState({headerList});
     }
+
+    handleChange=(value)=>{
+        console.log("interfacevalue==="+JSON.stringify(value))
+        this.setState({
+            boolean: {
+                sign: value
+            }
+        })
+
+}
 
     delManager = (index) =>{
         let headerList = this.collectManager();
@@ -348,15 +353,15 @@ class CreateInterFaceModal extends Component {
                         {getFieldDecorator('sign',{
                             initialValue: true
                         })(
-                            <Switch checkedChildren="签名" unCheckedChildren="不签名" defaultChecked/>
+                            <Switch checkedChildren="签名" unCheckedChildren="不签名"  onChange={this.handleChange} />
                         )
                         }
                     </Form.Item>
 
                     <Form.Item label={'签名字段'}>
-                        {getFieldDecorator('signKey',{
+                        {getFieldDecorator('signEntity',{
                         })(
-                            <Input placeholder={"接口签名则需填写签名所需字段"}/>
+                            <TextArea disabled={!this.state.boolean.sign} placeholder={"接口签名则需填写签名所需字段"}/>
                         )}
                     </Form.Item>
 

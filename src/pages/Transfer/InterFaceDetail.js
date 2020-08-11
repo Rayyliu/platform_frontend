@@ -14,11 +14,9 @@ import {
 } from "antd";
 import {del, get, post} from "../../utils/ajax";
 import RadioGroup from "antd/es/radio/group";
-import EditableCell from "./EditableCell";
-import { EditableContext } from './CreateContext';
 import EditableTable from "./EditableTable";
 
-let  Option  = Select.Option;
+const {TextArea} = Input
 @Form.create()
 class InterFaceDetail extends React.Component{
     constructor(props) {
@@ -30,6 +28,8 @@ class InterFaceDetail extends React.Component{
             path: '',
             method: '',
             sign: false,
+            header:false,
+            signEntity:'',
         },
         // comps: [],
         // isShowPanel:true
@@ -139,6 +139,14 @@ class InterFaceDetail extends React.Component{
                         ...props.sign,
                         value: props.sign,
                     }),
+                    header: Form.createFormField({
+                        ...props.header,
+                        value: props.header,
+                    }),
+                    signEntity: Form.createFormField({
+                    ...props.signEntity,
+                    value: props.signEntity,
+                }),
                 };
             },
             onValuesChange(_, values) {
@@ -156,7 +164,7 @@ class InterFaceDetail extends React.Component{
                         <Form.Item label="HeaderDetail">
                             {getFieldDecorator('headerDetail', {
                                 rules: [{ required: true, message: 'HeaderDetail is required!' }],
-                            })(<Input />)}
+                            })(<Input placeholder={"{}"}/>)}
                         </Form.Item>
 
                         <Form.Item label="Path">
@@ -168,7 +176,9 @@ class InterFaceDetail extends React.Component{
                         <Form.Item label="Body">
                             {getFieldDecorator('body', {
                                 rules: [{ required: true, message: 'Body is required!' }],
-                            })(<Input />)}
+                            })(
+                                <Input />
+                            )}
                         </Form.Item>
 
                         <Form.Item label="提取参数Parameter">
@@ -192,7 +202,25 @@ class InterFaceDetail extends React.Component{
                                 // rules: [{ required: true, message: 'Assertion is required!' }],
                                 initialValue:''
                             })(
-                                <Switch  checkedChildren="启用" unCheckedChildren="废弃" checked={fields.sign}  />
+                                <Switch  checkedChildren="有" unCheckedChildren="无" checked={fields.sign}  />
+                            )}
+                        </Form.Item>
+
+                        <Form.Item label="签名字段">
+                            {getFieldDecorator('signEntity', {
+                                // rules: [{ required: true, message: 'Assertion is required!' }],
+                                initialValue:''
+                            })(
+                                <TextArea disabled={!fields.sign} defaultValue="没有签名则禁用"/>
+                            )}
+                        </Form.Item>
+
+                        <Form.Item label="header">
+                            {getFieldDecorator('header', {
+                                // rules: [{ required: true, message: 'Assertion is required!' }],
+                                initialValue:''
+                            })(
+                                <Switch  checkedChildren="设置" unCheckedChildren="不设置" checked={fields.header}  />
                             )}
                         </Form.Item>
 

@@ -111,12 +111,15 @@ class CreateTransferIndex extends React.Component{
         })
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
+                console.log("this.state.fields==="+JSON.stringify(this.state.fields))
                 values.headerDetail = this.state.fields.headerdetail
+                values.header = this.state.fields.header
                 values.body = this.state.fields.body
                 values.path = this.state.fields.path
                 values.method = this.state.fields.method
                 values.interFaceName = this.state.fields.interfaceName
                 values.sign = this.state.fields.sign
+                values.signEntity=this.state.fields.signEntity
                 this.createCaseAndExecute(values)
             }
         });
@@ -149,7 +152,7 @@ class CreateTransferIndex extends React.Component{
                     }
                 )
                 this.props.transferList();
-            },2000
+            },1500
                 )
 
 
