@@ -120,6 +120,7 @@ class CreateTransferIndex extends React.Component{
                 values.interFaceName = this.state.fields.interfaceName
                 values.sign = this.state.fields.sign
                 values.signEntity=this.state.fields.signEntity
+                values.assertionEntity=this.state.fields.dataSource
                 this.createCaseAndExecute(values)
             }
         });
@@ -169,15 +170,17 @@ class CreateTransferIndex extends React.Component{
     //     this.formRef = formRef;
     // };
 
+    test=()=>{
+        console.log("进入到test方法了")
+        console.log("this.child==="+this.child)
+        console.log(this.child.state.fields)
+    }
 
     render() {
         const {TextArea} = Input
         const { Panel } = Collapse;
         const { fields } = this.state;
         const { isShowPanel } = this.state;
-
-
-
         const formItemLayout = {
             labelCol: {
                 xs: { span: 24 },
@@ -263,10 +266,10 @@ class CreateTransferIndex extends React.Component{
                             <Button type='primary' onClick={this.onGetValue}>选择</Button>
                         </div>
                     </Form.Item>
-                    <InterFaceDetail isShowPanel={isShowPanel}
-                                     fields={fields}
-                                     // wrappedComponentRef={(form) => this.formRef = form}
-                    />
+                    {/*<InterFaceDetail isShowPanel={isShowPanel}*/}
+                                     {/*fields={fields}*/}
+                                     {/*// wrappedComponentRef={(form) => this.formRef = form}*/}
+                    {/*/>*/}
                     <Form.Item {...tailFormItemLayout}>
                         <Button type="default" onClick={this.handleCancel}>
                             取消
@@ -278,7 +281,8 @@ class CreateTransferIndex extends React.Component{
                     </Form.Item>
                 </Form>
                 </Spin>
-
+                <Button onClick={this.test}/>
+                <InterFaceDetail fields={fields} onRef={(ref) => { this.child = ref; }}/>
                 {/*<CustomizedForm {...fields} onChange={this.handleFormChange()}/>*/}
                 {/*<pre className="language-bash">{JSON.stringify(fields,null,2)}</pre>*/}
             </div>

@@ -57,21 +57,28 @@ class EditableTable extends React.Component {
 
         this.state = {
             dataSource: [
-                // {
-                //     key: "0",
-                //     name: "Edward King 0",
-                //     age: "32",
-                //     address: "London, Park Lane no. 0"
-                // },
-                // {
-                //     key: "1",
-                //     name: "Edward King 1",
-                //     age: "32",
-                //     address: "London, Park Lane no. 1"
-                // }
+                {
+                    key: "0",
+                    parameters: "Edward King 0",
+                    except: "32",
+                    rule: "equal"
+                },
+                {
+                    key: "1",
+                    parameters: "Edward King 1",
+                    except: "32",
+                    rule: "equal"
+                }
             ],
             count: 0
         };
+    }
+
+
+    componentDidMount() {
+        if (this.props.onRef) {
+            this.props.onRef(this);
+        }
     }
 
     handleDelete = (key) => {
@@ -104,6 +111,7 @@ class EditableTable extends React.Component {
             ...item,
             ...row
         });
+        console.log("newData=="+JSON.stringify(newData))
         this.setState({ dataSource: newData });
     };
 

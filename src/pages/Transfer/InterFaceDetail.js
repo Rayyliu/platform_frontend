@@ -30,6 +30,7 @@ class InterFaceDetail extends React.Component{
             sign: false,
             header:false,
             signEntity:'',
+            assertDataSource:[]
         },
         // comps: [],
         // isShowPanel:true
@@ -38,6 +39,11 @@ class InterFaceDetail extends React.Component{
     }
 
 
+    componentDidMount() {
+        if (this.props.onRef) {
+            this.props.onRef(this);
+        }
+    }
 
 
     /**
@@ -102,6 +108,21 @@ class InterFaceDetail extends React.Component{
             );
     };
 
+    test=(e)=>{
+        console.log("进入到test方法了")
+        console.log("this.form==="+this.form)
+        console.log("dataSource==="+this.form.state.dataSource)
+    }
+
+    submit=()=>{
+        this.setState({
+            fields:{
+                assertDataSource:this.form.state.dataSource
+            }
+        })
+        console.log("assertDataSource=="+JSON.stringify(this.state.fields.assertDataSource))
+    }
+
     render() {
 
 
@@ -147,6 +168,10 @@ class InterFaceDetail extends React.Component{
                     ...props.signEntity,
                     value: props.signEntity,
                 }),
+                    // assertDataSource: Form.createFormField({
+                    //     ...this.form.state.dataSource,
+                    //     value: this.form.state.dataSource,
+                    // }),
                 };
             },
             onValuesChange(_, values) {
@@ -193,7 +218,10 @@ class InterFaceDetail extends React.Component{
                                     // rules: [{ required: true, message: 'Assertion is required!' }],
                                     initialValue:''
                                 })(
-                                    <EditableTable/>
+                                    <div>
+                                        <Button onClick={this.submit}>点我点我</Button>
+                                    <EditableTable onRef={(ref) => { this.form = ref; }}/>
+                                    </div>
                                 )}
                         </Form.Item>
 
@@ -243,6 +271,10 @@ class InterFaceDetail extends React.Component{
                             }
                         </Form.Item>
 
+                            <div>
+                            <Button onClick={this.test}/>
+                            <EditableTable onRef={(ref) => { this.form = ref; }}/>
+                            </div>
                     {/*</Form>*/}
                         </Panel>
                     </Collapse>
