@@ -120,7 +120,7 @@ class CreateTransferIndex extends React.Component{
                 values.interFaceName = this.state.fields.interfaceName
                 values.sign = this.state.fields.sign
                 values.signEntity=this.state.fields.signEntity
-                values.assertionEntity=this.state.fields.dataSource
+                values.assertionEntity=this.state.fields.assertDataSource
                 this.createCaseAndExecute(values)
             }
         });

@@ -115,6 +115,7 @@ class InterFaceDetail extends React.Component{
     }
 
     submit=()=>{
+        console.log("submit----dataSource==="+JSON.stringify(this.form.state.dataSource))
         this.setState({
             fields:{
                 assertDataSource:this.form.state.dataSource
@@ -219,7 +220,7 @@ class InterFaceDetail extends React.Component{
                                     initialValue:''
                                 })(
                                     <div>
-                                        <Button onClick={this.submit}>点我点我</Button>
+                                    <Button onClick={this.submit}>点我点我</Button>
                                     <EditableTable onRef={(ref) => { this.form = ref; }}/>
                                     </div>
                                 )}
