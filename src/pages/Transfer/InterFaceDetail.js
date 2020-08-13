@@ -2,15 +2,11 @@ import React from "react";
 import {
     Button,
     Form,
-    Select,
-    Icon,
     Input,
     message,
     Collapse,
     Radio,
     Switch,
-    Table,
-    Popconfirm,
 } from "antd";
 import {del, get, post} from "../../utils/ajax";
 import RadioGroup from "antd/es/radio/group";
@@ -32,9 +28,6 @@ class InterFaceDetail extends React.Component{
             signEntity:'',
             assertDataSource:[]
         },
-        // comps: [],
-        // isShowPanel:true
-
     };
     }
 
@@ -108,20 +101,18 @@ class InterFaceDetail extends React.Component{
             );
     };
 
-    test=(e)=>{
+    test=()=>{
         console.log("进入到test方法了")
         console.log("this.form==="+this.form)
         console.log("dataSource==="+this.form.state.dataSource)
     }
 
     submit=()=>{
-        console.log("submit----dataSource==="+JSON.stringify(this.form.state.dataSource))
         this.setState({
             fields:{
                 assertDataSource:this.form.state.dataSource
             }
         })
-        console.log("assertDataSource=="+JSON.stringify(this.state.fields.assertDataSource))
     }
 
     render() {
@@ -219,10 +210,9 @@ class InterFaceDetail extends React.Component{
                                     // rules: [{ required: true, message: 'Assertion is required!' }],
                                     initialValue:''
                                 })(
-                                    <div>
-                                    <Button onClick={this.submit}>点我点我</Button>
-                                    <EditableTable onRef={(ref) => { this.form = ref; }}/>
-                                    </div>
+
+                                    <EditableTable submit={this.submit} onRef={(ref) => { this.form = ref; }}/>
+
                                 )}
                         </Form.Item>
 
@@ -272,10 +262,10 @@ class InterFaceDetail extends React.Component{
                             }
                         </Form.Item>
 
-                            <div>
-                            <Button onClick={this.test}/>
-                            <EditableTable onRef={(ref) => { this.form = ref; }}/>
-                            </div>
+                            {/*<div>*/}
+                            {/*<Button onClick={this.test}/>*/}
+                            {/*<EditableTable onRef={(ref) => { this.form = ref; }}/>*/}
+                            {/*</div>*/}
                     {/*</Form>*/}
                         </Panel>
                     </Collapse>

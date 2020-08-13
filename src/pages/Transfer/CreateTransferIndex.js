@@ -120,14 +120,14 @@ class CreateTransferIndex extends React.Component{
                 values.interFaceName = this.state.fields.interfaceName
                 values.sign = this.state.fields.sign
                 values.signEntity=this.state.fields.signEntity
-                values.assertionEntity=this.state.fields.assertDataSource
+                values.assertionEntity=this.child.state.fields.assertDataSource
                 this.createCaseAndExecute(values)
             }
         });
 
     };
     createCaseAndExecute = async (values) => {
-        console.log("values==="+JSON.stringify(values))
+        console.log("调试的values==="+JSON.stringify(values))
         values.storeImgS = this.state.storeImgs;
         const res = await post('/single/case/execute', {
             ...values
@@ -266,10 +266,10 @@ class CreateTransferIndex extends React.Component{
                             <Button type='primary' onClick={this.onGetValue}>选择</Button>
                         </div>
                     </Form.Item>
-                    {/*<InterFaceDetail isShowPanel={isShowPanel}*/}
-                                     {/*fields={fields}*/}
-                                     {/*// wrappedComponentRef={(form) => this.formRef = form}*/}
-                    {/*/>*/}
+                    <InterFaceDetail isShowPanel={isShowPanel}
+                                     fields={fields}
+                                     onRef={(ref) => { this.child = ref; }}
+                    />
                     <Form.Item {...tailFormItemLayout}>
                         <Button type="default" onClick={this.handleCancel}>
                             取消
@@ -281,8 +281,8 @@ class CreateTransferIndex extends React.Component{
                     </Form.Item>
                 </Form>
                 </Spin>
-                <Button onClick={this.test}/>
-                <InterFaceDetail fields={fields} onRef={(ref) => { this.child = ref; }}/>
+                {/*<Button onClick={this.test}/>*/}
+                {/*<InterFaceDetail fields={fields} onRef={(ref) => { this.child = ref; }}/>*/}
                 {/*<CustomizedForm {...fields} onChange={this.handleFormChange()}/>*/}
                 {/*<pre className="language-bash">{JSON.stringify(fields,null,2)}</pre>*/}
             </div>
