@@ -57,21 +57,20 @@ class EditableTable extends React.Component {
 
         this.state = {
             dataSource: [
-                // {
-                //     key: "0",
-                //     parameter: "Edward King 0",
-                //     except: "32",
-                //     rule: "equal"
-                // },
-                // {
-                //     key: "1",
-                //     parameter: "Edward King 1",
-                //     except: "32",
-                //     rule: "equal"
-                // }
+                {
+                    key: "0",
+                    parameter: "success",
+                    except: "32",
+                    rule: "Equals"
+                },
+                {
+                    key: "1",
+                    parameter: "executed",
+                    except: "true",
+                    rule: "Equals"
+                }
             ],
-            count: 0,
-            ruleValue:''
+            count: 0
         };
     }
 
@@ -91,13 +90,13 @@ class EditableTable extends React.Component {
 
     handleAdd = () => {
         console.log("进入add方法");
-        const { count, dataSource,ruleValue } = this.state;
+        const { count, dataSource } = this.state;
         const newData = {
             key: count,
             // name: `Edward King ${count}`,
             parameter: '',
             except: '',
-            rule:`${ruleValue}`
+            rule:this.columns.rule,
         };
         console.log("Edit---newData==="+JSON.stringify(newData))
         this.setState({
@@ -118,12 +117,7 @@ class EditableTable extends React.Component {
         this.setState({ dataSource: newData });
     };
 
-    handleChange=(value)=>{
-        console.log("editvalue==="+JSON.stringify(value))
-        this.setState({
-            ruleValue:value
-        })
-    }
+
 
     render() {
         const { dataSource } = this.state;

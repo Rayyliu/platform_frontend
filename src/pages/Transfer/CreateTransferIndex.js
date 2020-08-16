@@ -4,6 +4,7 @@ import {del, get, post} from "../../utils/ajax";
 import {isAuthenticated} from "../../utils/session";
 import options from './cities'
 import InterFaceDetail from "./InterFaceDetail";
+import jwt_decode from "jwt-decode";
 const { Option } = Select;
 // import { CaretRightOutlined } from '@ant-design/icons';
 
@@ -127,10 +128,18 @@ class CreateTransferIndex extends React.Component{
 
     };
     createCaseAndExecute = async (values) => {
+
+        let cook =isAuthenticated();
+        var user = jwt_decode(cook)
+        console.log("cook==="+JSON.stringify(cook))
+        var email = JSON.stringify(user.sub)
+        console.log("email==="+email)
+
         console.log("调试的values==="+JSON.stringify(values))
         values.storeImgS = this.state.storeImgs;
         const res = await post('/single/case/execute', {
-            ...values
+            ...values,
+            lastExecuteUser:email
         });
         console.log("res==="+JSON.stringify(res))
         if (res.code === 0) {
