@@ -139,7 +139,8 @@ class CreateTransferIndex extends React.Component{
         values.storeImgS = this.state.storeImgs;
         const res = await post('/single/case/execute', {
             ...values,
-            lastExecuteUser:email
+            lastExecuteUser:email,
+            add:true
         });
         console.log("res==="+JSON.stringify(res))
         if (res.code === 0) {
