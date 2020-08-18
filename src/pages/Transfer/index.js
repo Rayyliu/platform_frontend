@@ -147,7 +147,8 @@ class Index extends React.Component{
         this.setState({
             isAddAndUpdate: true,
             isAdd: false,
-            transfer: record
+            // transfer: record
+            cases:record
         })
     };
     /**
@@ -240,72 +241,72 @@ class Index extends React.Component{
             return;
         }
         const excelCases = res.data;
-        const option = {};
-        const columns = [
-            {
-                title: '用例名称',
-                dataIndex: 'caseName',
-            },
-            {
-                title: '所属项目',
-                dataIndex: 'project',
-            },
-            {
-                title: '是否有效',
-                dataIndex: 'valid',
-                align: 'center',
-                render:(text, record) => (
-                    <Switch onClick = {()=>this.switch(record)} checkedChildren="有效" unCheckedChildren="无效" checked={record.valid}  />
-                )
-            },
-            {
-                title: '描述',
-                dataIndex: 'description',
-            },
-            {
-                title: '执行结果',
-                dataIndex: 'caseExecuteResult',
-            },
-            {
-                title: '操作',
-                key: 'active',
-                align: 'center',
-                width: '20%',
-                render: (text, record) => (
-                    <div style={{ textAlign: 'center' }}>
-                        <Button type="primary" onClick={() => this.showEditModal(record)}>编辑</Button>
-                        &emsp;
-                        <Popconfirm title='您确定删除当前数据吗？' onConfirm={() => this.singleDelete(record)}>
-                            <Button type="danger">
-                                <Icon type='delete' />
-                                删除
-                            </Button>
-                        </Popconfirm>
-                    </div>
-                )
-            },
-        ];
-        option.fileName = 'cases';
-        option.datas = [
-            {
-                sheetData: excelCases.map(item => {
-                    const result = {};
-                    columns.forEach(c => {
-                        switch (c.dataIndex) {
-                            default:
-                                result[c.dataIndex] = item[c.dataIndex];
-                        }
-                    });
-                    return result;
-                }),
-                sheetName: 'cases',     // Excel文件名称
-                sheetFilter: columns.map(item => item.dataIndex),
-                sheetHeader: columns.map(item => item.title),
-                columnWidths: columns.map(() => excelCases.length),
-            },
-        ];
-        const toExcel = new ExportJsonExcel(option);
-        toExcel.saveExcel();
+        // const option = {};
+        // const columns = [
+        //     {
+        //         title: '用例名称',
+        //         dataIndex: 'caseName',
+        //     },
+        //     {
+        //         title: '所属项目',
+        //         dataIndex: 'project',
+        //     },
+        //     {
+        //         title: '是否有效',
+        //         dataIndex: 'valid',
+        //         align: 'center',
+        //         render:(text, record) => (
+        //             <Switch onClick = {()=>this.switch(record)} checkedChildren="有效" unCheckedChildren="无效" checked={record.valid}  />
+        //         )
+        //     },
+        //     {
+        //         title: '描述',
+        //         dataIndex: 'description',
+        //     },
+        //     {
+        //         title: '执行结果',
+        //         dataIndex: 'caseExecuteResult',
+        //     },
+        //     {
+        //         title: '操作',
+        //         key: 'active',
+        //         align: 'center',
+        //         width: '20%',
+        //         render: (text, record) => (
+        //             <div style={{ textAlign: 'center' }}>
+        //                 <Button type="primary" onClick={() => this.showEditModal(record)}>编辑</Button>
+        //                 &emsp;
+        //                 <Popconfirm title='您确定删除当前数据吗？' onConfirm={() => this.singleDelete(record)}>
+        //                     <Button type="danger">
+        //                         <Icon type='delete' />
+        //                         删除
+        //                     </Button>
+        //                 </Popconfirm>
+        //             </div>
+        //         )
+        //     },
+        // ];
+        // option.fileName = 'cases';
+        // option.datas = [
+        //     {
+        //         sheetData: excelCases.map(item => {
+        //             const result = {};
+        //             columns.forEach(c => {
+        //                 switch (c.dataIndex) {
+        //                     default:
+        //                         result[c.dataIndex] = item[c.dataIndex];
+        //                 }
+        //             });
+        //             return result;
+        //         }),
+        //         sheetName: 'cases',     // Excel文件名称
+        //         sheetFilter: columns.map(item => item.dataIndex),
+        //         sheetHeader: columns.map(item => item.title),
+        //         columnWidths: columns.map(() => excelCases.length),
+        //     },
+        // ];
+        // const toExcel = new ExportJsonExcel(option);
+        // toExcel.saveExcel();
     };
     render() {
         const {isAddAndUpdate,isAdd} = this.state;
@@ -416,30 +417,31 @@ class Index extends React.Component{
                                     bordered
                                     column={{ xxl: 4, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }}
                                 >
-                                    <Descriptions.Item label="关联接口"><Tag color="cyan">{record.interfaceId ? record.interfaceId:'用例关联接口'}</Tag></Descriptions.Item>
+                                    <Descriptions.Item label="关联接口"><Tag color="cyan">{record.interfaceName ? record.interfaceName:'用例关联接口'}</Tag></Descriptions.Item>
                                     <Descriptions label="测试数据">{record.body}</Descriptions>
-                                    <Descriptions.Item label="发布人头像">
-                                        {
-                                            record.avatar?
-                                                <img style={{height:'50px',width:'50px'}} src={record.response} alt={''}/>
-                                                :
-                                                <Tag color="cyan">平台发布</Tag>
-                                        }
-                                    </Descriptions.Item>
+                                    {/*<Descriptions.Item label="发布人头像">*/}
+                                        {/*{*/}
+                                            {/*record.avatar?*/}
+                                                {/*<img style={{height:'50px',width:'50px'}} src={record.response} alt={''}/>*/}
+                                                {/*:*/}
+                                                {/*<Tag color="cyan">平台发布</Tag>*/}
+                                        {/*}*/}
+                                    {/*</Descriptions.Item>*/}
                                     <Descriptions label="接口返回实际结果">{record.response}</Descriptions>
-                                    <Descriptions.Item label="城市"><Tag color="cyan">{record.city}</Tag></Descriptions.Item>
-                                    <Descriptions.Item label="街道"><Tag color="cyan">{record.district}</Tag></Descriptions.Item>
-                                    <Descriptions.Item label="地址"><Tag color="cyan">{record.address}</Tag></Descriptions.Item>
-                                    <Descriptions.Item label="是否置顶"><Tag color="cyan">{record.isStick ? '已置顶':'未置顶'}</Tag></Descriptions.Item>
-                                    <Descriptions.Item label="置顶天数"><Tag color="cyan">{record.isStick ? record.order ? record.order.stickDay:'平台赠送' :'未置顶'}</Tag></Descriptions.Item>
-                                    <Descriptions.Item label="置顶到期时间"><Tag color="cyan">{record.isStick ? moment(record.stickEndTime).format('YYYY-MM-DD HH:mm:ss'):'未置顶'}</Tag></Descriptions.Item>
-                                    <Descriptions.Item label="是否推广"><Tag color="cyan">{record.isGeneralize ? '已推广':'未推广'}</Tag></Descriptions.Item>
-                                    <Descriptions.Item label="推广结束时间"><Tag color="cyan">{record.isGeneralize ? moment(record.generalizeEndTime).format('YYYY-MM-DD HH:mm:ss'):'未推广'}</Tag></Descriptions.Item>
+                                    <Descriptions.Item label="断言内容">{record.assertionContent ?record.assertionContent:'该用例无断言内容'}</Descriptions.Item>
+                                    <Descriptions.Item label="断言结果"><Tag color="red">{record.assertResult ? record.assertResult : '无断言'}</Tag></Descriptions.Item>
+                                    <Descriptions.Item label="上一次执行人">{record.lastExecuteUser}</Descriptions.Item>
+                                    {/*<Descriptions.Item label="是否置顶"><Tag color="cyan">{record.isStick ? '已置顶':'未置顶'}</Tag></Descriptions.Item>*/}
+                                    {/*<Descriptions.Item label="置顶天数"><Tag color="cyan">{record.isStick ? record.order ? record.order.stickDay:'平台赠送' :'未置顶'}</Tag></Descriptions.Item>*/}
+                                    {/*<Descriptions.Item label="置顶到期时间"><Tag color="cyan">{record.isStick ? moment(record.stickEndTime).format('YYYY-MM-DD HH:mm:ss'):'未置顶'}</Tag></Descriptions.Item>*/}
+                                    {/*<Descriptions.Item label="是否推广"><Tag color="cyan">{record.isGeneralize ? '已推广':'未推广'}</Tag></Descriptions.Item>*/}
+                                    {/*<Descriptions.Item label="推广结束时间"><Tag color="cyan">{record.isGeneralize ? moment(record.generalizeEndTime).format('YYYY-MM-DD HH:mm:ss'):'未推广'}</Tag></Descriptions.Item>*/}
                                     {/*<Descriptions.Item label="是否缴费"><Tag color="cyan">{record.isChargePublish ? '已缴费':'未缴费'}</Tag></Descriptions.Item>*/}
-                                    <Descriptions.Item label="联系人"><Tag color="cyan">{record.linkman}</Tag></Descriptions.Item>
-                                    <Descriptions.Item label="联系电话"><Tag color="cyan">{record.phone}</Tag></Descriptions.Item>
-                                    <Descriptions.Item label="发布时间"><Tag color="cyan">{moment(record.createdAt).format('YYYY-MM-DD HH:mm:ss')}</Tag></Descriptions.Item>
-                                    <Descriptions.Item label="描述">{record.description}</Descriptions.Item>
+                                    {/*<Descriptions.Item label="联系人"><Tag color="cyan">{record.linkman}</Tag></Descriptions.Item>*/}
+                                    {/*<Descriptions.Item label="联系电话"><Tag color="cyan">{record.phone}</Tag></Descriptions.Item>*/}
+                                    {/*<Descriptions.Item label="用例创建时间"><Tag color="cyan">{moment(record.createAt).format('YYYY-MM-DD HH:mm:ss')}</Tag></Descriptions.Item>*/}
+                                    <Descriptions.Item label="描述">{record.description ? record.description : '该用例无描述内容'}</Descriptions.Item>
+                                    <Descriptions label="用例创建时间">{record.createAt}</Descriptions>
 
                                 </Descriptions>
                             </div>
