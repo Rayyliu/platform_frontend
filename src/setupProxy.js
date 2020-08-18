@@ -39,7 +39,8 @@ module.exports = function (app) {
                 '^/platform_server/interface/findByName' : '/interface/findByName',
 
                 //case
-                '^/platform_server/single/case/execute' : '/single/case/execute'
+                '^/platform_server/single/case/execute' : '/single/case/execute',
+                '^/platform_server/single/case/queryPage' : '/single/case/queryPage'
 
 
                 }

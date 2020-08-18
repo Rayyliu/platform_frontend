@@ -121,7 +121,8 @@ class CreateTransferIndex extends React.Component{
                 values.interFaceName = this.state.fields.interfaceName
                 values.sign = this.state.fields.sign
                 values.signEntity=this.state.fields.signEntity
-                values.assertionEntity=this.child.state.fields.assertDataSource
+                // values.assertionEntity=JSON.parse(this.child.state.fields.assertDataSource)
+                values.assertionContent=this.child.state.fields.assertDataSource
                 this.createCaseAndExecute(values)
             }
         });
@@ -140,7 +141,8 @@ class CreateTransferIndex extends React.Component{
         const res = await post('/single/case/execute', {
             ...values,
             lastExecuteUser:email,
-            add:true
+            add:false,
+            valid:true
         });
         console.log("res==="+JSON.stringify(res))
         if (res.code === 0) {
@@ -240,7 +242,7 @@ class CreateTransferIndex extends React.Component{
                         )}
                     </Form.Item>
                     <Form.Item label={'用例描述'}>
-                        {getFieldDecorator('caseDescription', {
+                        {getFieldDecorator('description', {
                             rules: [
                                 { required: true, message: '描述用例设计的场景!'}
                                 ],

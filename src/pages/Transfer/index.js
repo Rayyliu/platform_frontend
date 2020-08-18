@@ -3,22 +3,24 @@ import {
     Table,
     Card,
     Button,
-    message, Col, Input,Empty, Form, Carousel, Descriptions, Tag, Modal, notification, Popconfirm, Icon
+    message, Col, Input,Empty, Form, Carousel, Descriptions, Tag, Modal, notification, Popconfirm, Icon,Switch
 } from 'antd'
 import ExportJsonExcel from "js-export-excel"
-import {del, get} from "../../utils/ajax";
+import {del, get, post} from "../../utils/ajax";
 import './style.css'
 import CreateTransferIndex from "./CreateTransferIndex";
 import EditTransferModal from "./EditTransferModal";
 import moment from 'moment'
 import SynDataModal from "./SynDataModal";
 import EditStickModal from "./EditStickModal";
+import {isAuthenticated} from "../../utils/session";
+import jwt_decode from "jwt-decode";
 
 @Form.create()
 class Index extends React.Component{
     state = {
-        transfers: [],
-        transfersLoading: false,
+        cases: [],
+        casesLoading: false,
         pagination: {
             total: 0,
             current: 1,
@@ -34,57 +36,86 @@ class Index extends React.Component{
     };
     componentDidMount() {
         if (!this.state.isAddAndUpdate){
-            this.getTransfers()
+            this.getCaseExecuteRecord()
         }
     }
-    getTransfers = async (page = 1) => {
+    getCaseExecuteRecord = async (pageNum = 1) => {
         const { pagination } = this.state;
         const fields = this.props.form.getFieldsValue();
         this.setState({
-            transfersLoading: true,
+            casesLoading: true,
         });
-        const res = await get('/transfers', {
-            page: page,
+        const res = await get('/single/case/queryPage', {
+            pageNum: pageNum,
             pageSize: this.state.pagination.pageSize,
-            search: fields.search || ''
+            caseName: fields.caseName || ''
         });
+
+        console.log("pageres==="+JSON.stringify(res))
         if (res.code !== 0) {
             this.setState({
-                transfersLoading: false,
+                casesLoading: false,
             });
             return
         }
         this.setState({
-            transfersLoading: false,
-            transfers: res.data.list,
+            casesLoading: false,
+            cases: res.data.entity,
             pagination: {
                 ...pagination,
                 total: res.data.total,
-                current: page
+                current: pageNum
             }
         })
     };
+
+    executeCase=async(values)=>{
+        console.log("Transfer调试values==="+JSON.stringify(values))
+        let cook =isAuthenticated();
+        var user = jwt_decode(cook)
+        console.log("cook==="+JSON.stringify(cook))
+        var email = JSON.stringify(user.sub)
+        const res = await post('/single/case/execute', {
+            ...values,
+            lastExecuteUser:email,
+            add:false,
+            valid:true
+        });
+        console.log("res==="+JSON.stringify(res))
+        if (res.code === 0) {
+            this.setState({
+                result: {
+                    success: res.success,
+                    errorCode: res.errorCode,
+                    execute: res.execute,
+                    message: res.message,
+                }
+            }
+            )
+            this.props.transferList();
+        }
+    }
     /**
      * table分页
      */
-    onTableChange = async (page) => {
+    onTableChange = async (pageNum) => {
         await this.setState({
-            pagination: page
+            pagination: pageNum
         });
-        this.getTransfers(page.current)
+        this.getCaseExecuteRecord(pageNum.current)
     };
     /**
      * 搜索函数
      */
     onSearch = () => {
-        this.getTransfers()
+        this.getCaseExecuteRecord()
     };
     /**
      * 重置函数
      */
     onReset = () => {
         this.props.form.resetFields();
-        this.getTransfers();
+        this.getCaseExecuteRecord();
         this.setState({
             selectedRowKeys: []
         });
@@ -98,7 +129,7 @@ class Index extends React.Component{
            isAddAndUpdate: false,
            isAdd: false
        });
-        this.getTransfers();
+        this.getCaseExecuteRecord();
     };
     /**
      * 新增发布信息页面
@@ -135,7 +166,7 @@ class Index extends React.Component{
         this.setState({
             isShowStickModal: false
         });
-        this.getTransfers()
+        this.getCaseExecuteRecord()
     };
     /**
      * 批量删除
@@ -145,7 +176,7 @@ class Index extends React.Component{
             title: '提示',
             content: '您确定批量删除勾选内容吗？',
             onOk: async () => {
-                const res = await del('/transfers', {
+                const res = await del('/cases', {
                     ids: this.state.selectedRowKeys
                 });
                 if (res.code === 0) {
@@ -156,7 +187,7 @@ class Index extends React.Component{
                     this.setState({
                         selectedRowKeys: []
                     });
-                    this.getTransfers()
+                    this.getCaseExecuteRecord()
                 }
             }
         })
@@ -179,13 +210,13 @@ class Index extends React.Component{
         this.setState({
             selectedRowKeys: []
         });
-        this.getTransfers()
+        this.getCaseExecuteRecord()
     };
     /**
      * 单条删除
      */
     singleDelete = async (record) => {
-        const res = await del('/transfers',{
+        const res = await del('/cases',{
             ids: record.id
         });
         if (res.code === 0) {
@@ -196,19 +227,19 @@ class Index extends React.Component{
             this.setState({
                 selectedRowKeys: []
             });
-            this.getTransfers()
+            this.getCaseExecuteRecord()
         }
     };
     handleExport = async () => {
         const fields = this.props.form.getFieldsValue();
-        const res = await get('/transfers/findAll', {
+        const res = await get('/cases/findAll', {
             search: fields.search || ''
         });
         if (res.code !== 0){
             message.error(res.msg);
             return;
         }
-        const excelTransfers = res.data;
+        const excelCases = res.data;
         const option = {};
         const columns = [
             {
@@ -220,8 +251,20 @@ class Index extends React.Component{
                 dataIndex: 'project',
             },
             {
+                title: '是否有效',
+                dataIndex: 'valid',
+                align: 'center',
+                render:(text, record) => (
+                    <Switch onClick = {()=>this.switch(record)} checkedChildren="有效" unCheckedChildren="无效" checked={record.valid}  />
+                )
+            },
+            {
                 title: '描述',
                 dataIndex: 'description',
+            },
+            {
+                title: '执行结果',
+                dataIndex: 'caseExecuteResult',
             },
             {
                 title: '操作',
@@ -242,10 +285,10 @@ class Index extends React.Component{
                 )
             },
         ];
-        option.fileName = 'transfers';
+        option.fileName = 'cases';
         option.datas = [
             {
-                sheetData: excelTransfers.map(item => {
+                sheetData: excelCases.map(item => {
                     const result = {};
                     columns.forEach(c => {
                         switch (c.dataIndex) {
@@ -255,10 +298,10 @@ class Index extends React.Component{
                     });
                     return result;
                 }),
-                sheetName: 'transfers',     // Excel文件名称
+                sheetName: 'cases',     // Excel文件名称
                 sheetFilter: columns.map(item => item.dataIndex),
                 sheetHeader: columns.map(item => item.title),
-                columnWidths: columns.map(() => excelTransfers.length),
+                columnWidths: columns.map(() => excelCases.length),
             },
         ];
         const toExcel = new ExportJsonExcel(option);
@@ -266,7 +309,7 @@ class Index extends React.Component{
     };
     render() {
         const {isAddAndUpdate,isAdd} = this.state;
-        const {transfers,transfer,transfersLoading, pagination,selectedRowKeys,synDataModel,isShowStickModal} = this.state;
+        const {cases,transfer,casesLoading, pagination,selectedRowKeys,synDataModel,isShowStickModal} = this.state;
         const { getFieldDecorator } = this.props.form;
         const columns = [
             {
@@ -282,11 +325,24 @@ class Index extends React.Component{
             {
                 title: '用例描述',
                 dataIndex: 'description',
-                align: 'center'
+                align: 'center',
+            },
+            {
+                title: '是否有效',
+                dataIndex: 'valid',
+                align: 'center',
+                render:(text, record) => (
+                    <Switch onClick = {()=>this.switch(record)} checkedChildren="有效" unCheckedChildren="无效" checked={record.valid}  />
+                )
             },
             {
                 title: '执行结果',
-                dataIndex: 'result',
+                dataIndex: 'caseExecuteResult',
+                align: 'center'
+            },
+            {
+                title: '上一次执行时间',
+                dataIndex: 'lastExecuteTime',
                 align: 'center'
             },
             {
@@ -298,9 +354,9 @@ class Index extends React.Component{
                     <div style={{ textAlign: 'center' }}>
                         <Button type="primary" onClick={() => this.editTransferInfo(record)}>编辑</Button>
                         &emsp;
-                        <Button type="primary" onClick={() => this.editTransferInfo(record)}>运行</Button>
+                        <Button type="primary" onClick={() => this.executeCase(record)}>运行</Button>
                         &emsp;
-                        <Button type="default" onClick={() => this.editStick(record)}>编辑置顶</Button>
+                        <Button type="default" onClick={() => this.editStick(record)}>用例详情</Button>
                         &emsp;
                         <Popconfirm title='您确定删除当前数据吗？' onConfirm={() => this.singleDelete(record)}>
                             <Button type="danger">
@@ -360,15 +416,17 @@ class Index extends React.Component{
                                     bordered
                                     column={{ xxl: 4, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }}
                                 >
-                                    <Descriptions.Item label="发布人"><Tag color="cyan">{record.nickname ? record.nickname:'平台发布'}</Tag></Descriptions.Item>
+                                    <Descriptions.Item label="关联接口"><Tag color="cyan">{record.interfaceId ? record.interfaceId:'用例关联接口'}</Tag></Descriptions.Item>
+                                    <Descriptions label="测试数据">{record.body}</Descriptions>
                                     <Descriptions.Item label="发布人头像">
                                         {
-                                            record.avatar ?
-                                                <img style={{height:'50px',width:'50px'}} src={record.avatar} alt={''}/>
+                                            record.avatar?
+                                                <img style={{height:'50px',width:'50px'}} src={record.response} alt={''}/>
                                                 :
                                                 <Tag color="cyan">平台发布</Tag>
                                         }
                                     </Descriptions.Item>
+                                    <Descriptions label="接口返回实际结果">{record.response}</Descriptions>
                                     <Descriptions.Item label="城市"><Tag color="cyan">{record.city}</Tag></Descriptions.Item>
                                     <Descriptions.Item label="街道"><Tag color="cyan">{record.district}</Tag></Descriptions.Item>
                                     <Descriptions.Item label="地址"><Tag color="cyan">{record.address}</Tag></Descriptions.Item>
@@ -382,12 +440,13 @@ class Index extends React.Component{
                                     <Descriptions.Item label="联系电话"><Tag color="cyan">{record.phone}</Tag></Descriptions.Item>
                                     <Descriptions.Item label="发布时间"><Tag color="cyan">{moment(record.createdAt).format('YYYY-MM-DD HH:mm:ss')}</Tag></Descriptions.Item>
                                     <Descriptions.Item label="描述">{record.description}</Descriptions.Item>
+
                                 </Descriptions>
                             </div>
                         }
                         columns={columns}
-                        dataSource={transfers}
-                        loading={transfersLoading}
+                        dataSource={cases}
+                        loading={casesLoading}
                         rowSelection={rowSelection}
                         pagination={pagination}
                         onChange={this.onTableChange}
