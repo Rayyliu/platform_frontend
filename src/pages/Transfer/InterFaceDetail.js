@@ -160,10 +160,6 @@ class InterFaceDetail extends React.Component{
                     ...props.signEntity,
                     value: props.signEntity,
                 }),
-                    // assertDataSource: Form.createFormField({
-                    //     ...this.form.state.dataSource,
-                    //     value: this.form.state.dataSource,
-                    // }),
                 };
             },
             onValuesChange(_, values) {

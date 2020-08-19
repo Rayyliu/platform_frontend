@@ -5,12 +5,10 @@ import {
     Button,
     message, Col, Input,Empty, Form, Carousel, Descriptions, Tag, Modal, notification, Popconfirm, Icon,Switch
 } from 'antd'
-import ExportJsonExcel from "js-export-excel"
 import {del, get, post} from "../../utils/ajax";
 import './style.css'
 import CreateTransferIndex from "./CreateTransferIndex";
 import EditTransferModal from "./EditTransferModal";
-import moment from 'moment'
 import SynDataModal from "./SynDataModal";
 import EditStickModal from "./EditStickModal";
 import {isAuthenticated} from "../../utils/session";
@@ -201,6 +199,8 @@ class Index extends React.Component{
             synDataModel: true
         })
     };
+
+
     /**
      * 关闭修改模态框
      */
@@ -327,6 +327,7 @@ class Index extends React.Component{
                 title: '用例描述',
                 dataIndex: 'description',
                 align: 'center',
+                ellipsis: true,
             },
             {
                 title: '是否有效',
@@ -412,13 +413,17 @@ class Index extends React.Component{
                         rowKey='id'
                         bordered
                         expandedRowRender={record =>
-                            <div>
+                            <div >
                                 <Descriptions
                                     bordered
                                     column={{ xxl: 4, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }}
                                 >
-                                    <Descriptions.Item label="关联接口"><Tag color="cyan">{record.interfaceName ? record.interfaceName:'用例关联接口'}</Tag></Descriptions.Item>
-                                    <Descriptions label="测试数据">{record.body}</Descriptions>
+                                    <Descriptions.Item label="关联接口"><Tag color="cyan">{record.interfaceName !=null? record.interfaceName:'用例关联接口'}</Tag></Descriptions.Item>
+                                    <Descriptions label="测试数据" >
+                                        <div className={"ellipsis"} title={record.body}>
+                                            {record.body}
+                                        </div>
+                                        </Descriptions>
                                     {/*<Descriptions.Item label="发布人头像">*/}
                                         {/*{*/}
                                             {/*record.avatar?*/}
@@ -427,9 +432,17 @@ class Index extends React.Component{
                                                 {/*<Tag color="cyan">平台发布</Tag>*/}
                                         {/*}*/}
                                     {/*</Descriptions.Item>*/}
-                                    <Descriptions label="接口返回实际结果">{record.response}</Descriptions>
-                                    <Descriptions.Item label="断言内容">{record.assertionContent ?record.assertionContent:'该用例无断言内容'}</Descriptions.Item>
-                                    <Descriptions.Item label="断言结果"><Tag color="red">{record.assertResult ? record.assertResult : '无断言'}</Tag></Descriptions.Item>
+                                    <Descriptions label="接口返回实际结果" >
+                                        <div className={"ellipsis"} title={record.response}>
+                                            {record.response}
+                                        </div>
+                                        </Descriptions>
+                                    <Descriptions.Item label="断言内容" >
+                                        <div className={"ellipsis"} title={record.assertionContent}>
+                                            {record.assertionContent !=null ?record.assertionContent:'该用例无断言内容'}
+                                        </div>
+                                        </Descriptions.Item>
+                                    <Descriptions.Item label="断言结果"><Tag color="red">{record.assertResult!=null ? record.assertResult : '无断言'}</Tag></Descriptions.Item>
                                     <Descriptions.Item label="上一次执行人">{record.lastExecuteUser}</Descriptions.Item>
                                     {/*<Descriptions.Item label="是否置顶"><Tag color="cyan">{record.isStick ? '已置顶':'未置顶'}</Tag></Descriptions.Item>*/}
                                     {/*<Descriptions.Item label="置顶天数"><Tag color="cyan">{record.isStick ? record.order ? record.order.stickDay:'平台赠送' :'未置顶'}</Tag></Descriptions.Item>*/}
@@ -440,7 +453,7 @@ class Index extends React.Component{
                                     {/*<Descriptions.Item label="联系人"><Tag color="cyan">{record.linkman}</Tag></Descriptions.Item>*/}
                                     {/*<Descriptions.Item label="联系电话"><Tag color="cyan">{record.phone}</Tag></Descriptions.Item>*/}
                                     {/*<Descriptions.Item label="用例创建时间"><Tag color="cyan">{moment(record.createAt).format('YYYY-MM-DD HH:mm:ss')}</Tag></Descriptions.Item>*/}
-                                    <Descriptions.Item label="描述">{record.description ? record.description : '该用例无描述内容'}</Descriptions.Item>
+                                    <Descriptions.Item label="描述">{record.description!=null ? record.description : '该用例无描述内容'}</Descriptions.Item>
                                     <Descriptions label="用例创建时间">{record.createAt}</Descriptions>
 
                                 </Descriptions>
@@ -459,5 +472,7 @@ class Index extends React.Component{
             </div>
     }
 }
+
+
 
 export default Index;

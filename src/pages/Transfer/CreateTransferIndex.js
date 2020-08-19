@@ -93,6 +93,7 @@ class CreateTransferIndex extends React.Component{
                 interfaceName: this.state.interfaceName
             });
             if (res.code === 0) {
+                res.data.signEntity=JSON.stringify(res.data.signEntity)
                 this.setState({
                     fields: res.data,
                     isShowPanel: false
