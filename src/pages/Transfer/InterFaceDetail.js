@@ -7,10 +7,12 @@ import {
     Collapse,
     Radio,
     Switch,
+    Tabs
 } from "antd";
 import {del, get, post} from "../../utils/ajax";
 import RadioGroup from "antd/es/radio/group";
 import EditableTable from "./EditableTable";
+import EditBodyTabs from "./EditBodyTabs";
 
 const {TextArea} = Input
 @Form.create()
@@ -26,7 +28,7 @@ class InterFaceDetail extends React.Component{
             sign: false,
             header:false,
             signEntity:'',
-            assertDataSource:[]
+            assertDataSource:[],
         },
     };
     }
@@ -190,7 +192,7 @@ class InterFaceDetail extends React.Component{
                             {getFieldDecorator('body', {
                                 rules: [{ required: true, message: 'Body is required!' }],
                             })(
-                                <Input />
+                                <EditBodyTabs/>
                             )}
                         </Form.Item>
 
