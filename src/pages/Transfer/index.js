@@ -68,7 +68,7 @@ class Index extends React.Component{
     };
 
     executeCase=async(values)=>{
-        console.log("Transfer调试values==="+JSON.stringify(values))
+        console.log("运行时的values==="+JSON.stringify(values))
         let cook =isAuthenticated();
         var user = jwt_decode(cook)
         console.log("cook==="+JSON.stringify(cook))

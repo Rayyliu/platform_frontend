@@ -22,7 +22,7 @@ class InterFaceDetail extends React.Component{
     this.state = {
         fields: {
             headerDetail: '',
-            body: '',
+            body: [],
             path: '',
             method: '',
             sign: false,
@@ -110,16 +110,42 @@ class InterFaceDetail extends React.Component{
     }
 
     submit=()=>{
+        setTimeout(()=>{
         this.setState({
             fields:{
-                assertDataSource:this.form.state.dataSource
+                assertDataSource:this.form.state.dataSource,
+                body:this.bodyForm.state.dataSource
             }
         })
+        console.log("assertDataSource==="+JSON.stringify(this.state.fields.assertDataSource))
+        console.log("interfacedetail-body==="+JSON.stringify(this.state.fields.body))
+    },10)
     }
-
+    bodySubmit=()=>{
+        setTimeout(()=>{
+        this.setState({
+            fields:{
+                body:this.bodyForm.state.dataSource
+            }
+        })
+        console.log("bodyForm-body==="+JSON.stringify(this.bodyForm.state.dataSource))
+        console.log("interfacedetail-body==="+JSON.stringify(this.state.fields.body))
+    },10)
+    }
     render() {
 
-
+        const tailFormItemLayout = {
+            wrapperCol: {
+                xs: {
+                    span: 24,
+                    offset: 0,
+                },
+                sm: {
+                    span: 16,
+                    offset: 7,
+                },
+            },
+        };
 
 
         const { getFieldDecorator} = this.props.form;
@@ -192,7 +218,7 @@ class InterFaceDetail extends React.Component{
                             {getFieldDecorator('body', {
                                 rules: [{ required: true, message: 'Body is required!' }],
                             })(
-                                <EditBodyTabs/>
+                                <EditBodyTabs bodySubmit={this.bodySubmit} onRef={(ref) => { this.bodyForm = ref; }}/>
                             )}
                         </Form.Item>
 
@@ -228,7 +254,7 @@ class InterFaceDetail extends React.Component{
                                 // rules: [{ required: true, message: 'Assertion is required!' }],
                                 initialValue:''
                             })(
-                                <TextArea disabled={!fields.sign} defaultValue="没有签名则禁用"/>
+                                <TextArea  disabled={!fields.sign} defaultValue="没有签名则禁用"/>
                             )}
                         </Form.Item>
 
@@ -265,6 +291,11 @@ class InterFaceDetail extends React.Component{
                             {/*<EditableTable onRef={(ref) => { this.form = ref; }}/>*/}
                             {/*</div>*/}
                     {/*</Form>*/}
+                            <Form.Item {...tailFormItemLayout}>
+                            <Button  type="primary" icon="check" onClick={this.submit}>
+                                提交
+                            </Button>
+                            </Form.Item>
                         </Panel>
                     </Collapse>
                 );

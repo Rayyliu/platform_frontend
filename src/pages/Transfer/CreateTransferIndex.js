@@ -116,14 +116,15 @@ class CreateTransferIndex extends React.Component{
                 console.log("this.state.fields==="+JSON.stringify(this.state.fields))
                 values.headerDetail = this.state.fields.headerdetail
                 values.header = this.state.fields.header
-                values.body = this.state.fields.body
+                // values.body = this.state.fields.body
+                values.body = JSON.stringify(this.child.state.fields.body)
                 values.path = this.state.fields.path
                 values.method = this.state.fields.method
                 values.interFaceName = this.state.fields.interfaceName
                 values.sign = this.state.fields.sign
                 values.signEntity=this.state.fields.signEntity
                 // values.assertionEntity=JSON.parse(this.child.state.fields.assertDataSource)
-                values.assertionContent=this.child.state.fields.assertDataSource
+                values.assertionContent=JSON.stringify(this.child.state.fields.assertDataSource)
                 this.createCaseAndExecute(values)
             }
         });

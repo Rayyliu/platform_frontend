@@ -151,7 +151,7 @@ class EditableTable extends React.Component {
                 >
                     Add a row
                 </Button>
-                <Button onClick={this.props.submit}>确认</Button>
+                {/*<Button onClick={this.props.submit}>确认</Button>*/}
                 <Table
                     components={components}
                     rowClassName={() => "editable-row"}

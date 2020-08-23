@@ -1,21 +1,62 @@
-import {Button, Form, Table, Popconfirm, Select, Tabs, Input} from "antd";
+import EditableCell from "./EditableCell";
+import {Button, Form,Table,Popconfirm,Select} from "antd";
 import React from "react";
+import { EditableContext } from './CreateContext';
 
-const initialPanes = [
-    { key: "1" }
-];
 
-const {TextArea} = Input
-const { TabPane } = Tabs;
-class EditBodyTabs extends React.Component {
-    newTabIndex = 0;
-    count=1;
+const EditableRow = ({ form, index, ...props }) => (
+    <EditableContext.Provider value={form}>
+        <tr {...props} />
+    </EditableContext.Provider>
+);
+const EditableFormRow = Form.create()(EditableRow);
 
-    state = {
-        activeKey: initialPanes[0].key,
-        panes: initialPanes,
+    class EditBodyTabs extends React.Component {
+    constructor(props) {
+        super(props);
+        this.columns = [
+            {
+                title: "caseDescription",
+                dataIndex: "caseDescription",
+                width: "30%",
+                editable: true
+            },
+            {
+                title: "caseData",
+                dataIndex: "caseData",
+                editable: true
+            },
+            {
+                title: "operation",
+                dataIndex: "operation",
+                render: (text, record) =>
+                    this.state.dataSource.length >= 1 ? (
+                        <Popconfirm
+                            title="Sure to delete?"
+                            onConfirm={() => this.handleDelete(record.key)}
+                        >
+                            <a>Delete</a>
+                        </Popconfirm>
+                    ) : null
+            }
+        ];
 
-    };
+        this.state = {
+            dataSource: [
+                {
+                    key: "0",
+                    caseDescription: "success",
+                    caseData: "32",
+                },
+                {
+                    key: "1",
+                    caseDescription: "executed",
+                    caseData: "true",
+                }
+            ],
+            count: 0
+        };
+    }
 
 
     componentDidMount() {
@@ -24,77 +65,84 @@ class EditBodyTabs extends React.Component {
         }
     }
 
-    //新增TabPane标签页
-    add = () => {
-        const { panes } = this.state;
-        const activeKey = `入参${this.newTabIndex++}`;
-        console.log("activeKey==="+JSON.stringify(activeKey))
-        const newPanes = [...panes];
-        newPanes.push({
-            title: `用例${this.count++}`,
-            content: <TextArea/>,
-            key: activeKey
-        });
+    handleDelete = (key) => {
+        const dataSource = [...this.state.dataSource];
         this.setState({
-            panes: newPanes,
-            activeKey
+            dataSource: dataSource.filter((item) => item.key !== key)
         });
     };
 
-    //监听
-    onChange = (activeKey) => {
-        this.setState({ activeKey });
-    };
-
-    onEdit = (targetKey, action) => {
-        this[action](targetKey);
-    };
-
-    remove = (targetKey) => {
-        const { panes, activeKey ,count} = this.state;
-        console.log("activeKey==="+JSON.stringify(activeKey))
-        console.log("targetKey==="+JSON.stringify(targetKey))
-        let newActiveKey = activeKey;
-        let lastIndex;
-        panes.forEach((pane, i) => {
-            console.log("pane==="+JSON.stringify(pane))
-            console.log("i==="+JSON.stringify(i))
-            if (pane.key === targetKey) {
-                lastIndex = i - 1;
-
-            }
-        });
-        const newPanes = panes.filter((pane) => pane.key !== targetKey);
-        if (newPanes.length && newActiveKey === targetKey) {
-            if (lastIndex >= 0) {
-                newActiveKey = newPanes[lastIndex].key;
-            } else {
-                newActiveKey = newPanes[0].key;
-            }
-        }
-        this.count=this.count-1;
+    handleAdd = () => {
+        console.log("进入add方法");
+        const { count, dataSource } = this.state;
+        const newData = {
+            key: count,
+            // name: `Edward King ${count}`,
+            caseDescription: '',
+            caseData: '',
+        };
+        console.log("Edit---newData==="+JSON.stringify(newData))
         this.setState({
-            panes: newPanes,
-            activeKey: newActiveKey
+            dataSource: [...dataSource, newData],
+            count: count + 1
         });
     };
+
+    handleSave = (row) => {
+        const newData = [...this.state.dataSource];
+        const index = newData.findIndex((item) => row.key === item.key);
+        const item = newData[index];
+        newData.splice(index, 1, {
+            ...item,
+            ...row
+        });
+        console.log("newData=="+JSON.stringify(newData))
+        this.setState({ dataSource: newData });
+        console.log("EditBody-dataSource==="+JSON.stringify(this.state.dataSource))
+    };
+
+
     render() {
-        const { panes, activeKey } = this.state;
+        const { dataSource } = this.state;
+        const components = {
+            body: {
+                row: EditableFormRow,
+                cell: EditableCell
+            }
+        };
+        const columns = this.columns.map((col) => {
+            if (!col.editable) {
+                return col;
+            }
+            return {
+                ...col,
+                onCell: (record) => ({
+                    record,
+                    editable: col.editable,
+                    dataIndex: col.dataIndex,
+                    title: col.title,
+                    handleSave: this.handleSave
+                })
+            };
+        });
         return (
-
-        <Tabs
-            type="editable-card"
-            onChange={this.onChange}
-            activeKey={activeKey}
-            onEdit={this.onEdit}
-            style={{height:'200px'}}
-        >
-            {panes.map((pane) => (
-                <TabPane tab={pane.title} key={pane.key} closable={pane.closable}>
-                    {pane.content}
-                </TabPane>
-            ))}
-        </Tabs>
+            <div>
+                <Button
+                    onClick={this.handleAdd}
+                    type="primary"
+                    style={{ marginBottom: 16 }}
+                >
+                    Add a row
+                </Button>
+                {/*<Button onClick={this.props.bodySubmit}>确认</Button>*/}
+                <Table
+                    components={components}
+                    rowClassName={() => "editable-row"}
+                    bordered
+                    dataSource={dataSource}
+                    columns={columns}
+                />
+            </div>
         );
     }
 }
