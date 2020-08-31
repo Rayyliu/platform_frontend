@@ -54,7 +54,8 @@ module.exports = function (app) {
             changeOrigin: true,
             pathRewrite:{
                 //execute表
-                '^/platform_data/execute/update' : '/execute/update'
+                '^/platform_data/execute/update' : '/execute/update',
+                '^/platform_data/execute/queryCase' : '/execute/queryCase'
             }
         }
         ))

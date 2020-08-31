@@ -1,17 +1,17 @@
 import React from "react";
 import {Button, Drawer, Form,Select, Row, Input, Col, message, DatePicker,Radio,Spin,Alert} from "antd";
-import {del, get, post} from "../../utils/ajax";
+import {getDataUrl, get, post} from "../../utils/ajax";
 import {isAuthenticated} from "../../utils/session";
 import options from './cities'
 import InterFaceDetail from "./InterFaceDetail";
 import jwt_decode from "jwt-decode";
-const { Option } = Select;
-
+const { Option } = Select
 
 @Form.create()
 class CreateSceneCase extends React.Component{
     state = {
-        visible:false
+        visible:false,
+        cases:[]
     };
 
     showSceneCaseDrawer = () => {
@@ -55,6 +55,21 @@ class CreateSceneCase extends React.Component{
             })
         }else {
             message.error("调用queryDistInterFace接口失败，查询接口失败")
+        }
+    }
+
+    /***
+     * 查询所有用例详情
+     * @param value
+     */
+    queryAllCase= async () => {
+        console.log("进入到queryAllCase方法")
+        const res = await getDataUrl('/execute/queryCase')
+        console.log("res==="+JSON.stringify(res))
+        if(res.code === 0) {
+            this.setState({
+                cases:res.caseName
+            })
         }
     }
 
@@ -157,6 +172,7 @@ class CreateSceneCase extends React.Component{
     };
 
     render() {
+        const {cases} = this.state
         return (
         <Drawer
             title='用例场景'
@@ -178,20 +194,23 @@ class CreateSceneCase extends React.Component{
                             <Input placeholder="Please enter user name" />
                         </Form.Item>
                     </Col>
-                    {/*<Col span={16}>
+                    <Col span={16}>
                         <Form.Item
                             name="url"
                             label="Url"
                             rules={[{ required: true, message: 'Please enter url' }]}
                         >
-                            <Input
-                                style={{ width: '100%' }}
-                                addonBefore="http://"
-                                addonAfter=".com"
-                                placeholder="Please enter url"
-                            />
+                            {/*<Select placeholder={"选择接口用例"} style={{width:"29%"}} onChange={this.queryAllCase}>*/}
+                                {/*{cases.map((item)=>{*/}
+                                {/*return <Option value={item}>{item}</Option>})*/}
+                            {/*})*/}
+                            {/*</Select>*/}
+                            <Select placeholder="请选择" style={{width:"29%"}} onChange={this.queryAllCase}>
+                                {cases.map((item) => {
+                                    return <Select.Option value={item}>{item}</Select.Option>})}
+                            </Select>
                         </Form.Item>
-                    </Col>*/}
+                    </Col>
                 </Row>
                 </div>
                 {/*<Row gutter={16}>*/}
