@@ -2,7 +2,14 @@ import EditableCell from "./EditableCell";
 import {Button, Form,Table,Popconfirm,Select} from "antd";
 import React from "react";
 import { EditableContext } from './CreateContext';
+import {createFormField} from "../../utils/util";
 
+const form = Form.create({
+    //表单回显
+    mapPropsToFields(props) {
+        return createFormField(props.useCase)
+    }
+});
 
 const EditableRow = ({ form, index, ...props }) => (
     <EditableContext.Provider value={form}>
@@ -10,8 +17,8 @@ const EditableRow = ({ form, index, ...props }) => (
     </EditableContext.Provider>
 );
 const EditableFormRow = Form.create()(EditableRow);
-
-    class EditBodyTabs extends React.Component {
+@form
+class EditBodyTabs extends React.Component {
     constructor(props) {
         super(props);
         this.columns = [

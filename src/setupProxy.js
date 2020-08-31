@@ -40,10 +40,22 @@ module.exports = function (app) {
 
                 //case
                 '^/platform_server/single/case/execute' : '/single/case/execute',
-                '^/platform_server/single/case/queryPage' : '/single/case/queryPage'
+                '^/platform_server/single/case/queryPage' : '/single/case/queryPage',
+                '^/platform_server/execute/update' : '/execute/update'
 
 
                 }
         }
     ))
+
+    app.use(
+        createProxyMiddleware('/platform_data', {
+            target: 'http://localhost:8081',
+            changeOrigin: true,
+            pathRewrite:{
+                //execute表
+                '^/platform_data/execute/update' : '/execute/update'
+            }
+        }
+        ))
 };

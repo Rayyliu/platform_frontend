@@ -6,17 +6,6 @@ import options from './cities'
 import InterFaceDetail from "./InterFaceDetail";
 import jwt_decode from "jwt-decode";
 const { Option } = Select;
-// import { CaretRightOutlined } from '@ant-design/icons';
-
-
-function getBase64(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
-    });
-}
 
 @Form.create()
 class CreateTransferIndex extends React.Component{
@@ -114,6 +103,7 @@ class CreateTransferIndex extends React.Component{
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
                 console.log("this.state.fields==="+JSON.stringify(this.state.fields))
+                values.interfaceId=this.state.fields.id
                 values.headerDetail = this.state.fields.headerdetail
                 values.header = this.state.fields.header
                 // values.body = this.state.fields.body
@@ -143,7 +133,7 @@ class CreateTransferIndex extends React.Component{
         const res = await post('/single/case/execute', {
             ...values,
             lastExecuteUser:email,
-            add:false,
+            add:true,
             valid:true
         });
         console.log("res==="+JSON.stringify(res))
@@ -174,22 +164,6 @@ class CreateTransferIndex extends React.Component{
         }
     };
 
-    // handleCreate = () => {
-    //     console.log(this.formRef.getItemsValue());     //6、调用子组件的自定义方法getItemsValue。注意：通过this.formRef 才能拿到数据
-    //     this.props.getFormRef(this.formRef.getItemsValue());
-    //     this.props.closeModal(false);
-    // }
-    //
-    // saveFormRef = formRef => {
-    //     this.formRef = formRef;
-    // };
-
-    test=()=>{
-        console.log("进入到test方法了")
-        console.log("this.child==="+this.child)
-        console.log(this.child.state.fields)
-    }
-
     render() {
         const {TextArea} = Input
         const { Panel } = Collapse;
@@ -218,9 +192,8 @@ class CreateTransferIndex extends React.Component{
             },
         };
 
-        const { previewVisible, previewImage,projects,interfaces } = this.state;
-        const { uploading } = this.state;
-        const { getFieldDecorator, getFieldValue } = this.props.form;
+        const { projects,interfaces } = this.state;
+        const { getFieldDecorator} = this.props.form;
 
         return(
             <div style={{marginTop:'10px'}}>

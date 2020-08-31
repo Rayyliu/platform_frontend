@@ -3,7 +3,7 @@ import {
     Table,
     Card,
     Button,
-    message, Col, Input,Empty, Form, Carousel, Descriptions, Tag, Modal, notification, Popconfirm, Icon,Switch
+    message, Col, Input,Empty, Form, Carousel, Descriptions, Tag, Modal, notification, Popconfirm, Icon,Switch,Tooltip
 } from 'antd'
 import {del, get, post} from "../../utils/ajax";
 import './style.css'
@@ -13,11 +13,13 @@ import SynDataModal from "./SynDataModal";
 import EditStickModal from "./EditStickModal";
 import {isAuthenticated} from "../../utils/session";
 import jwt_decode from "jwt-decode";
+import CreateSceneCase from "./CreateSceneCase";
 
 @Form.create()
 class Index extends React.Component{
     state = {
         cases: [],
+        useCase:{},
         casesLoading: false,
         pagination: {
             total: 0,
@@ -25,6 +27,7 @@ class Index extends React.Component{
             pageSize: 10,
             showQuickJumper: true
         },
+        isShowSceneCase:false,
         selectedRowKeys: [],
         transfer: {},
         isAddAndUpdate: false,
@@ -40,6 +43,7 @@ class Index extends React.Component{
     getCaseExecuteRecord = async (pageNum = 1) => {
         const { pagination } = this.state;
         const fields = this.props.form.getFieldsValue();
+        console.log("CaseName==="+JSON.stringify(fields.caseName))
         this.setState({
             casesLoading: true,
         });
@@ -138,15 +142,38 @@ class Index extends React.Component{
             isAdd: true
         })
     };
+
+    /***
+     * 新增用例集合页面
+     */
+    handleSceneCase =() => {
+        // setTimeout(()=> {
+        //     this.setState({
+        //             isShowSceneCase: true
+        //         }
+        //     )},10)
+        this.setState({
+            isShowSceneCase:true
+        })
+        console.log("isShowSceneCase==="+JSON.stringify(this.state.isShowSceneCase))
+    };
+
+    closeCreateSceneCase=()=>{
+        this.setState({
+            isShowSceneCase:false
+        })
+    }
+
     /**
      * 编辑发布信息页面
      * */
-    editTransferInfo = (record)=>{
+    editCaseInfo = (record)=>{
+        console.log("record==="+JSON.stringify(record))
         this.setState({
             isAddAndUpdate: true,
             isAdd: false,
             // transfer: record
-            cases:record
+            useCase:record
         })
     };
     /**
@@ -157,6 +184,7 @@ class Index extends React.Component{
             isShowStickModal: true,
             transfer: record
         })
+        console.log("isShowStickModal==="+JSON.stringify(this.state.isShowStickModal))
     };
     /**
      * 关闭编辑置顶框
@@ -231,87 +259,11 @@ class Index extends React.Component{
             this.getCaseExecuteRecord()
         }
     };
-    handleExport = async () => {
-        const fields = this.props.form.getFieldsValue();
-        const res = await get('/cases/findAll', {
-            search: fields.search || ''
-        });
-        if (res.code !== 0){
-            message.error(res.msg);
-            return;
-        }
-        const excelCases = res.data;
-        // const option = {};
-        // const columns = [
-        //     {
-        //         title: '用例名称',
-        //         dataIndex: 'caseName',
-        //     },
-        //     {
-        //         title: '所属项目',
-        //         dataIndex: 'project',
-        //     },
-        //     {
-        //         title: '是否有效',
-        //         dataIndex: 'valid',
-        //         align: 'center',
-        //         render:(text, record) => (
-        //             <Switch onClick = {()=>this.switch(record)} checkedChildren="有效" unCheckedChildren="无效" checked={record.valid}  />
-        //         )
-        //     },
-        //     {
-        //         title: '描述',
-        //         dataIndex: 'description',
-        //     },
-        //     {
-        //         title: '执行结果',
-        //         dataIndex: 'caseExecuteResult',
-        //     },
-        //     {
-        //         title: '操作',
-        //         key: 'active',
-        //         align: 'center',
-        //         width: '20%',
-        //         render: (text, record) => (
-        //             <div style={{ textAlign: 'center' }}>
-        //                 <Button type="primary" onClick={() => this.showEditModal(record)}>编辑</Button>
-        //                 &emsp;
-        //                 <Popconfirm title='您确定删除当前数据吗？' onConfirm={() => this.singleDelete(record)}>
-        //                     <Button type="danger">
-        //                         <Icon type='delete' />
-        //                         删除
-        //                     </Button>
-        //                 </Popconfirm>
-        //             </div>
-        //         )
-        //     },
-        // ];
-        // option.fileName = 'cases';
-        // option.datas = [
-        //     {
-        //         sheetData: excelCases.map(item => {
-        //             const result = {};
-        //             columns.forEach(c => {
-        //                 switch (c.dataIndex) {
-        //                     default:
-        //                         result[c.dataIndex] = item[c.dataIndex];
-        //                 }
-        //             });
-        //             return result;
-        //         }),
-        //         sheetName: 'cases',     // Excel文件名称
-        //         sheetFilter: columns.map(item => item.dataIndex),
-        //         sheetHeader: columns.map(item => item.title),
-        //         columnWidths: columns.map(() => excelCases.length),
-        //     },
-        // ];
-        // const toExcel = new ExportJsonExcel(option);
-        // toExcel.saveExcel();
-    };
+
     render() {
-        const {isAddAndUpdate,isAdd} = this.state;
-        const {cases,transfer,casesLoading, pagination,selectedRowKeys,synDataModel,isShowStickModal} = this.state;
-        const { getFieldDecorator } = this.props.form;
+        const {isAddAndUpdate,isAdd,isShowSceneCase} = this.state;
+        const {cases,transfer,casesLoading, pagination,selectedRowKeys,synDataModel,isShowStickModal,useCase} = this.state;
+        const {getFieldDecorator} = this.props.form;
         const columns = [
             {
                 title: '用例名称',
@@ -354,7 +306,7 @@ class Index extends React.Component{
                 width: '25%',
                 render: (text, record) => (
                     <div style={{ textAlign: 'center' }}>
-                        <Button type="primary" onClick={() => this.editTransferInfo(record)}>编辑</Button>
+                        <Button type="primary" onClick={() => this.editCaseInfo(record)}>编辑</Button>
                         &emsp;
                         <Button type="primary" onClick={() => this.executeCase(record)}>运行</Button>
                         &emsp;
@@ -378,14 +330,14 @@ class Index extends React.Component{
             isAdd ?
                 <CreateTransferIndex transferList = {this.transferList}/>
                 :
-                <EditTransferModal transferList ={this.transferList} transfer={transfer}/>
-            :
+                <EditTransferModal transferList ={this.transferList} useCase={useCase}/>
+                :
             <div style={{ padding: 5 }}>
                 <Card bordered={false}>
                     <Form layout='inline' style={{ marginBottom: 16 }}>
                         <Col span={6}>
                             <Form.Item label="综合搜索">
-                                {getFieldDecorator('search')(
+                                {getFieldDecorator('caseName')(
                                     <Input
                                         onPressEnter={this.onSearch}
                                         style={{ width: 200 }}
@@ -404,10 +356,10 @@ class Index extends React.Component{
                         </Col>
                     </Form>
                     <div style={{ marginBottom: 16, textAlign: 'right' }}>
-                        <Button type='primary' icon='plus' onClick={this.pushTransferInfo}>新增</Button>&emsp;
+                        <Button type='primary' icon='plus' onClick={this.pushTransferInfo}>新增用例</Button>&emsp;
                         <Button type='danger' icon='delete' disabled={!selectedRowKeys.length} onClick={this.batchDelete}>批量删除</Button>&emsp;
                         <Button type='default' icon='copy' disabled={!selectedRowKeys.length} onClick={this.synData}>同步数据</Button>&emsp;
-                        <Button type="primary" icon='export' onClick={this.handleExport}>导出</Button>
+                        <Button type="primary" icon='export' onClick={this.handleSceneCase}>新增场景</Button>
                     </div>
                     <Table
                         rowKey='id'
@@ -418,10 +370,19 @@ class Index extends React.Component{
                                     bordered
                                     column={{ xxl: 4, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }}
                                 >
-                                    <Descriptions.Item label="关联接口"><Tag color="cyan">{record.interfaceName !=null? record.interfaceName:'用例关联接口'}</Tag></Descriptions.Item>
+                                    <Descriptions.Item label="关联接口">
+                                        <div className={"ellipsis"}>
+                                            <Tooltip placement="topLeft" title={record.interfaceName} color={'#f50'}>
+                                        <Tag color="cyan">{record.interfaceName !=null? record.interfaceName:'用例关联接口'}
+                                        </Tag>
+                                            </Tooltip>
+                                        </div>
+                                    </Descriptions.Item>
                                     <Descriptions label="测试数据" >
-                                        <div className={"ellipsis"} title={record.body}>
+                                        <div className={"ellipsis"}>
+                                            <Tooltip placement="topLeft" title={record.body} color={'#f50'}>
                                             {record.body}
+                                            </Tooltip>
                                         </div>
                                         </Descriptions>
                                     {/*<Descriptions.Item label="发布人头像">*/}
@@ -433,16 +394,20 @@ class Index extends React.Component{
                                         {/*}*/}
                                     {/*</Descriptions.Item>*/}
                                     <Descriptions label="接口返回实际结果" >
-                                        <div className={"ellipsis"} title={record.response}>
+                                        <div className={"ellipsis"} >
+                                            <Tooltip placement="topLeft" title={record.response} color={'#f50'}>
                                             {record.response}
+                                            </Tooltip>
                                         </div>
                                         </Descriptions>
                                     <Descriptions.Item label="断言内容" >
-                                        <div className={"ellipsis"} title={record.assertionContent}>
+                                        <div className={"ellipsis"} >
+                                            <Tooltip placement="topLeft" title={record.assertionContent} color={'#f50'}>
                                             {record.assertionContent !=null ?record.assertionContent:'该用例无断言内容'}
+                                            </Tooltip>
                                         </div>
                                         </Descriptions.Item>
-                                    <Descriptions.Item label="断言结果"><Tag color="red">{record.assertResult!=null ? record.assertResult : '无断言'}</Tag></Descriptions.Item>
+                                    <Descriptions label="用例创建时间">{record.createAt}</Descriptions>
                                     <Descriptions.Item label="上一次执行人">{record.lastExecuteUser}</Descriptions.Item>
                                     {/*<Descriptions.Item label="是否置顶"><Tag color="cyan">{record.isStick ? '已置顶':'未置顶'}</Tag></Descriptions.Item>*/}
                                     {/*<Descriptions.Item label="置顶天数"><Tag color="cyan">{record.isStick ? record.order ? record.order.stickDay:'平台赠送' :'未置顶'}</Tag></Descriptions.Item>*/}
@@ -453,9 +418,28 @@ class Index extends React.Component{
                                     {/*<Descriptions.Item label="联系人"><Tag color="cyan">{record.linkman}</Tag></Descriptions.Item>*/}
                                     {/*<Descriptions.Item label="联系电话"><Tag color="cyan">{record.phone}</Tag></Descriptions.Item>*/}
                                     {/*<Descriptions.Item label="用例创建时间"><Tag color="cyan">{moment(record.createAt).format('YYYY-MM-DD HH:mm:ss')}</Tag></Descriptions.Item>*/}
-                                    <Descriptions.Item label="描述">{record.description!=null ? record.description : '该用例无描述内容'}</Descriptions.Item>
-                                    <Descriptions label="用例创建时间">{record.createAt}</Descriptions>
-
+                                    <Descriptions.Item label="描述">
+                                        <div className={"ellipsis"}>
+                                            <Tooltip placement="topLeft" title={record.description} color={'#ff4646'}>
+                                        {record.description!=null ? record.description : '该用例无描述内容'}
+                                            </Tooltip>
+                                        </div>
+                                    </Descriptions.Item>
+                                    {/*<Descriptions.Item label="断言结果"><Tag color="red">*/}
+                                        {/*<div className={"ellipsis"} title={record.assertResult}>*/}
+                                            {/*{record.assertResult!=null ? record.assertResult : '无断言'}*/}
+                                        {/*</div>*/}
+                                    {/*</Tag>*/}
+                                    {/*</Descriptions.Item>*/}
+                                    <Descriptions.Item label="断言结果">
+                                        <div className={"ellipsis"}>
+                                            <Tag color="red">
+                                                <Tooltip placement="topLeft" title={record.assertResult} color="red">
+                                            {record.assertResult!=null ? record.assertResult : '无断言'}
+                                                </Tooltip>
+                                            </Tag>
+                                        </div>
+                                    </Descriptions.Item>
                                 </Descriptions>
                             </div>
                         }
@@ -467,6 +451,7 @@ class Index extends React.Component{
                         onChange={this.onTableChange}
                     />
                 </Card>
+                <CreateSceneCase onClose={this.closeCreateSceneCase} visible={isShowSceneCase}/>
                 <EditStickModal onCancel={this.closeEditStickModal} visible={isShowStickModal}  transfer={transfer}/>
                 <SynDataModal onCancel={this.closeSynDataModal} visible={synDataModel}  ids={this.state.selectedRowKeys}/>
             </div>
