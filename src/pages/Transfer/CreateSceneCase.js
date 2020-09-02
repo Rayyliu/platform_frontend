@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Drawer, Form,Select, Row, Input, Col, message, DatePicker,Radio,Spin,Alert} from "antd";
+import {Button, Drawer, Form,Select, Row, Input, Col, message, Divider,Radio,Spin,Alert} from "antd";
 import {getDataUrl, get, post} from "../../utils/ajax";
 import {isAuthenticated} from "../../utils/session";
 import options from './cities'
@@ -26,8 +26,9 @@ class CreateSceneCase extends React.Component{
         });
     };
     componentDidMount() {
-        this.queryInterFaces();
-        this.queryProject()
+        // this.queryInterFaces();
+        // this.queryProject();
+        this.queryAllCase()
     }
 
     /***
@@ -65,13 +66,16 @@ class CreateSceneCase extends React.Component{
     queryAllCase= async () => {
         console.log("进入到queryAllCase方法")
         const res = await getDataUrl('/execute/queryCase')
-        console.log("res==="+JSON.stringify(res))
+        console.log("queryAllCaseRes==="+JSON.stringify(res))
         if(res.code === 0) {
             this.setState({
-                cases:res.caseName
+                cases:res.data
             })
         }
+        console.log("cases=="+JSON.stringify(this.state.cases))
     }
+
+
 
     handleChange=(value)=>{
         console.log("handleChange+value==="+JSON.stringify(value))
@@ -173,6 +177,7 @@ class CreateSceneCase extends React.Component{
 
     render() {
         const {cases} = this.state
+        const { getFieldDecorator } = this.props.form;
         return (
         <Drawer
             title='用例场景'
@@ -187,28 +192,37 @@ class CreateSceneCase extends React.Component{
                 <Row gutter={16}>
                     <Col span={8}>
                         <Form.Item
-                            name="name"
-                            label="Name"
+                            name="scene"
+                            label="Scene"
                             rules={[{ required: true, message: 'Please enter user name' }]}
                         >
                             <Input placeholder="Please enter user name" />
+
                         </Form.Item>
+                        <Button type="primary" icon="plus" style={{width:"100%"}} ></Button>
+                        <Divider/>
+                        <Button type="primary" icon="plus" style={{width:"100%"}} >添加场景</Button>
                     </Col>
                     <Col span={16}>
                         <Form.Item
-                            name="url"
-                            label="Url"
+                            name="case"
+                            label="选择用例"
                             rules={[{ required: true, message: 'Please enter url' }]}
                         >
-                            {/*<Select placeholder={"选择接口用例"} style={{width:"29%"}} onChange={this.queryAllCase}>*/}
-                                {/*{cases.map((item)=>{*/}
-                                {/*return <Option value={item}>{item}</Option>})*/}
-                            {/*})*/}
-                            {/*</Select>*/}
-                            <Select placeholder="请选择" style={{width:"29%"}} onChange={this.queryAllCase}>
-                                {cases.map((item) => {
-                                    return <Select.Option value={item}>{item}</Select.Option>})}
-                            </Select>
+                            {getFieldDecorator('case', {
+                                validateFirst: true,
+                                rules: [
+                                    { required: true, message: '项目不能为空' }
+                                ],
+                                initialValue : "",
+                            })(
+                                <Select placeholder="请选择" style={{width:"50%"}}>
+                                    {cases.map((item) => {
+                                        return <Select.Option value={item}>{item}</Select.Option>}
+                                    )}
+                                </Select>
+                            )}
+                            <Button>添加</Button>
                         </Form.Item>
                     </Col>
                 </Row>
