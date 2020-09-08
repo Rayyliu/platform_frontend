@@ -7,13 +7,14 @@ import InterFaceDetail from "./InterFaceDetail";
 import jwt_decode from "jwt-decode";
 const { Option } = Select;
 
+let fieldArr=[];
 @Form.create()
 class CreateTransferIndex extends React.Component{
     state = {
         projects:[],
         interfaces:[],
-        fields:{},
-        interfaceName:'',
+        fields:[],
+        interfaceName:{},
         isShowPanel:true,
         result:{
             success:false,
@@ -37,6 +38,14 @@ class CreateTransferIndex extends React.Component{
         this.queryInterFaces();
         this.queryProject()
     }
+
+    /***
+     * 组件生命周期之结束
+     */
+    componentWillUnmount(){
+        fieldArr=[]
+    }
+
 
     /***
      * 去重查询项目名称
@@ -74,6 +83,7 @@ class CreateTransferIndex extends React.Component{
 }
 
     onGetValue = async ()=> {
+
         console.log("interfaceName===" + JSON.stringify(this.state.interfaceName))
         if (this.state.interfaceName == null||this.state.interfaceName =="") {
             message.error('请先选择接口')
@@ -81,15 +91,17 @@ class CreateTransferIndex extends React.Component{
             const res = await get('/interface/findByName', {
                 interfaceName: this.state.interfaceName
             });
+            console.log("res==="+JSON.stringify(res))
             if (res.code === 0) {
-                res.data.signEntity=JSON.stringify(res.data.signEntity)
+                console.log("data===="+JSON.stringify(res.data))
+                console.log("fieldArr==="+JSON.stringify(fieldArr.push(res.data)))
                 this.setState({
-                    fields: res.data,
+                    fields: fieldArr,
                     isShowPanel: false
                 })
                 console.log("fields==" + JSON.stringify(this.state.fields))
             } else {
-                message.error(res.msg || '没有行业信息，无法新增')
+                message.error(res.msg || '没有接口信息，无法新增')
             }
         }
     };
@@ -253,10 +265,25 @@ class CreateTransferIndex extends React.Component{
                             <Button type='primary' onClick={this.onGetValue}>选择</Button>
                         </div>
                     </Form.Item>
-                    <InterFaceDetail isShowPanel={isShowPanel}
-                                     fields={fields}
-                                     onRef={(ref) => { this.child = ref; }}
-                    />
+
+                    <div>
+                     {/*<InterFaceDetail isShowPanel={isShowPanel}*/}
+                                     {/*fields={fields}*/}
+                                     {/*onRef={(ref) => { this.child = ref; }}*/}
+                    {/*/>*/}
+                        {fields.map((item,index)=>{
+                            console.log("index=="+index)
+                            return(
+                                <InterFaceDetail isShowPanel={isShowPanel}
+                                                 fields={item}
+                                                 index={index}
+                                                 onRef={(ref) => { this.child = ref; }}
+                                                 fieldArr={fieldArr}
+                                                 destroyInactivePanel={true}
+                        />
+                            )
+                        })}
+                    </div>
                     <Form.Item {...tailFormItemLayout}>
                         <Button type="default" onClick={this.handleCancel}>
                             取消

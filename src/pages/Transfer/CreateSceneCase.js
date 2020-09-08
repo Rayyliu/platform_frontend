@@ -1,12 +1,12 @@
 import React from "react";
-import {Button, Drawer, Form,Select, Row, Input, Col, message, Divider,Radio,Spin,Alert} from "antd";
+import {Button, Drawer, Form,Select, Row, Input, Col, message, Divider,Collapse,Spin,Alert} from "antd";
 import {getDataUrl, get, post} from "../../utils/ajax";
 import {isAuthenticated} from "../../utils/session";
 import options from './cities'
 import InterFaceDetail from "./InterFaceDetail";
 import jwt_decode from "jwt-decode";
 const { Option } = Select
-
+const { Panel } = Collapse
 @Form.create()
 class CreateSceneCase extends React.Component{
     state = {
@@ -83,6 +83,15 @@ class CreateSceneCase extends React.Component{
             interfaceName:value
         })
     }
+
+    /***
+     * 添加场景Collapse折叠板
+     * @returns {Promise<void>}
+     */
+    addSceneCollapse=()=>{
+
+    }
+
 
     onGetValue = async ()=> {
         console.log("interfaceName===" + JSON.stringify(this.state.interfaceName))
@@ -191,17 +200,53 @@ class CreateSceneCase extends React.Component{
                 <div>
                 <Row gutter={16}>
                     <Col span={8}>
-                        <Form.Item
-                            name="scene"
-                            label="Scene"
-                            rules={[{ required: true, message: 'Please enter user name' }]}
-                        >
-                            <Input placeholder="Please enter user name" />
+                        {/*<Form.Item*/}
+                            {/*name="scene"*/}
+                            {/*label="Scene"*/}
+                            {/*rules={[{ required: true, message: 'Please enter user name' }]}*/}
+                        {/*>*/}
+                            {/*<Input placeholder="Please enter user name" />*/}
+                        {/*</Form.Item>*/}
+                        {/*<Button type="primary" icon="plus" style={{width:"100%"}} ></Button>*/}
+                        <Collapse >
+                            <Panel header="用例场景" key="1" >
+                                <Collapse >
+                                    <Panel header="登录测试1" key="1" >
+                                        <Form.Item name="提取参数" label="提取参数">
+                                            <Input placeholder="提取参数" />
+                                        </Form.Item>
+                                    </Panel>
+                                </Collapse>
 
-                        </Form.Item>
-                        <Button type="primary" icon="plus" style={{width:"100%"}} ></Button>
+                                <Collapse >
+                                    <Panel header="登录测试2" key="1" >
+                                        <Form.Item name="提取参数" label="提取参数">
+                                            <Input placeholder="提取参数" />
+                                        </Form.Item>
+                                    </Panel>
+                                </Collapse>
+                            </Panel>
+
+                            {/*<Panel header="场景 2" key="2" >*/}
+                                {/*<Collapse >*/}
+                                    {/*<Panel header="登录测试3" key="1" >*/}
+                                        {/*<Form.Item name="提取参数" label="提取参数">*/}
+                                            {/*<Input placeholder="提取参数" />*/}
+                                        {/*</Form.Item>*/}
+                                    {/*</Panel>*/}
+                                {/*</Collapse>*/}
+
+                                {/*<Collapse >*/}
+                                    {/*<Panel header="登录测试4" key="1" >*/}
+                                        {/*<Form.Item name="提取参数" label="提取参数">*/}
+                                            {/*<Input placeholder="提取参数" />*/}
+                                        {/*</Form.Item>*/}
+                                    {/*</Panel>*/}
+                                {/*</Collapse>*/}
+                            {/*</Panel>*/}
+                        </Collapse>
                         <Divider/>
-                        <Button type="primary" icon="plus" style={{width:"100%"}} >添加场景</Button>
+                        <Button type="primary" icon="plus" style={{width:"100%"}} onClick={this.addSceneCollapse} >添加场景</Button>
                     </Col>
                     <Col span={16}>
                         <Form.Item

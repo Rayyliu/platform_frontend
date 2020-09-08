@@ -7,7 +7,8 @@ import {
     Collapse,
     Radio,
     Switch,
-    Tabs
+    Icon,
+    Popconfirm
 } from "antd";
 import {del, get, post} from "../../utils/ajax";
 import RadioGroup from "antd/es/radio/group";
@@ -30,16 +31,25 @@ class InterFaceDetail extends React.Component{
             signEntity:'',
             assertDataSource:[],
         },
+        panelIndex:'',
+        isDestroyInactivePanel:false
     };
     }
 
 
+    /***
+     * 组件挂载后触发
+     */
     componentDidMount() {
         if (this.props.onRef) {
             this.props.onRef(this);
         }
+        this.setState({
+            panelIndex:this.props.index
+        })
+        console.log("index==="+this.props.index)
+        console.log("panelIndex==="+this.state.panelIndex)
     }
-
 
     /**
      * 表单提交
@@ -103,11 +113,41 @@ class InterFaceDetail extends React.Component{
             );
     };
 
+    // deletePanel=(fieldArr,index)=>{
+    //     console.log("lastindex==="+JSON.stringify(index))
+    //     console.log("删除panel")
+    //     console.log("fieldArr==="+JSON.stringify(fieldArr))
+    //     fieldArr.splice(index)
+    // }
+
+    deletePanel=()=>{
+        this.setState({
+            isDestroyInactivePanel:true
+        })
+    }
+
+    genExtra = () => (
+        <Icon
+            type="close"
+            style={{ color: 'red' }}
+            onClick={() => {
+                //If you don't want click extra trigger collapse, you can prevent this:
+                this.setState({
+                    isDestroyInactivePanel:true
+                })
+                console.log("isDestroyInactivePanel==="+this.state.isDestroyInactivePanel)
+            }}
+        />
+    );
+
+
     test=()=>{
         console.log("进入到test方法了")
         console.log("this.form==="+this.form)
         console.log("dataSource==="+this.form.state.dataSource)
     }
+
+
 
     submit=()=>{
         setTimeout(()=>{
@@ -134,6 +174,7 @@ class InterFaceDetail extends React.Component{
     }
     render() {
 
+
         const tailFormItemLayout = {
             wrapperCol: {
                 xs: {
@@ -148,8 +189,25 @@ class InterFaceDetail extends React.Component{
         };
 
 
+        // const genExtra = (fieldArr,index) => (
+        //
+        // <Icon
+        //     type="minus"
+        //     style={{ color: 'red' }}
+        //     onClick={() => {
+        //
+        //         this.setState({
+        //             destroyInactivePanel:true,
+        //         })
+        //         console.log("destroyInactivePanel==="+this.state.destroyInactivePanel)
+        //     }}
+        // />
+        //
+        // );
+
+        const {isDestroyInactivePanel} = this.state
         const { getFieldDecorator} = this.props.form;
-        const { comps,dataSource } = this.state;
+        const {index,fieldArr} = this.props;
         const { Panel } = Collapse;
         const {isShowPanel,fields} = this.props
         const CustomizedForm = Form.create({
@@ -197,10 +255,15 @@ class InterFaceDetail extends React.Component{
             props => {
                 const { getFieldDecorator } = props.form;
                 return (
-                    <Collapse bordered="true" >
+                    <Collapse bordered={false}
+                              onChange={this.callback}
+                              destroyInactivePanel={isDestroyInactivePanel}>
                         <Panel
                             header={fields.interfaceName}
-                            disabled = {isShowPanel}>
+                            disabled = {isShowPanel}
+                            extra ={this.genExtra()}
+
+                        >
                     {/*<Form layout="inline" >*/}
                         <Form.Item label="HeaderDetail">
                             {getFieldDecorator('headerDetail', {
