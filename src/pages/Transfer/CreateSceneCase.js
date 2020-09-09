@@ -179,8 +179,6 @@ class CreateSceneCase extends React.Component{
                     this.props.transferList();
                 },1500
             )
-
-
         }
     };
 

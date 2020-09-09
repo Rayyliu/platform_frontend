@@ -31,8 +31,8 @@ class InterFaceDetail extends React.Component{
             signEntity:'',
             assertDataSource:[],
         },
-        panelIndex:'',
-        isDestroyInactivePanel:false
+        isDestroyInactivePanel:true,
+        fieldArr:[]
     };
     }
 
@@ -44,11 +44,7 @@ class InterFaceDetail extends React.Component{
         if (this.props.onRef) {
             this.props.onRef(this);
         }
-        this.setState({
-            panelIndex:this.props.index
-        })
-        console.log("index==="+this.props.index)
-        console.log("panelIndex==="+this.state.panelIndex)
+
     }
 
     /**
@@ -120,22 +116,26 @@ class InterFaceDetail extends React.Component{
     //     fieldArr.splice(index)
     // }
 
-    deletePanel=()=>{
-        this.setState({
-            isDestroyInactivePanel:true
-        })
-    }
 
-    genExtra = () => (
+
+    genExtra = (fieldArrs,index,fields) => (
         <Icon
             type="close"
             style={{ color: 'red' }}
             onClick={() => {
+                console.log("被删除的values==="+JSON.stringify(fields))
+                console.log("arrIndex==="+JSON.stringify(index))
+                console.log("删除之前的fieldArrs==="+JSON.stringify(fieldArrs))
+                fieldArrs.splice(index,1)
+                console.log("删除之后的fieldArrs==="+JSON.stringify(fieldArrs))
                 //If you don't want click extra trigger collapse, you can prevent this:
-                this.setState({
-                    isDestroyInactivePanel:true
-                })
+                setTimeout(()=>{
+                        this.setState({
+                        isDestroyInactivePanel:false,
+                        fieldArr:fieldArrs
+                })},10)
                 console.log("isDestroyInactivePanel==="+this.state.isDestroyInactivePanel)
+                console.log("fieldArr==="+this.state.fieldArr)
             }}
         />
     );
@@ -205,11 +205,10 @@ class InterFaceDetail extends React.Component{
         //
         // );
 
-        const {isDestroyInactivePanel} = this.state
+        const {isDestroyInactivePanel,fieldArr} = this.state
         const { getFieldDecorator} = this.props.form;
-        const {index,fieldArr} = this.props;
         const { Panel } = Collapse;
-        const {isShowPanel,fields} = this.props
+        const {isShowPanel,fields,fieldArrs,index} = this.props
         const CustomizedForm = Form.create({
             name: 'global_state',
             onFieldsChange(props, changedFields) {
@@ -255,16 +254,16 @@ class InterFaceDetail extends React.Component{
             props => {
                 const { getFieldDecorator } = props.form;
                 return (
-                    <Collapse bordered={false}
+                    <>
+                        {isDestroyInactivePanel&&
+                        <Collapse bordered={false}
                               onChange={this.callback}
-                              destroyInactivePanel={isDestroyInactivePanel}>
+                              >
                         <Panel
                             header={fields.interfaceName}
                             disabled = {isShowPanel}
-                            extra ={this.genExtra()}
-
+                            extra ={this.genExtra(fieldArrs,index,fields)}
                         >
-                    {/*<Form layout="inline" >*/}
                         <Form.Item label="HeaderDetail">
                             {getFieldDecorator('headerDetail', {
                                 rules: [{ required: true, message: 'HeaderDetail is required!' }],
@@ -361,6 +360,8 @@ class InterFaceDetail extends React.Component{
                             </Form.Item>
                         </Panel>
                     </Collapse>
+                        }
+                        </>
                 );
             });
         return(
@@ -377,7 +378,7 @@ class InterFaceDetail extends React.Component{
     }
 }
 const styles = {
-    urlUploader: {
+        urlUploader: {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',

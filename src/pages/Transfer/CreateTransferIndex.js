@@ -82,8 +82,9 @@ class CreateTransferIndex extends React.Component{
         })
 }
 
-    onGetValue = async ()=> {
 
+
+    onGetValue = async ()=> {
         console.log("interfaceName===" + JSON.stringify(this.state.interfaceName))
         if (this.state.interfaceName == null||this.state.interfaceName =="") {
             message.error('请先选择接口')
@@ -179,7 +180,7 @@ class CreateTransferIndex extends React.Component{
     render() {
         const {TextArea} = Input
         const { Panel } = Collapse;
-        const { fields } = this.state;
+        const { fields} = this.state;
         const { isShowPanel } = this.state;
         const formItemLayout = {
             labelCol: {
@@ -276,10 +277,9 @@ class CreateTransferIndex extends React.Component{
                             return(
                                 <InterFaceDetail isShowPanel={isShowPanel}
                                                  fields={item}
+                                                 fieldArrs={fieldArr}
                                                  index={index}
                                                  onRef={(ref) => { this.child = ref; }}
-                                                 fieldArr={fieldArr}
-                                                 destroyInactivePanel={true}
                         />
                             )
                         })}
@@ -299,6 +299,7 @@ class CreateTransferIndex extends React.Component{
                 {/*<InterFaceDetail fields={fields} onRef={(ref) => { this.child = ref; }}/>*/}
                 {/*<CustomizedForm {...fields} onChange={this.handleFormChange()}/>*/}
                 {/*<pre className="language-bash">{JSON.stringify(fields,null,2)}</pre>*/}
+
             </div>
         )
     }
