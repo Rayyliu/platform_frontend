@@ -44,6 +44,9 @@ class InterFaceDetail extends React.Component{
         if (this.props.onRef) {
             this.props.onRef(this);
         }
+        this.setState({
+            fieldArr:this.props.fieldArrs
+        })
 
     }
 
@@ -109,14 +112,6 @@ class InterFaceDetail extends React.Component{
             );
     };
 
-    // deletePanel=(fieldArr,index)=>{
-    //     console.log("lastindex==="+JSON.stringify(index))
-    //     console.log("删除panel")
-    //     console.log("fieldArr==="+JSON.stringify(fieldArr))
-    //     fieldArr.splice(index)
-    // }
-
-
 
     genExtra = (fieldArrs,index,fields) => (
         <Icon
@@ -129,13 +124,19 @@ class InterFaceDetail extends React.Component{
                 fieldArrs.splice(index,1)
                 console.log("删除之后的fieldArrs==="+JSON.stringify(fieldArrs))
                 //If you don't want click extra trigger collapse, you can prevent this:
-                setTimeout(()=>{
-                        this.setState({
-                        isDestroyInactivePanel:false,
-                        fieldArr:fieldArrs
-                })},10)
-                console.log("isDestroyInactivePanel==="+this.state.isDestroyInactivePanel)
-                console.log("fieldArr==="+this.state.fieldArr)
+                //         this.setState({
+                //         isDestroyInactivePanel:false,
+                //         fieldArr:fieldArrs
+                // })
+
+                //注意：this.setState方法的执行，是异步的，在调用完this.setState之后，又想立即拿到state值，需要使用this.setState({},callback)
+                this.setState({
+                    isDestroyInactivePanel:false,
+                    fieldArr:fieldArrs
+                },function () {
+                    console.log("fieldArr==="+JSON.stringify( this.state.fieldArr))
+                    console.log("isDestroyInactivePanel==="+this.state.isDestroyInactivePanel)
+                })
             }}
         />
     );
@@ -188,24 +189,7 @@ class InterFaceDetail extends React.Component{
             },
         };
 
-
-        // const genExtra = (fieldArr,index) => (
-        //
-        // <Icon
-        //     type="minus"
-        //     style={{ color: 'red' }}
-        //     onClick={() => {
-        //
-        //         this.setState({
-        //             destroyInactivePanel:true,
-        //         })
-        //         console.log("destroyInactivePanel==="+this.state.destroyInactivePanel)
-        //     }}
-        // />
-        //
-        // );
-
-        const {isDestroyInactivePanel,fieldArr} = this.state
+        const {isDestroyInactivePanel} = this.state
         const { getFieldDecorator} = this.props.form;
         const { Panel } = Collapse;
         const {isShowPanel,fields,fieldArrs,index} = this.props

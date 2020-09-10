@@ -8,6 +8,7 @@ import jwt_decode from "jwt-decode";
 const { Option } = Select;
 
 let fieldArr=[];
+let valuesArr=[]
 @Form.create()
 class CreateTransferIndex extends React.Component{
     state = {
@@ -115,39 +116,64 @@ class CreateTransferIndex extends React.Component{
         })
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
+                console.log("this.child.state.fieldArr==="+JSON.stringify(this.child.state.fieldArr))
                 console.log("this.state.fields==="+JSON.stringify(this.state.fields))
-                values.interfaceId=this.state.fields.id
-                values.headerDetail = this.state.fields.headerdetail
-                values.header = this.state.fields.header
-                // values.body = this.state.fields.body
-                values.body = JSON.stringify(this.child.state.fields.body)
-                values.path = this.state.fields.path
-                values.method = this.state.fields.method
-                values.interFaceName = this.state.fields.interfaceName
-                values.sign = this.state.fields.sign
-                values.signEntity=this.state.fields.signEntity
-                // values.assertionEntity=JSON.parse(this.child.state.fields.assertDataSource)
-                values.assertionContent=JSON.stringify(this.child.state.fields.assertDataSource)
-                this.createCaseAndExecute(values)
+                for( var valuess of this.child.state.fieldArr){
+                    // values.interfaceId=valuess.id
+                    // values.headerDetail = valuess.headerdetail
+                    // values.header = valuess.header
+                    // // values.body = this.state.fields.body
+                    // values.body = JSON.stringify(valuess.body)
+                    // values.path = valuess.path
+                    // values.method = valuess.method
+                    // values.interFaceName = valuess.interfaceName
+                    // values.sign = valuess.sign
+                    // values.signEntity=valuess.signEntity
+                    // // values.assertionEntity=JSON.parse(this.child.state.fields.assertDataSource)
+                    // values.assertionContent=JSON.stringify(this.child.state.fields.assertDataSource)
+                    let cook =isAuthenticated();
+                    var user = jwt_decode(cook)
+                    console.log("cook==="+JSON.stringify(cook))
+                    var email = JSON.stringify(user.sub)
+                    console.log("email==="+email)
+
+                    console.log("数组的values==="+JSON.stringify(values))
+                    valuesArr.push({
+                        interfaceId: valuess.id,
+                        headerDetail:valuess.headerdetail,
+                        header : valuess.header,
+                        // values.body = this.state.fields.body
+                        body : JSON.stringify(valuess.body),
+                        path : valuess.path,
+                        method : valuess.method,
+                        interFaceName : valuess.interfaceName,
+                        sign : valuess.sign,
+                        signEntity : valuess.signEntity,
+                    // values.assertionEntity=JSON.parse(this.child.state.fields.assertDataSource)
+                        assertionContent:JSON.stringify(this.child.state.fields.assertDataSource),
+                        lastExecuteUser:email,
+                        add:true,
+                        valid:true
+                    })
+                    console.log("valuesArr==="+JSON.stringify(valuesArr))
+                }
+                console.log("valuesArr==="+JSON.stringify(valuesArr))
+                this.createCaseAndExecute(valuesArr)
             }
         });
 
     };
     createCaseAndExecute = async (values) => {
 
-        let cook =isAuthenticated();
-        var user = jwt_decode(cook)
-        console.log("cook==="+JSON.stringify(cook))
-        var email = JSON.stringify(user.sub)
-        console.log("email==="+email)
+
 
         console.log("调试的values==="+JSON.stringify(values))
         values.storeImgS = this.state.storeImgs;
         const res = await post('/single/case/execute', {
-            ...values,
-            lastExecuteUser:email,
-            add:true,
-            valid:true
+            values,
+            // lastExecuteUser:email,
+            // add:true,
+            // valid:true
         });
         console.log("res==="+JSON.stringify(res))
         if (res.code === 0) {
