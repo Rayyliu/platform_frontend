@@ -102,6 +102,7 @@ export async function get(url, param) {
 //提交
 export async function post(url, param) {
     const completeUrl = handleUrl(url);
+    console.log("param==="+JSON.stringify(param))
     const response = await fetch(completeUrl, {
         credentials: 'include',
         method: 'POST',

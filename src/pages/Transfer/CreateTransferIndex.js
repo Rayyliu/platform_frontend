@@ -45,6 +45,7 @@ class CreateTransferIndex extends React.Component{
      */
     componentWillUnmount(){
         fieldArr=[]
+        valuesArr=[]
     }
 
 
@@ -155,7 +156,7 @@ class CreateTransferIndex extends React.Component{
                         add:true,
                         valid:true
                     })
-                    console.log("valuesArr==="+JSON.stringify(valuesArr))
+                    // console.log("valuesArr==="+JSON.stringify(valuesArr))
                 }
                 console.log("valuesArr==="+JSON.stringify(valuesArr))
                 this.createCaseAndExecute(valuesArr)
@@ -163,14 +164,15 @@ class CreateTransferIndex extends React.Component{
         });
 
     };
-    createCaseAndExecute = async (values) => {
+    createCaseAndExecute = async (valuesArr) => {
 
 
 
-        console.log("调试的values==="+JSON.stringify(values))
-        values.storeImgS = this.state.storeImgs;
+        // console.log("调试的values==="+JSON.stringify(valuesArr))
+        console.log("valuesList==="+valuesArr)
+        // valuesArr.storeImgS = this.state.storeImgs;
         const res = await post('/single/case/execute', {
-            values,
+            valuesArr,
             // lastExecuteUser:email,
             // add:true,
             // valid:true
