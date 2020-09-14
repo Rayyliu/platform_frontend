@@ -110,7 +110,7 @@ export async function post(url, param) {
             withCredentials: true
         },
         headers: {
-            "content-type": "application/json",
+            "content-type": "application/json;charset=UTF-8",
         },
         body: JSON.stringify(param)
     });

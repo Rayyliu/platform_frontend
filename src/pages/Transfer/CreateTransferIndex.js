@@ -144,7 +144,7 @@ class CreateTransferIndex extends React.Component{
                         headerDetail:valuess.headerdetail,
                         header : valuess.header,
                         // values.body = this.state.fields.body
-                        body : JSON.stringify(valuess.body),
+                        body : valuess.body,
                         path : valuess.path,
                         method : valuess.method,
                         interFaceName : valuess.interfaceName,
@@ -158,7 +158,7 @@ class CreateTransferIndex extends React.Component{
                     })
                     // console.log("valuesArr==="+JSON.stringify(valuesArr))
                 }
-                console.log("valuesArr==="+JSON.stringify(valuesArr))
+                // console.log("valuesArr==="+JSON.stringify(valuesArr))
                 this.createCaseAndExecute(valuesArr)
             }
         });
@@ -169,7 +169,8 @@ class CreateTransferIndex extends React.Component{
 
 
         // console.log("调试的values==="+JSON.stringify(valuesArr))
-        console.log("valuesList==="+valuesArr)
+        // var valuesJson=JSON.stringify(valuesArr)
+        // console.log("valuesJson==="+valuesJson)
         // valuesArr.storeImgS = this.state.storeImgs;
         const res = await post('/single/case/execute', {
             valuesArr,
