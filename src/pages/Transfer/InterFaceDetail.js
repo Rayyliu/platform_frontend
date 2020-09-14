@@ -227,7 +227,7 @@ class InterFaceDetail extends React.Component{
                     }),
                     signEntity: Form.createFormField({
                     ...props.signEntity,
-                    value: props.signEntity,
+                    value: JSON.stringify( props.signEntity),
                 }),
                 };
             },
@@ -300,7 +300,7 @@ class InterFaceDetail extends React.Component{
                                 // rules: [{ required: true, message: 'Assertion is required!' }],
                                 initialValue:''
                             })(
-                                <TextArea  disabled={!fields.sign} defaultValue="没有签名则禁用"/>
+                                <TextArea  disabled={!fields.sign} defaultValue="没有签名则禁用" />
                             )}
                         </Form.Item>
 

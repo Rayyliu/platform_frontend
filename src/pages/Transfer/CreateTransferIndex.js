@@ -16,6 +16,7 @@ class CreateTransferIndex extends React.Component{
         interfaces:[],
         fields:[],
         interfaceName:{},
+        caseName:'',
         isShowPanel:true,
         result:{
             success:false,
@@ -117,6 +118,7 @@ class CreateTransferIndex extends React.Component{
         })
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
+                console.log("values==="+JSON.stringify(values))
                 console.log("this.child.state.fieldArr==="+JSON.stringify(this.child.state.fieldArr))
                 console.log("this.state.fields==="+JSON.stringify(this.state.fields))
                 for( var valuess of this.child.state.fieldArr){
@@ -138,18 +140,21 @@ class CreateTransferIndex extends React.Component{
                     var email = JSON.stringify(user.sub)
                     console.log("email==="+email)
 
-                    console.log("数组的values==="+JSON.stringify(values))
+                    console.log("数组的values==="+JSON.stringify(valuess))
                     valuesArr.push({
-                        interfaceId: valuess.id,
+                        interfaceId: this.state.fields.id,
                         headerDetail:valuess.headerdetail,
                         header : valuess.header,
                         // values.body = this.state.fields.body
-                        body : valuess.body,
+                        body : JSON.stringify( this.child.state.fields.body),
                         path : valuess.path,
                         method : valuess.method,
                         interFaceName : valuess.interfaceName,
+                        caseName:values.caseName,
+                        description:valuess.description,
+                        project:values.project,
                         sign : valuess.sign,
-                        signEntity : valuess.signEntity,
+                        signEntity : JSON.stringify( valuess.signEntity),
                     // values.assertionEntity=JSON.parse(this.child.state.fields.assertDataSource)
                         assertionContent:JSON.stringify(this.child.state.fields.assertDataSource),
                         lastExecuteUser:email,
@@ -170,7 +175,7 @@ class CreateTransferIndex extends React.Component{
 
         // console.log("调试的values==="+JSON.stringify(valuesArr))
         // var valuesJson=JSON.stringify(valuesArr)
-        // console.log("valuesJson==="+valuesJson)
+        console.log("valuesJson==="+JSON.stringify(valuesArr))
         // valuesArr.storeImgS = this.state.storeImgs;
         const res = await post('/single/case/execute', {
             valuesArr,
@@ -301,11 +306,11 @@ class CreateTransferIndex extends React.Component{
                                      {/*fields={fields}*/}
                                      {/*onRef={(ref) => { this.child = ref; }}*/}
                     {/*/>*/}
-                        {fields.map((item,index)=>{
+                        {fields.map((fields,index)=>{
                             console.log("index=="+index)
                             return(
                                 <InterFaceDetail isShowPanel={isShowPanel}
-                                                 fields={item}
+                                                 fields={fields}
                                                  fieldArrs={fieldArr}
                                                  index={index}
                                                  onRef={(ref) => { this.child = ref; }}
