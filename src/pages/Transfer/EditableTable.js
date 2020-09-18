@@ -20,25 +20,29 @@ class EditableTable extends React.Component {
                 title: "参数",
                 dataIndex: "parameter",
                 width: "30%",
+                type: 'input',
                 editable: true
             },
             {
                 title: "期望值",
                 dataIndex: "except",
+                type:'input',
                 editable: true
             },
             {
                 title: "校验规则",
                 dataIndex: "rule",
-                render:() =>
-                    this.state.dataSource.length >= 1 ?(
-                        <Select onChange={this.handleChange}>
-                            <Option value={"equal"}>equal</Option>
-                            <Option value={"notEqual"}>notEqual</Option>
-                            <Option value={"contains"}>contains</Option>
-                            <Option value={"notContains"}>notContains</Option>
-                        </Select>
-                    ):null
+                type:'select',
+                editable: true
+                // render:() =>
+                //     // this.state.dataSource.length >= 1 ?(
+                //         <Select onChange={this.handleChange} value={this.state.assertRule}>
+                //             <Option value={"equal"}>equal</Option>
+                //             <Option value={"notEqual"}>notEqual</Option>
+                //             <Option value={"contains"}>contains</Option>
+                //             <Option value={"notContains"}>notContains</Option>
+                //         </Select>
+                //     // ):null
             },
             {
                 title: "operation",
@@ -57,20 +61,21 @@ class EditableTable extends React.Component {
 
         this.state = {
             dataSource: [
-                {
-                    key: "0",
-                    parameter: "success",
-                    except: "32",
-                    rule: "Equals"
-                },
-                {
-                    key: "1",
-                    parameter: "executed",
-                    except: "true",
-                    rule: "Equals"
-                }
+                // {
+                //     key: "0",
+                //     parameter: "success",
+                //     except: "32",
+                //     rule: "Equals"
+                // },
+                // {
+                //     key: "1",
+                //     parameter: "executed",
+                //     except: "true",
+                //     rule: "Equals"
+                // }
             ],
-            count: 0
+            count: 0,
+            assertRule:''
         };
     }
 
@@ -81,6 +86,21 @@ class EditableTable extends React.Component {
         }
     }
 
+    componentWillMount(){
+        this.setState({
+            dataSource:this.props.assertDataSource
+        })
+        console.log("dataSource==="+this.props.assertDataSource)
+    }
+
+    handleChange=(value)=>{
+        this.setState({
+            assertRule:value
+        },function () {
+            console.log("rule=="+JSON.stringify(this.state.assertRule))
+        })
+}
+
     handleDelete = (key) => {
         const dataSource = [...this.state.dataSource];
         this.setState({
@@ -90,13 +110,13 @@ class EditableTable extends React.Component {
 
     handleAdd = () => {
         console.log("进入add方法");
-        const { count, dataSource } = this.state;
+        const { count, dataSource} = this.state;
         const newData = {
             key: count,
             // name: `Edward King ${count}`,
             parameter: '',
             except: '',
-            rule:this.columns.rule,
+            rule:'',
         };
         console.log("Edit---newData==="+JSON.stringify(newData))
         this.setState({
@@ -106,6 +126,7 @@ class EditableTable extends React.Component {
     };
 
     handleSave = (row) => {
+        console.log("row==="+JSON.stringify(row))
         const newData = [...this.state.dataSource];
         const index = newData.findIndex((item) => row.key === item.key);
         const item = newData[index];
@@ -115,6 +136,7 @@ class EditableTable extends React.Component {
         });
         console.log("newData=="+JSON.stringify(newData))
         this.setState({ dataSource: newData });
+        console.log("EditTable-dataSource==="+JSON.stringify(this.state.dataSource))
     };
 
 
@@ -128,9 +150,11 @@ class EditableTable extends React.Component {
             }
         };
         const columns = this.columns.map((col) => {
-            if (!col.editable) {
-                return col;
-            }
+            console.log("first_col==="+JSON.stringify(col))
+            // if (!col.editable) {
+            //     return col;
+            // }
+            console.log("col==="+JSON.stringify(col))
             return {
                 ...col,
                 onCell: (record) => ({
@@ -138,6 +162,7 @@ class EditableTable extends React.Component {
                     editable: col.editable,
                     dataIndex: col.dataIndex,
                     title: col.title,
+                    type: col.type,
                     handleSave: this.handleSave
                 })
             };

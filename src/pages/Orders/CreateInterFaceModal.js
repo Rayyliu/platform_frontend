@@ -360,6 +360,7 @@ class CreateInterFaceModal extends Component {
 
                     <Form.Item label={'签名字段'}>
                         {getFieldDecorator('signEntity',{
+                            initialValue:"{\"XXXX\": \"XXXXX\"}"
                         })(
                             <TextArea disabled={!this.state.boolean.sign} placeholder={"接口签名则需填写签名所需字段"}/>
                         )}
@@ -426,7 +427,7 @@ class CreateInterFaceModal extends Component {
                             // rules: [
                             //     { required: true, message: '接口描述不能为空' }
                             // ],
-                            initialValue : "",
+                            initialValue : "默认值:"+"{\"content-type\": \"application/json;charset=UTF-8\"}",
                         })(
                             <TextArea/>
                         )}
@@ -446,7 +447,7 @@ class CreateInterFaceModal extends Component {
                             // rules: [
                             //     { required: true, message: '接口描述不能为空' }
                             // ],
-                            initialValue : "",
+                            initialValue : "{\"XXXX\": \"xxxx\"}",
                         })(
                             <TextArea/>
                         )}

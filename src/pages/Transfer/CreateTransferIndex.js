@@ -14,7 +14,9 @@ class CreateTransferIndex extends React.Component{
     state = {
         projects:[],
         interfaces:[],
-        fields:[],
+        fields:[{
+
+        }],
         interfaceName:{},
         caseName:'',
         isShowPanel:true,
@@ -83,7 +85,8 @@ class CreateTransferIndex extends React.Component{
         this.setState({
             interfaceName:value
         })
-}
+        console.log("更新后的fields==" + JSON.stringify(this.state.fields))
+    }
 
 
 
@@ -103,7 +106,7 @@ class CreateTransferIndex extends React.Component{
                     fields: fieldArr,
                     isShowPanel: false
                 })
-                console.log("fields==" + JSON.stringify(this.state.fields))
+                console.log("更新后的fields==" + JSON.stringify(this.state.fields))
             } else {
                 message.error(res.msg || '没有接口信息，无法新增')
             }
@@ -119,52 +122,62 @@ class CreateTransferIndex extends React.Component{
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
                 console.log("values==="+JSON.stringify(values))
-                console.log("this.child.state.fieldArr==="+JSON.stringify(this.child.state.fieldArr))
+                console.log("this.child.state==="+JSON.stringify(this.child.state))
                 console.log("this.state.fields==="+JSON.stringify(this.state.fields))
-                for( var valuess of this.child.state.fieldArr){
-                    // values.interfaceId=valuess.id
-                    // values.headerDetail = valuess.headerdetail
-                    // values.header = valuess.header
-                    // // values.body = this.state.fields.body
-                    // values.body = JSON.stringify(valuess.body)
-                    // values.path = valuess.path
-                    // values.method = valuess.method
-                    // values.interFaceName = valuess.interfaceName
-                    // values.sign = valuess.sign
-                    // values.signEntity=valuess.signEntity
-                    // // values.assertionEntity=JSON.parse(this.child.state.fields.assertDataSource)
-                    // values.assertionContent=JSON.stringify(this.child.state.fields.assertDataSource)
-                    let cook =isAuthenticated();
-                    var user = jwt_decode(cook)
-                    console.log("cook==="+JSON.stringify(cook))
-                    var email = JSON.stringify(user.sub)
-                    console.log("email==="+email)
+                console.log("this.child.state.fields.body==="+JSON.stringify(this.child.state.fields.body))
+                this.setState({
+                    fields: fieldArr
+                },function () {
+                    console.log("fieldArrlast==="+JSON.stringify(this.state.fields))
+                    // for( var valuess of this.child.state.fieldArr){
+                    for( var valuess of this.state.fields){
+                        // values.interfaceId=valuess.id
+                        // values.headerDetail = valuess.headerdetail
+                        // values.header = valuess.header
+                        // // values.body = this.state.fields.body
+                        // values.body = JSON.stringify(valuess.body)
+                        // values.path = valuess.path
+                        // values.method = valuess.method
+                        // values.interFaceName = valuess.interfaceName
+                        // values.sign = valuess.sign
+                        // values.signEntity=valuess.signEntity
+                        // // values.assertionEntity=JSON.parse(this.child.state.fields.assertDataSource)
+                        // values.assertionContent=JSON.stringify(this.child.state.fields.assertDataSource)
+                        let cook =isAuthenticated();
+                        var user = jwt_decode(cook)
+                        console.log("cook==="+JSON.stringify(cook))
+                        var email = JSON.stringify(user.sub)
+                        console.log("email==="+email)
 
-                    console.log("数组的values==="+JSON.stringify(valuess))
-                    valuesArr.push({
-                        interfaceId: this.state.fields.id,
-                        headerDetail:valuess.headerdetail,
-                        header : valuess.header,
-                        // values.body = this.state.fields.body
-                        body : JSON.stringify( this.child.state.fields.body),
-                        path : valuess.path,
-                        method : valuess.method,
-                        interFaceName : valuess.interfaceName,
-                        caseName:values.caseName,
-                        description:valuess.description,
-                        project:values.project,
-                        sign : valuess.sign,
-                        signEntity : JSON.stringify( valuess.signEntity),
-                    // values.assertionEntity=JSON.parse(this.child.state.fields.assertDataSource)
-                        assertionContent:JSON.stringify(this.child.state.fields.assertDataSource),
-                        lastExecuteUser:email,
-                        add:true,
-                        valid:true
-                    })
-                    // console.log("valuesArr==="+JSON.stringify(valuesArr))
-                }
+                        console.log("数组的values==="+JSON.stringify(valuess))
+                        console.log("this.child.state.fields.body==="+JSON.stringify(this.child.state.fields.body))
+                        console.log("valuess.body==="+JSON.stringify(valuess.body))
+                        valuesArr.push({
+                            interfaceId: this.state.fields.id,
+                            headerDetail:valuess.headerdetail,
+                            header : valuess.header,
+                            // values.body = this.state.fields.body
+                            // body : JSON.stringify(this.child.state.fields.body),
+                            body : JSON.stringify(valuess.body),
+                            path : valuess.path,
+                            method : valuess.method,
+                            interFaceName : valuess.interfaceName,
+                            caseName:values.caseName,
+                            description:valuess.description,
+                            project:values.project,
+                            sign : valuess.sign,
+                            signEntity : JSON.stringify( valuess.signEntity),
+                            // values.assertionEntity=JSON.parse(this.child.state.fields.assertDataSource)
+                            assertionContent:JSON.stringify(this.child.state.fields.assertDataSource),
+                            lastExecuteUser:email,
+                            add:true,
+                            valid:true
+                        })
+                        console.log("valuesArr==="+JSON.stringify(valuesArr))
+                    }
+                    this.createCaseAndExecute(valuesArr)
+                })
                 // console.log("valuesArr==="+JSON.stringify(valuesArr))
-                this.createCaseAndExecute(valuesArr)
             }
         });
 
@@ -309,7 +322,29 @@ class CreateTransferIndex extends React.Component{
                         {fields.map((fields,index)=>{
                             console.log("index=="+index)
                             return(
-                                <InterFaceDetail isShowPanel={isShowPanel}
+                                <InterFaceDetail
+                                    callback={(type,module,body,assertDataSource,key)=>{
+
+                                        console.log("key==="+key)
+                                        console.log("callbackfieldArr=="+JSON.stringify(fieldArr))
+                                        if(type==="submit") {
+                                            if(module==="body") {
+                                                console.log("fieldArr[key].body==="+fieldArr[key].body)
+                                                fieldArr[key].body = body;
+                                                console.log("fieldArr[key]==" + JSON.stringify(fieldArr))
+                                            }else if(module==="assertDataSource"){
+                                                console.log("fieldArr[key].assertDataSource==="+fieldArr[key].assertDataSource)
+                                                fieldArr[key].assertDataSource = assertDataSource;
+                                                console.log("fieldArr[key]==" + JSON.stringify(fieldArr))
+                                            }
+                                        }else if(type==="delete"){
+                                            console.log("beforefieldArr[key]==" + JSON.stringify(fieldArr))
+                                            fieldArr.splice(key,1)
+                                            console.log("afterfieldArr[key]==" + JSON.stringify(fieldArr))
+                                        }
+
+                                    }}
+                                    isShowPanel={isShowPanel}
                                                  fields={fields}
                                                  fieldArrs={fieldArr}
                                                  index={index}

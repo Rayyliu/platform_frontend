@@ -16,13 +16,15 @@ import EditableTable from "./EditableTable";
 import EditBodyTabs from "./EditBodyTabs";
 
 const {TextArea} = Input
+var bodyArr=[]
+var fileArr=[]
 @Form.create()
 class InterFaceDetail extends React.Component{
     constructor(props) {
         super(props);
     this.state = {
         fields: {
-            headerDetail: '',
+            headerdetail: '',
             body: [],
             path: '',
             method: '',
@@ -44,9 +46,9 @@ class InterFaceDetail extends React.Component{
         if (this.props.onRef) {
             this.props.onRef(this);
         }
-        this.setState({
-            fieldArr:this.props.fieldArrs
-        })
+        // this.setState({
+        //     fieldArr:this.props.fieldArrs
+        // })
 
     }
 
@@ -118,11 +120,12 @@ class InterFaceDetail extends React.Component{
             type="close"
             style={{ color: 'red' }}
             onClick={() => {
-                console.log("被删除的values==="+JSON.stringify(fields))
-                console.log("arrIndex==="+JSON.stringify(index))
-                console.log("删除之前的fieldArrs==="+JSON.stringify(fieldArrs))
-                fieldArrs.splice(index,1)
-                console.log("删除之后的fieldArrs==="+JSON.stringify(fieldArrs))
+                console.log("进入genExtra方法")
+                // console.log("被删除的values==="+JSON.stringify(fields))
+                // console.log("arrIndex==="+JSON.stringify(index))
+                // console.log("删除之前的fieldArrs==="+JSON.stringify(fieldArrs))
+                // fieldArrs.splice(index,1)
+                // console.log("删除之后的fieldArrs==="+JSON.stringify(fieldArrs))
                 //If you don't want click extra trigger collapse, you can prevent this:
                 //         this.setState({
                 //         isDestroyInactivePanel:false,
@@ -132,10 +135,8 @@ class InterFaceDetail extends React.Component{
                 //注意：this.setState方法的执行，是异步的，在调用完this.setState之后，又想立即拿到state值，需要使用this.setState({},callback)
                 this.setState({
                     isDestroyInactivePanel:false,
-                    fieldArr:fieldArrs
                 },function () {
-                    console.log("fieldArr==="+JSON.stringify( this.state.fieldArr))
-                    console.log("isDestroyInactivePanel==="+this.state.isDestroyInactivePanel)
+                    this.props.callback("delete",'',index)
                 })
             }}
         />
@@ -150,18 +151,58 @@ class InterFaceDetail extends React.Component{
 
 
 
-    submit=()=>{
-        setTimeout(()=>{
+
+
+    submit=()=> {
+        // console.log("this.bodyForm.state.dataSource.body==="+JSON.stringify(this.bodyForm.state.dataSource.body))
+        // var a = this.bodyForm.state.dataSource
+        // bodyArr=bodyArr.concat(a)
+        // console.log("bodyArr==="+JSON.stringify(bodyArr))
+        // console.log("this.form.state.dataSource==="+JSON.stringify(this.bodyForm.state.dataSource))
+        this.state.fieldArr.splice(0,this.state.fieldArr.length)
+        console.log("this.state.fieldArr==="+JSON.stringify(this.state.fieldArr))
+        console.log("this.form.state.dataSource==="+JSON.stringify(this.form.state.dataSource))
         this.setState({
-            fields:{
-                assertDataSource:this.form.state.dataSource,
-                body:this.bodyForm.state.dataSource
-            }
+            fields: {
+                assertDataSource: this.form.state.dataSource,
+                body: this.bodyForm.state.dataSource,
+                // headerdetail:this.props.fields.headerdetail,
+                // path: this.props.fields.path,
+                // method: this.props.fields.method,
+                // sign: this.props.fields.sign,
+                // header:this.props.fields.header,
+                // signEntity:this.props.fields.signEntity,
+            },
+            // fieldArr:this.state.fieldArr.push(this.state.fields)
+        },function() {
+            console.log("submit-assertDataSource===" + JSON.stringify(this.state.fields.assertDataSource))
+            console.log("submit-interfacedetail-fields===" + JSON.stringify(this.state.fields))
+            console.log("submit-interfacedetail-fieldArr===" + JSON.stringify(this.state.fieldArr))
+            // this.updateFieldArr(this.state.fields)
+            console.log("this.props.index==="+this.props.index)
+            console.log("this.state.fields.body==="+JSON.stringify(this.state.fields.body))
+            this.props.callback("submit","body",this.state.fields.body,"",this.props.index)
+            this.props.callback("submit","assertDataSource",this.state.fields.assertDataSource,"",this.props.index)
+
         })
-        console.log("assertDataSource==="+JSON.stringify(this.state.fields.assertDataSource))
-        console.log("interfacedetail-body==="+JSON.stringify(this.state.fields.body))
-    },10)
+
+        // this.updateFieldArr(this.state.fields)
     }
+
+    updateFieldArr=(value)=>{
+
+
+        console.log("valueeeee==="+JSON.stringify(value))
+
+        fileArr.push(value)
+        this.setState({
+            fieldArr:fileArr
+        },function () {
+            console.log("updateFieldArr+fieldArr==="+JSON.stringify(this.state.fieldArr))
+        })
+        // this.props.callback(fileArr)
+    }
+
     bodySubmit=()=>{
         setTimeout(()=>{
         this.setState({
@@ -201,9 +242,9 @@ class InterFaceDetail extends React.Component{
             mapPropsToFields(props) {
                 console.log("detail+props=="+JSON.stringify(props))
                 return {
-                    headerDetail: Form.createFormField({
-                        ...props.headerDetail,
-                        value: props.headerDetail,
+                    headerdetail: Form.createFormField({
+                        ...props.headerdetail,
+                        value:  props.headerdetail,
                     }),
                     body: Form.createFormField({
                         ...props.body,
@@ -237,72 +278,19 @@ class InterFaceDetail extends React.Component{
         })(
             props => {
                 const { getFieldDecorator } = props.form;
+                const {body,assertDataSource}=this.state.fields
+                const {fields} = this.props
                 return (
                     <>
-                        {isDestroyInactivePanel&&
+                        {isDestroyInactivePanel ?
                         <Collapse bordered={false}
-                              onChange={this.callback}
+                              // onChange={this.callback}
                               >
                         <Panel
                             header={fields.interfaceName}
                             disabled = {isShowPanel}
                             extra ={this.genExtra(fieldArrs,index,fields)}
                         >
-                        <Form.Item label="HeaderDetail">
-                            {getFieldDecorator('headerDetail', {
-                                rules: [{ required: true, message: 'HeaderDetail is required!' }],
-                            })(<Input placeholder={"{}"}/>)}
-                        </Form.Item>
-
-                        <Form.Item label="Path">
-                            {getFieldDecorator('path', {
-                                rules: [{ required: true, message: 'Path is required!' }],
-                            })(<Input />)}
-                        </Form.Item>
-
-                        <Form.Item label="Body">
-                            {getFieldDecorator('body', {
-                                rules: [{ required: true, message: 'Body is required!' }],
-                            })(
-                                <EditBodyTabs bodySubmit={this.bodySubmit} onRef={(ref) => { this.bodyForm = ref; }}/>
-                            )}
-                        </Form.Item>
-
-                        <Form.Item label="提取参数Parameter">
-                                {getFieldDecorator('parameter', {
-                                    // rules: [{ required: true, message: 'parameter is required!' }],
-                                    initialValue:''
-                                })(<Input />)}
-                        </Form.Item>
-
-                        <Form.Item label="断言">
-                                {getFieldDecorator('assertion', {
-                                    // rules: [{ required: true, message: 'Assertion is required!' }],
-                                    initialValue:''
-                                })(
-
-                                    <EditableTable submit={this.submit} onRef={(ref) => { this.form = ref; }}/>
-
-                                )}
-                        </Form.Item>
-
-                        <Form.Item label="签名">
-                            {getFieldDecorator('sign', {
-                                // rules: [{ required: true, message: 'Assertion is required!' }],
-                                initialValue:''
-                            })(
-                                <Switch  checkedChildren="有" unCheckedChildren="无" checked={fields.sign}  />
-                            )}
-                        </Form.Item>
-
-                        <Form.Item label="签名字段">
-                            {getFieldDecorator('signEntity', {
-                                // rules: [{ required: true, message: 'Assertion is required!' }],
-                                initialValue:''
-                            })(
-                                <TextArea  disabled={!fields.sign} defaultValue="没有签名则禁用" />
-                            )}
-                        </Form.Item>
 
                         <Form.Item label="header">
                             {getFieldDecorator('header', {
@@ -311,6 +299,18 @@ class InterFaceDetail extends React.Component{
                             })(
                                 <Switch  checkedChildren="设置" unCheckedChildren="不设置" checked={fields.header}  />
                             )}
+                        </Form.Item>
+
+                        <Form.Item label="headerdetail">
+                            {getFieldDecorator('headerdetail', {
+                                rules: [{ required: true, message: 'headerdetail is required!' }],
+                            })(<Input   disabled={!fields.header}  placeholder={"{}"}/>)}
+                        </Form.Item>
+
+                        <Form.Item label="Path">
+                            {getFieldDecorator('path', {
+                                rules: [{ required: true, message: 'Path is required!' }],
+                            })(<Input />)}
                         </Form.Item>
 
                         <Form.Item label={'请求方式'}>
@@ -332,6 +332,56 @@ class InterFaceDetail extends React.Component{
                             }
                         </Form.Item>
 
+
+                        <Form.Item label="签名">
+                            {getFieldDecorator('sign', {
+                                // rules: [{ required: true, message: 'Assertion is required!' }],
+                                initialValue:''
+                            })(
+                                <Switch  checkedChildren="有" unCheckedChildren="无" checked={fields.sign}  />
+                            )}
+                        </Form.Item>
+
+                        <Form.Item label="签名字段">
+                            {getFieldDecorator('signEntity', {
+                                // rules: [{ required: true, message: 'Assertion is required!' }],
+                                initialValue:''
+                            })(
+                                <TextArea  disabled={!fields.sign} defaultValue="没有签名则禁用" />
+                            )}
+                        </Form.Item>
+
+                        <Form.Item label="Body">
+                            {getFieldDecorator('body', {
+                                rules: [{ required: true, message: 'Body is required!' }],
+                            })(
+                                <EditBodyTabs bodySubmit={this.bodySubmit}
+                                              onRef={(ref) => { this.bodyForm = ref; }}
+                                              body={body}
+                                              ifassertDataSource={assertDataSource}/>
+                            )}
+                        </Form.Item>
+
+                        <Form.Item label="提取参数Parameter">
+                                {getFieldDecorator('parameter', {
+                                    // rules: [{ required: true, message: 'parameter is required!' }],
+                                    initialValue:''
+                                })(<Input />)}
+                        </Form.Item>
+
+                        <Form.Item label="断言">
+                                {getFieldDecorator('assertion', {
+                                    // rules: [{ required: true, message: 'Assertion is required!' }],
+                                    initialValue:''
+                                })(
+
+                                    <EditableTable submit={this.submit}
+                                                   onRef={(ref) => { this.form = ref; }}
+                                                   assertDataSource={assertDataSource}/>
+
+                                )}
+                        </Form.Item>
+
                             {/*<div>*/}
                             {/*<Button onClick={this.test}/>*/}
                             {/*<EditableTable onRef={(ref) => { this.form = ref; }}/>*/}
@@ -344,6 +394,7 @@ class InterFaceDetail extends React.Component{
                             </Form.Item>
                         </Panel>
                     </Collapse>
+                            :null
                         }
                         </>
                 );

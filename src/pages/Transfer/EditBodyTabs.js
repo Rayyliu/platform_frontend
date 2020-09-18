@@ -17,6 +17,7 @@ const EditableRow = ({ form, index, ...props }) => (
     </EditableContext.Provider>
 );
 const EditableFormRow = Form.create()(EditableRow);
+
 @form
 class EditBodyTabs extends React.Component {
     constructor(props) {
@@ -26,11 +27,13 @@ class EditBodyTabs extends React.Component {
                 title: "caseDescription",
                 dataIndex: "caseDescription",
                 width: "30%",
+                type: 'input',
                 editable: true
             },
             {
                 title: "caseData",
                 dataIndex: "caseData",
+                type: 'input',
                 editable: true
             },
             {
@@ -50,16 +53,16 @@ class EditBodyTabs extends React.Component {
 
         this.state = {
             dataSource: [
-                {
-                    key: "0",
-                    caseDescription: "success",
-                    caseData: "32",
-                },
-                {
-                    key: "1",
-                    caseDescription: "executed",
-                    caseData: "true",
-                }
+                // {
+                //     key: "0",
+                //     caseDescription: "success",
+                //     caseData: "32",
+                // },
+                // {
+                //     key: "1",
+                //     caseDescription: "executed",
+                //     caseData: "true",
+                // }
             ],
             count: 0
         };
@@ -71,6 +74,13 @@ class EditBodyTabs extends React.Component {
             this.props.onRef(this);
         }
     }
+
+    componentWillMount(){
+            this.setState({
+                dataSource:this.props.body
+            })
+        console.log("dataSource==="+this.props.body)
+        }
 
     handleDelete = (key) => {
         const dataSource = [...this.state.dataSource];
@@ -104,8 +114,11 @@ class EditBodyTabs extends React.Component {
             ...row
         });
         console.log("newData=="+JSON.stringify(newData))
-        this.setState({ dataSource: newData });
-        console.log("EditBody-dataSource==="+JSON.stringify(this.state.dataSource))
+        this.setState({
+            dataSource: newData
+        },function () {
+            console.log("EditBody-dataSource==="+JSON.stringify(this.state.dataSource))
+        });
     };
 
 
@@ -128,6 +141,7 @@ class EditBodyTabs extends React.Component {
                     editable: col.editable,
                     dataIndex: col.dataIndex,
                     title: col.title,
+                    type: col.type,
                     handleSave: this.handleSave
                 })
             };
