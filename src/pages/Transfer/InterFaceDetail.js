@@ -159,6 +159,7 @@ class InterFaceDetail extends React.Component{
         // bodyArr=bodyArr.concat(a)
         // console.log("bodyArr==="+JSON.stringify(bodyArr))
         // console.log("this.form.state.dataSource==="+JSON.stringify(this.bodyForm.state.dataSource))
+        var module
         this.state.fieldArr.splice(0,this.state.fieldArr.length)
         console.log("this.state.fieldArr==="+JSON.stringify(this.state.fieldArr))
         console.log("this.form.state.dataSource==="+JSON.stringify(this.form.state.dataSource))
@@ -181,9 +182,10 @@ class InterFaceDetail extends React.Component{
             // this.updateFieldArr(this.state.fields)
             console.log("this.props.index==="+this.props.index)
             console.log("this.state.fields.body==="+JSON.stringify(this.state.fields.body))
-            this.props.callback("submit","body",this.state.fields.body,"",this.props.index)
-            this.props.callback("submit","assertDataSource",this.state.fields.assertDataSource,"",this.props.index)
 
+                this.props.callback("submit", "body", this.state.fields.body, "", this.props.index)
+            console.log("this.state.fields.assertDataSource==="+JSON.stringify(this.state.fields.assertDataSource))
+                this.props.callback("submit", "assertDataSource", "", this.state.fields.assertDataSource, this.props.index)
         })
 
         // this.updateFieldArr(this.state.fields)

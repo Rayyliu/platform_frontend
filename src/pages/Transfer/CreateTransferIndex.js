@@ -331,10 +331,13 @@ class CreateTransferIndex extends React.Component{
                                             if(module==="body") {
                                                 console.log("fieldArr[key].body==="+fieldArr[key].body)
                                                 fieldArr[key].body = body;
+                                                console.log("after-fieldArr[key].body==="+JSON.stringify(fieldArr[key].body))
                                                 console.log("fieldArr[key]==" + JSON.stringify(fieldArr))
                                             }else if(module==="assertDataSource"){
+                                                console.log("assertDataSource==="+JSON.stringify(assertDataSource))
                                                 console.log("fieldArr[key].assertDataSource==="+fieldArr[key].assertDataSource)
                                                 fieldArr[key].assertDataSource = assertDataSource;
+                                                console.log("after-fieldArr[key].assertDataSource==="+JSON.stringify(fieldArr[key].assertDataSource))
                                                 console.log("fieldArr[key]==" + JSON.stringify(fieldArr))
                                             }
                                         }else if(type==="delete"){
