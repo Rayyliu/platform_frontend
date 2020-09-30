@@ -18,6 +18,8 @@ import EditBodyTabs from "./EditBodyTabs";
 const {TextArea} = Input
 var bodyArr=[]
 var fileArr=[]
+var changedParameters={}
+var extractValue
 @Form.create()
 class InterFaceDetail extends React.Component{
     constructor(props) {
@@ -32,6 +34,8 @@ class InterFaceDetail extends React.Component{
             header:false,
             signEntity:'',
             assertDataSource:[],
+            extract:[],
+            signAttribute:''
         },
         isDestroyInactivePanel:true,
         fieldArr:[]
@@ -103,9 +107,10 @@ class InterFaceDetail extends React.Component{
 
 
     handleFormChange = changedFields => {
-        this.setState(({ fields }) => ({
-            fields: { ...fields, ...changedFields },
-        }));
+        // console.log("handleFormChangechangedFields==="+JSON.stringify(changedFields))
+        // this.setState(({ fields }) => ({
+        //     fields: { ...fields, ...changedFields },
+        // }));
     };
     onTabChange = (key, type) => {
         console.log(key, type);
@@ -136,7 +141,7 @@ class InterFaceDetail extends React.Component{
                 this.setState({
                     isDestroyInactivePanel:false,
                 },function () {
-                    this.props.callback("delete",'',index)
+                    this.props.callback("delete",'','','',index)
                 })
             }}
         />
@@ -159,14 +164,24 @@ class InterFaceDetail extends React.Component{
         // bodyArr=bodyArr.concat(a)
         // console.log("bodyArr==="+JSON.stringify(bodyArr))
         // console.log("this.form.state.dataSource==="+JSON.stringify(this.bodyForm.state.dataSource))
-        var module
+        console.log("changedParameters==="+JSON.stringify(changedParameters))
+        // this.setState(({ fields }) => ({
+        //     fields: {
+        //         extract:changedParameters
+        //     },
+        // }),function () {
+        //     console.log("this.state.fields==="+JSON.stringify(this.state.fields))
+        // });
         this.state.fieldArr.splice(0,this.state.fieldArr.length)
         console.log("this.state.fieldArr==="+JSON.stringify(this.state.fieldArr))
         console.log("this.form.state.dataSource==="+JSON.stringify(this.form.state.dataSource))
+        console.log("changedParameters的长度==="+changedParameters.length)
+        if(changedParameters.length>0){
         this.setState({
             fields: {
                 assertDataSource: this.form.state.dataSource,
                 body: this.bodyForm.state.dataSource,
+                extract:changedParameters.extract.value
                 // headerdetail:this.props.fields.headerdetail,
                 // path: this.props.fields.path,
                 // method: this.props.fields.method,
@@ -178,15 +193,51 @@ class InterFaceDetail extends React.Component{
         },function() {
             console.log("submit-assertDataSource===" + JSON.stringify(this.state.fields.assertDataSource))
             console.log("submit-interfacedetail-fields===" + JSON.stringify(this.state.fields))
+            console.log("submit-interfacedetail-extract===" + JSON.stringify(this.state.fields.extract))
             console.log("submit-interfacedetail-fieldArr===" + JSON.stringify(this.state.fieldArr))
             // this.updateFieldArr(this.state.fields)
             console.log("this.props.index==="+this.props.index)
             console.log("this.state.fields.body==="+JSON.stringify(this.state.fields.body))
 
-                this.props.callback("submit", "body", this.state.fields.body, "", this.props.index)
+                this.props.callback("submit", "body", this.state.fields.body, "", "",this.props.index)
             console.log("this.state.fields.assertDataSource==="+JSON.stringify(this.state.fields.assertDataSource))
-                this.props.callback("submit", "assertDataSource", "", this.state.fields.assertDataSource, this.props.index)
-        })
+
+                this.props.callback("submit", "assertDataSource", "", this.state.fields.assertDataSource, "",this.props.index)
+
+            this.props.callback("submit", "extract", "", "", this.state.fields.extract,this.props.index)
+            console.log("this.state.fields.extract==="+JSON.stringify(this.state.fields.extract))
+
+
+        })}else {
+            this.setState({
+                fields: {
+                    assertDataSource: this.form.state.dataSource,
+                    body: this.bodyForm.state.dataSource,
+                    // headerdetail:this.props.fields.headerdetail,
+                    // path: this.props.fields.path,
+                    // method: this.props.fields.method,
+                    // sign: this.props.fields.sign,
+                    // header:this.props.fields.header,
+                    // signEntity:this.props.fields.signEntity,
+                },
+                // fieldArr:this.state.fieldArr.push(this.state.fields)
+            },function() {
+                console.log("submit-assertDataSource===" + JSON.stringify(this.state.fields.assertDataSource))
+                console.log("submit-interfacedetail-fields===" + JSON.stringify(this.state.fields))
+                console.log("submit-interfacedetail-extract===" + JSON.stringify(this.state.fields.extract))
+                console.log("submit-interfacedetail-fieldArr===" + JSON.stringify(this.state.fieldArr))
+                // this.updateFieldArr(this.state.fields)
+                console.log("this.props.index==="+this.props.index)
+                console.log("this.state.fields.body==="+JSON.stringify(this.state.fields.body))
+
+                this.props.callback("submit", "body", this.state.fields.body, "", "",this.props.index)
+                console.log("this.state.fields.assertDataSource==="+JSON.stringify(this.state.fields.assertDataSource))
+
+                this.props.callback("submit", "assertDataSource", "", this.state.fields.assertDataSource, "",this.props.index)
+
+                this.props.callback("submit", "extract", "", "", this.state.fields.extract,this.props.index)
+                console.log("this.state.fields.extract==="+JSON.stringify(this.state.fields.extract))
+        })}
 
         // this.updateFieldArr(this.state.fields)
     }
@@ -239,10 +290,15 @@ class InterFaceDetail extends React.Component{
         const CustomizedForm = Form.create({
             name: 'global_state',
             onFieldsChange(props, changedFields) {
+                changedParameters=changedFields;
+                extractValue=changedParameters.extract.value
+                console.log("changedFields==="+JSON.stringify(changedFields))
+                console.log("changedParameters==="+JSON.stringify(changedParameters))
                 props.onChange(changedFields);
             },
-            mapPropsToFields(props) {
+            mapPropsToFields(props,changedParameters) {
                 console.log("detail+props=="+JSON.stringify(props))
+                console.log("changedParameters=="+JSON.stringify(changedParameters))
                 return {
                     headerdetail: Form.createFormField({
                         ...props.headerdetail,
@@ -251,6 +307,10 @@ class InterFaceDetail extends React.Component{
                     body: Form.createFormField({
                         ...props.body,
                         value: props.body,
+                    }),
+                    extract: Form.createFormField({
+                        // ...props.extract,
+                        value: JSON.stringify(extractValue),
                     }),
                     path: Form.createFormField({
                         ...props.path,
@@ -264,6 +324,10 @@ class InterFaceDetail extends React.Component{
                         ...props.sign,
                         value: props.sign,
                     }),
+                    signAttribute: Form.createFormField({
+                    ...props.signAttribute,
+                    value: props.signAttribute,
+                }),
                     header: Form.createFormField({
                         ...props.header,
                         value: props.header,
@@ -306,7 +370,9 @@ class InterFaceDetail extends React.Component{
                         <Form.Item label="headerdetail">
                             {getFieldDecorator('headerdetail', {
                                 rules: [{ required: true, message: 'headerdetail is required!' }],
-                            })(<Input   disabled={!fields.header}  placeholder={"{}"}/>)}
+                            })(<
+                                Input   disabled={!fields.header}  placeholder={"{}"}
+                            />)}
                         </Form.Item>
 
                         <Form.Item label="Path">
@@ -344,6 +410,15 @@ class InterFaceDetail extends React.Component{
                             )}
                         </Form.Item>
 
+                        <Form.Item label="签名属性">
+                            {getFieldDecorator('signAttribute', {
+                                // rules: [{ required: true, message: 'Assertion is required!' }],
+                                initialValue:''
+                            })(
+                                <Input disabled={!fields.sign}/>
+                            )}
+                        </Form.Item>
+
                         <Form.Item label="签名字段">
                             {getFieldDecorator('signEntity', {
                                 // rules: [{ required: true, message: 'Assertion is required!' }],
@@ -364,11 +439,11 @@ class InterFaceDetail extends React.Component{
                             )}
                         </Form.Item>
 
-                        <Form.Item label="提取参数Parameter">
-                                {getFieldDecorator('parameter', {
+                        <Form.Item label="提取参数">
+                                {getFieldDecorator('extract', {
                                     // rules: [{ required: true, message: 'parameter is required!' }],
                                     initialValue:''
-                                })(<Input />)}
+                                })(<Input placeholder={"[]"}/>)}
                         </Form.Item>
 
                         <Form.Item label="断言">
@@ -390,7 +465,7 @@ class InterFaceDetail extends React.Component{
                             {/*</div>*/}
                     {/*</Form>*/}
                             <Form.Item {...tailFormItemLayout}>
-                            <Button  type="primary" icon="check" onClick={this.submit}>
+                            <Button  type="primary" icon="check" {...fields} onClick={this.submit}>
                                 提交
                             </Button>
                             </Form.Item>

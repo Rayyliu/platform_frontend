@@ -243,10 +243,21 @@ class EditInterFaceModal extends React.Component {
                         )}
                     </Form.Item>
 
+                    <Form.Item label={'签名属性'}>
+                        {getFieldDecorator('signAttribute',{
+                            initialValue: true
+                        })(
+                            <Input  placeholder={"签名属性值"}/>
+                        )
+                        }
+                    </Form.Item>
+
                     <Form.Item label={'签名字段'}>
                         {getFieldDecorator('signEntity',{
                         })(
-                            <TextArea disabled={!this.state.sign} placeholder={"接口签名则需填写签名所需字段"}/>
+                            <TextArea
+                                // disabled={!this.state.sign}
+                                      placeholder={"接口签名则需填写签名所需字段"}/>
                         )}
                     </Form.Item>
 
@@ -313,7 +324,7 @@ class EditInterFaceModal extends React.Component {
                             // ],
                             initialValue : "",
                         })(
-                            <TextArea/>
+                            <TextArea placeholder={"{}"}/>
                         )}
                         {/*<Input type="textarea" placeholder="备注"/>*/}
 

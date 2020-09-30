@@ -53,7 +53,7 @@ class Index extends React.Component{
             caseName: fields.caseName || ''
         });
 
-        console.log("pageres==="+JSON.stringify(res))
+        console.log("ExecuteRecord==="+JSON.stringify(res))
         if (res.code !== 0) {
             this.setState({
                 casesLoading: false,
@@ -77,8 +77,21 @@ class Index extends React.Component{
         var user = jwt_decode(cook)
         console.log("cook==="+JSON.stringify(cook))
         var email = JSON.stringify(user.sub)
+
+        const interfaceRes = await get('/interface/findByName', {
+            interfaceName: values.interfaceName,
+        });
+        console.log("interfaceRes==="+JSON.stringify(interfaceRes))
+
+        values.method=interfaceRes.data.method
+        values.signAttribute=interfaceRes.data.signAttribute
+        values.sign=interfaceRes.data.sign
+        let valuesArr=[]
+        valuesArr.push(values)
+        console.log("valuesArr==="+JSON.stringify(valuesArr))
         const res = await post('/single/case/execute', {
-            ...values,
+            // ...values,
+            valuesArr,
             lastExecuteUser:email,
             add:false,
             valid:true
@@ -147,11 +160,6 @@ class Index extends React.Component{
      * 新增用例集合页面
      */
     handleSceneCase =() => {
-        // setTimeout(()=> {
-        //     this.setState({
-        //             isShowSceneCase: true
-        //         }
-        //     )},10)
         this.setState({
             isShowSceneCase:true
         })

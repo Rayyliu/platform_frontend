@@ -287,6 +287,11 @@ class Interfaces extends React.Component{
                 // sorter: (a, b) => a.payedAt - b.payedAt
             },
             {
+                title: '签名属性',
+                dataIndex: 'signAttribute',
+                align: 'center',
+            },
+            {
                 title: '描述',
                 dataIndex: 'description',
                 align: 'center',

@@ -153,7 +153,7 @@ class CreateTransferIndex extends React.Component{
                         console.log("this.child.state.fields.body==="+JSON.stringify(this.child.state.fields.body))
                         console.log("valuess.body==="+JSON.stringify(valuess.body))
                         valuesArr.push({
-                            interfaceId: this.state.fields.id,
+                            interfaceId: valuess.id,
                             headerDetail:valuess.headerdetail,
                             header : valuess.header,
                             // values.body = this.state.fields.body
@@ -163,12 +163,15 @@ class CreateTransferIndex extends React.Component{
                             method : valuess.method,
                             interFaceName : valuess.interfaceName,
                             caseName:values.caseName,
-                            description:valuess.description,
+                            description:values.description,
                             project:values.project,
+                            // extract:JSON.stringify(valuess.extract),
+                            extract:valuess.extract,
                             sign : valuess.sign,
+                            signAttribute:valuess.signAttribute,
                             signEntity : JSON.stringify( valuess.signEntity),
                             // values.assertionEntity=JSON.parse(this.child.state.fields.assertDataSource)
-                            assertionContent:JSON.stringify(this.child.state.fields.assertDataSource),
+                            assertionContent:JSON.stringify(valuess.assertDataSource),
                             lastExecuteUser:email,
                             add:true,
                             valid:true
@@ -196,7 +199,7 @@ class CreateTransferIndex extends React.Component{
             // add:true,
             // valid:true
         });
-        console.log("res==="+JSON.stringify(res))
+        console.log("调用结果res==="+JSON.stringify(res))
         if (res.code === 0) {
             message.success('接口调用成功');
             setTimeout(()=> {
@@ -323,7 +326,7 @@ class CreateTransferIndex extends React.Component{
                             console.log("index=="+index)
                             return(
                                 <InterFaceDetail
-                                    callback={(type,module,body,assertDataSource,key)=>{
+                                    callback={(type,module,body,assertDataSource,extract,key)=>{
 
                                         console.log("key==="+key)
                                         console.log("callbackfieldArr=="+JSON.stringify(fieldArr))
@@ -339,7 +342,14 @@ class CreateTransferIndex extends React.Component{
                                                 fieldArr[key].assertDataSource = assertDataSource;
                                                 console.log("after-fieldArr[key].assertDataSource==="+JSON.stringify(fieldArr[key].assertDataSource))
                                                 console.log("fieldArr[key]==" + JSON.stringify(fieldArr))
+                                            }else if(module==="extract"){
+                                                console.log("extract==="+JSON.stringify(extract))
+                                                console.log("fieldArr[key].extract==="+fieldArr[key].extract)
+                                                fieldArr[key].extract = extract;
+                                                console.log("after-fieldArr[key].extract==="+JSON.stringify(fieldArr[key].extract))
+                                                console.log("fieldArr[key]==" + JSON.stringify(fieldArr))
                                             }
+
                                         }else if(type==="delete"){
                                             console.log("beforefieldArr[key]==" + JSON.stringify(fieldArr))
                                             fieldArr.splice(key,1)

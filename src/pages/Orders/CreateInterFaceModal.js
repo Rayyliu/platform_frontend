@@ -27,7 +27,8 @@ class CreateInterFaceModal extends Component {
         method:"",
         mode:"",
         isShowCreateModal:false,
-        interFace:[]
+        interFace:[],
+        signAttribute:'',
     }}
 
     componentDidMount() {
@@ -354,6 +355,15 @@ class CreateInterFaceModal extends Component {
                             initialValue: true
                         })(
                             <Switch checkedChildren="签名" unCheckedChildren="不签名"  onChange={this.handleChange} />
+                        )
+                        }
+                    </Form.Item>
+
+                    <Form.Item label={'签名属性'}>
+                        {getFieldDecorator('signAttribute',{
+                            initialValue: ''
+                        })(
+                            <Input disabled={!this.state.boolean.sign} placeholder={"签名属性值"}/>
                         )
                         }
                     </Form.Item>
