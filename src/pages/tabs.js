@@ -6,11 +6,11 @@ const Role = LoadableComponent(import('./Setting/Role'), true);
 const Menu = LoadableComponent(import('./Setting/Menu'), true);
 const Home = LoadableComponent(import('./Home/index'), true);
 const Banners = LoadableComponent(import('./Banners/index'), true);
-const Generalize = LoadableComponent(import('./Platform/Generalize'), true);
-const Stick = LoadableComponent(import('./Platform/Stick/index'), true);
 const Trade = LoadableComponent(import('./Env/index'), true);
 const Order = LoadableComponent(import('./Orders/index'), true);
 const Transfer = LoadableComponent(import('./Transfer/index'), true);
+const Plan = LoadableComponent(import('./Plan/index'), true);
+
 
 const menu = [
     {
@@ -40,25 +40,13 @@ const menu = [
     },
     {
         name: '用例管理',
-        icon: 'copyright',
+        icon: 'database',
         key: 'Transfer'
     },
     {
         name: '测试计划',
-        icon: 'dashboard',
-        key: 'Platform',
-        children: [
-            {
-                name: '推广设置',
-                icon: 'fullscreen',
-                key: 'Generalize',
-            },
-            {
-                name: '置顶设置',
-                icon: 'caret-up',
-                key: 'Stick',
-            }
-        ]
+        icon: 'paper-clip',
+        key: 'Plan',
     },
     {
         name: '定时任务',
@@ -110,9 +98,7 @@ const tabs = {
     Order: <Order />,
     Trade: <Trade />,
     Transfer: <Transfer />,
-    Generalize: <Generalize />,
-    Stick: <Stick />,
-
+    Plan: <Plan />,
     Menu: <Menu />,
     Permission: <Permission/>,
     Role: <Role />,

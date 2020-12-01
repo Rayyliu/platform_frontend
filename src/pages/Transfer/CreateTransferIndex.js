@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Cascader, Form,Select, Icon, Input, InputNumber, message, Collapse,Radio,Spin,Alert} from "antd";
+import {Button, Divider, Form,Select, Icon, Input, InputNumber, message, Collapse,Radio,Spin,Alert} from "antd";
 import {del, get, post} from "../../utils/ajax";
 import {isAuthenticated} from "../../utils/session";
 import options from './cities'
@@ -169,7 +169,7 @@ class CreateTransferIndex extends React.Component{
                             extract:valuess.extract,
                             sign : valuess.sign,
                             signAttribute:valuess.signAttribute,
-                            signEntity : JSON.stringify( valuess.signEntity),
+                            signEntity : JSON.stringify(valuess.signEntity),
                             // values.assertionEntity=JSON.parse(this.child.state.fields.assertDataSource)
                             assertionContent:JSON.stringify(valuess.assertDataSource),
                             lastExecuteUser:email,
@@ -289,19 +289,24 @@ class CreateTransferIndex extends React.Component{
                             )
                         }
                     </Form.Item>
+                    <Divider
+                        dashed
+                    >
+                        {/*<p>以上内容固定不变</p>*/}
+                        选择用例执行
+                    </Divider>
 
 
-
-                    <Form.Item label={'添加步骤'}>
+                    <Form.Item label={'选择用例'}>
                         {getFieldDecorator('caseStep', {
                             rules: [
-                                { required: true, message: '请选择接口!', whitespace: true}
+                                { required: true, message: '请选择用例!', whitespace: true}
                             ],
                         })(
                             <Select
                                 showSearch
                                 style={{ width: 200 }}
-                                placeholder="请选择接口!"
+                                placeholder="请选择用例!"
                                 optionFilterProp="children"
                                 onChange={this.handleChange}
 
@@ -371,7 +376,10 @@ class CreateTransferIndex extends React.Component{
                             取消
                         </Button>
                         &emsp;
-                        <Button type="primary" icon="reload"  onClick={this.handleSubmit}>
+                        <Button type="primary"
+                                icon="reload"
+                                // disabled={true}
+                                onClick={this.handleSubmit}>
                             调试
                         </Button>
                     </Form.Item>

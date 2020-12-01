@@ -352,7 +352,7 @@ class CreateInterFaceModal extends Component {
 
                     <Form.Item label={'是否签名'}>
                         {getFieldDecorator('sign',{
-                            initialValue: true
+                            // initialValue: true
                         })(
                             <Switch checkedChildren="签名" unCheckedChildren="不签名"  onChange={this.handleChange} />
                         )
@@ -361,16 +361,17 @@ class CreateInterFaceModal extends Component {
 
                     <Form.Item label={'签名属性'}>
                         {getFieldDecorator('signAttribute',{
-                            initialValue: ''
+                            // initialValue: ''
                         })(
-                            <Input disabled={!this.state.boolean.sign} placeholder={"签名属性值"}/>
+                            <Input disabled={!this.state.boolean.sign}
+                                   placeholder={"签名属性值"}/>
                         )
                         }
                     </Form.Item>
 
                     <Form.Item label={'签名字段'}>
                         {getFieldDecorator('signEntity',{
-                            initialValue:"{\"XXXX\": \"XXXXX\"}"
+                            // initialValue:"{}"
                         })(
                             <TextArea disabled={!this.state.boolean.sign} placeholder={"接口签名则需填写签名所需字段"}/>
                         )}
@@ -437,7 +438,7 @@ class CreateInterFaceModal extends Component {
                             // rules: [
                             //     { required: true, message: '接口描述不能为空' }
                             // ],
-                            initialValue : "默认值:"+"{\"content-type\": \"application/json;charset=UTF-8\"}",
+                            initialValue : "{}或"+"{\"content-type\": \"application/json;charset=UTF-8\"}",
                         })(
                             <TextArea/>
                         )}
@@ -446,22 +447,22 @@ class CreateInterFaceModal extends Component {
                     </Form.Item>
 
 
-                    <Form.Item label={'请求body'}>
+                    {/*<Form.Item label={'请求body'}>*/}
 
-                        {/*<Button type='primary' icon='plus-square' onClick={()=>this.toggleShowCreateModal(true)}>添加行</Button>*/}
-                        {/*<Button type='primary' icon='plus-square' onClick={()=>this.addline()}>添加行</Button>*/}
-                        {/*&emsp;*/}
-                        {/*<Button shape='primary' icon='plus-square' >添加JSON</Button>*/}
-                        {getFieldDecorator('body', {
-                            validateFirst: true,
-                            // rules: [
-                            //     { required: true, message: '接口描述不能为空' }
-                            // ],
-                            initialValue : "{\"XXXX\": \"xxxx\"}",
-                        })(
-                            <TextArea/>
-                        )}
-                    </Form.Item>
+                        {/*/!*<Button type='primary' icon='plus-square' onClick={()=>this.toggleShowCreateModal(true)}>添加行</Button>*!/*/}
+                        {/*/!*<Button type='primary' icon='plus-square' onClick={()=>this.addline()}>添加行</Button>*!/*/}
+                        {/*/!*&emsp;*!/*/}
+                        {/*/!*<Button shape='primary' icon='plus-square' >添加JSON</Button>*!/*/}
+                        {/*{getFieldDecorator('body', {*/}
+                            {/*validateFirst: true,*/}
+                            {/*// rules: [*/}
+                            {/*//     { required: true, message: '接口描述不能为空' }*/}
+                            {/*// ],*/}
+                            {/*initialValue : "{\"XXXX\": \"xxxx\"}",*/}
+                        {/*})(*/}
+                            {/*<TextArea/>*/}
+                        {/*)}*/}
+                    {/*</Form.Item>*/}
                     {/*<HeaderModal visible = {isShowCreateModal} toggleVisible={this.toggleShowCreateModal}/>*/}
             </Form>
             </Modal>

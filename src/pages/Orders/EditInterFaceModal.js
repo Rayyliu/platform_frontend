@@ -20,6 +20,12 @@ const form = Form.create({
 @form
 class EditInterFaceModal extends React.Component {
     state = {
+
+        boolean:{
+            sign:false,
+            header:false,
+            mock:false
+        },
         uploading: false,
         img:{},
         interfaces:[],
@@ -112,9 +118,11 @@ class EditInterFaceModal extends React.Component {
     };
 
     handleChange=(value)=> {
-        console.log("editvalue===" + JSON.stringify(value))
+        console.log("interfacevalue==="+JSON.stringify(value))
         this.setState({
-            sign: value
+            boolean: {
+                sign: value
+            }
         })
     }
 
@@ -247,7 +255,7 @@ class EditInterFaceModal extends React.Component {
                         {getFieldDecorator('signAttribute',{
                             initialValue: true
                         })(
-                            <Input  placeholder={"签名属性值"}/>
+                            <Input  disabled={!this.state.boolean.sign} placeholder={"签名属性值"}/>
                         )
                         }
                     </Form.Item>
@@ -255,7 +263,7 @@ class EditInterFaceModal extends React.Component {
                     <Form.Item label={'签名字段'}>
                         {getFieldDecorator('signEntity',{
                         })(
-                            <TextArea
+                            <TextArea disabled={!this.state.boolean.sign}
                                 // disabled={!this.state.sign}
                                       placeholder={"接口签名则需填写签名所需字段"}/>
                         )}
@@ -331,22 +339,22 @@ class EditInterFaceModal extends React.Component {
                     </Form.Item>
 
 
-                    <Form.Item label={'请求body'}>
+                    {/*<Form.Item label={'请求body'}>*/}
 
-                        {/*<Button type='primary' icon='plus-square' onClick={()=>this.toggleShowCreateModal(true)}>添加行</Button>*/}
-                        {/*<Button type='primary' icon='plus-square' onClick={()=>this.addline()}>添加行</Button>*/}
-                        {/*&emsp;*/}
-                        {/*<Button shape='primary' icon='plus-square' >添加JSON</Button>*/}
-                        {getFieldDecorator('body', {
-                            validateFirst: true,
-                            // rules: [
-                            //     { required: true, message: '接口描述不能为空' }
-                            // ],
-                            initialValue : "",
-                        })(
-                            <TextArea/>
-                        )}
-                    </Form.Item>
+                        {/*/!*<Button type='primary' icon='plus-square' onClick={()=>this.toggleShowCreateModal(true)}>添加行</Button>*!/*/}
+                        {/*/!*<Button type='primary' icon='plus-square' onClick={()=>this.addline()}>添加行</Button>*!/*/}
+                        {/*/!*&emsp;*!/*/}
+                        {/*/!*<Button shape='primary' icon='plus-square' >添加JSON</Button>*!/*/}
+                        {/*{getFieldDecorator('body', {*/}
+                            {/*validateFirst: true,*/}
+                            {/*// rules: [*/}
+                            {/*//     { required: true, message: '接口描述不能为空' }*/}
+                            {/*// ],*/}
+                            {/*initialValue : "",*/}
+                        {/*})(*/}
+                            {/*<TextArea/>*/}
+                        {/*)}*/}
+                    {/*</Form.Item>*/}
                     {/*<HeaderModal visible = {isShowCreateModal} toggleVisible={this.toggleShowCreateModal}/>*/}
                 </Form>
             </Modal>

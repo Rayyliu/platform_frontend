@@ -3,7 +3,7 @@ const {createProxyMiddleware} = require('http-proxy-middleware');
 module.exports = function (app) {
     app.use(
         createProxyMiddleware('/platform_server', {
-            target: 'http://localhost:8082',
+            target: 'http://10.244.81.210:8082',
             // target: 'http://localhost:8081',
             changeOrigin: true,
                 pathRewrite:{
@@ -28,6 +28,7 @@ module.exports = function (app) {
                 '^/platform_server/env/singleDelet' : '/env/singleDelet',
                 '^/platform_server/env/deletes' : '/env/deletes',
                 '^/platform_server/env/edit' : '/env/edit',
+                '^/platform_server/env/queryEnvName' : '/env/queryEnvName',
 
 
                 //interface
@@ -41,8 +42,11 @@ module.exports = function (app) {
                 //case
                 '^/platform_server/single/case/execute' : '/single/case/execute',
                 '^/platform_server/single/case/queryPage' : '/single/case/queryPage',
-                '^/platform_server/execute/update' : '/execute/update'
+                '^/platform_server/execute/update' : '/execute/update',
+                '^/platform_server/execute/deletes' : '/execute/deletes',
 
+                //plan
+                '^/platform_server/plan/execute' : '/plan/execute',
 
                 }
         }
@@ -50,12 +54,22 @@ module.exports = function (app) {
 
     app.use(
         createProxyMiddleware('/platform_data', {
-            target: 'http://localhost:8081',
+            target: 'http://10.244.81.210:8081',
             changeOrigin: true,
             pathRewrite:{
+                //env表
+                '^/platform_data/env/queryAllEnv' : '/env/queryAllEnv',
+
                 //execute表
                 '^/platform_data/execute/update' : '/execute/update',
-                '^/platform_data/execute/queryCase' : '/execute/queryCase'
+                '^/platform_data/execute/queryCase' : '/execute/queryCase',
+                '^/platform_data/execute/delSingleById' : '/execute/delSingleById',
+                '^/platform_data/execute/deletes' : '/execute/deletes',
+                '^/platform_data/execute/queryByProject' : '/execute/queryByProject',
+
+                //plan表
+                '^/platform_data/plan/add' : '/plan/add',
+                '^/platform_data/plan/queryPage' : '/plan/queryPage'
             }
         }
         ))

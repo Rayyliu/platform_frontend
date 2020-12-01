@@ -422,7 +422,7 @@ class InterFaceDetail extends React.Component{
                         <Form.Item label="签名字段">
                             {getFieldDecorator('signEntity', {
                                 // rules: [{ required: true, message: 'Assertion is required!' }],
-                                initialValue:''
+                                // initialValue:'{}'
                             })(
                                 <TextArea  disabled={!fields.sign} defaultValue="没有签名则禁用" />
                             )}

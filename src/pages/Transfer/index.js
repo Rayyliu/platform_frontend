@@ -5,7 +5,7 @@ import {
     Button,
     message, Col, Input,Empty, Form, Carousel, Descriptions, Tag, Modal, notification, Popconfirm, Icon,Switch,Tooltip
 } from 'antd'
-import {del, get, post} from "../../utils/ajax";
+import {del, get, post,getDataUrl} from "../../utils/ajax";
 import './style.css'
 import CreateTransferIndex from "./CreateTransferIndex";
 import EditTransferModal from "./EditTransferModal";
@@ -27,6 +27,7 @@ class Index extends React.Component{
             pageSize: 10,
             showQuickJumper: true
         },
+        assertionContent:{},
         isShowSceneCase:false,
         selectedRowKeys: [],
         transfer: {},
@@ -98,17 +99,38 @@ class Index extends React.Component{
         });
         console.log("res==="+JSON.stringify(res))
         if (res.code === 0) {
-            this.setState({
-                result: {
-                    success: res.success,
-                    errorCode: res.errorCode,
-                    execute: res.execute,
-                    message: res.message,
-                }
-            }
-            )
-            this.props.transferList();
+            // this.setState({
+            //     result: {
+            //         success: res.success,
+            //         errorCode: res.errorCode,
+            //         execute: res.execute,
+            //         message: res.message,
+            //         lastExecuteTime:res.executeDate,
+            //     }
+            // }
+            // )
+            this.transferList();
         }
+    }
+
+    /**
+     * 解析断言内容
+     */
+    resolve = (record,type)=>{
+        let records=[]
+        records.push(record);
+        console.log("records==="+records)
+        let par
+        if(type==="assertionContent"){
+        par = records.map((item)=>{return JSON.parse(item).map((item)=>{
+            return item.parameter+"/"+item.except+"/"+item.rule})})}
+
+            else if(type==="body"){
+            par = records.map((item)=>{return JSON.parse(item).map((item)=>{
+                return item.caseDescription+"---"+item.caseData
+        })})}
+        console.log("par=="+JSON.stringify(par))
+        return par
     }
     /**
      * table分页
@@ -211,8 +233,8 @@ class Index extends React.Component{
             title: '提示',
             content: '您确定批量删除勾选内容吗？',
             onOk: async () => {
-                const res = await del('/cases', {
-                    ids: this.state.selectedRowKeys
+                const res = await get('/execute/deletes', {
+                    recordIds: this.state.selectedRowKeys
                 });
                 if (res.code === 0) {
                     notification.success({
@@ -253,9 +275,10 @@ class Index extends React.Component{
      * 单条删除
      */
     singleDelete = async (record) => {
-        const res = await del('/cases',{
-            ids: record.id
+        const res = await getDataUrl('/execute/delSingleById',{
+            recordId: record.id
         });
+        console.log("单挑删除的res==="+JSON.stringify(res))
         if (res.code === 0) {
             notification.success({
                 message: '删除成功',
@@ -388,8 +411,8 @@ class Index extends React.Component{
                                     </Descriptions.Item>
                                     <Descriptions label="测试数据" >
                                         <div className={"ellipsis"}>
-                                            <Tooltip placement="topLeft" title={record.body} color={'#f50'}>
-                                            {record.body}
+                                            <Tooltip placement="topLeft" title={this.resolve(record.body,"body")} color={'#f50'}>
+                                            {this.resolve(record.body,"body")}
                                             </Tooltip>
                                         </div>
                                         </Descriptions>
@@ -410,8 +433,12 @@ class Index extends React.Component{
                                         </Descriptions>
                                     <Descriptions.Item label="断言内容" >
                                         <div className={"ellipsis"} >
-                                            <Tooltip placement="topLeft" title={record.assertionContent} color={'#f50'}>
-                                            {record.assertionContent !=null ?record.assertionContent:'该用例无断言内容'}
+                                            <Tooltip placement="topLeft" title={this.resolve(record.assertionContent,"assertionContent")} color={'#f50'}>
+                                            {record.assertionContent !=null ?
+                                                this.resolve(record.assertionContent,"assertionContent"):
+                                                // record.assertionContent.map((item)=>item.parameter):
+                                                '该用例无断言内容'
+                                            }
                                             </Tooltip>
                                         </div>
                                         </Descriptions.Item>
@@ -441,8 +468,10 @@ class Index extends React.Component{
                                     {/*</Descriptions.Item>*/}
                                     <Descriptions.Item label="断言结果">
                                         <div className={"ellipsis"}>
-                                            <Tag color="red">
-                                                <Tooltip placement="topLeft" title={record.assertResult} color="red">
+                                            <Tag color="green">
+                                                <Tooltip placement="topLeft" title={record.assertResult}
+                                                         // color="red"
+                                                >
                                             {record.assertResult!=null ? record.assertResult : '无断言'}
                                                 </Tooltip>
                                             </Tag>
