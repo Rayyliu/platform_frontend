@@ -4,7 +4,7 @@ import {isAuthenticated, logout} from '../utils/session'
 import history from './history'
 
 const BASE_URL = process.env.REACT_APP_BASE_URL_DEV || '';
-const DATA_URL = 'http://localhost:3000/platform_data';
+const DATA_URL = 'http://10.244.201.32:3000/platform_data';
 
 
 /**
@@ -254,6 +254,7 @@ export async function getDataUrl(url, param) {
             withCredentials: true       //跨域
         }
     });
+    console.log("response==="+JSON.stringify( response))
     const reslut = await response.json();
     if (!response.ok) {
         if(response.status === 200){

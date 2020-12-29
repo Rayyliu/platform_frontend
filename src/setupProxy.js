@@ -3,7 +3,7 @@ const {createProxyMiddleware} = require('http-proxy-middleware');
 module.exports = function (app) {
     app.use(
         createProxyMiddleware('/platform_server', {
-            target: 'http://10.244.81.210:8082',
+            target: 'http://10.244.201.32:8082',
             // target: 'http://localhost:8081',
             changeOrigin: true,
                 pathRewrite:{
@@ -54,7 +54,7 @@ module.exports = function (app) {
 
     app.use(
         createProxyMiddleware('/platform_data', {
-            target: 'http://10.244.81.210:8081',
+            target: 'http://10.244.201.32:8081',
             changeOrigin: true,
             pathRewrite:{
                 //env表
