@@ -1,6 +1,6 @@
 import React from "react";
 import {Button, Cascader, Form,Select, Icon, Input, InputNumber, message, Collapse,Radio,Spin,Switch} from "antd";
-import {del, get, post, postDataUrl} from "../../utils/ajax";
+import {tokenPostServer, get, post, postDataUrl} from "../../utils/ajax";
 import {isAuthenticated} from "../../utils/session";
 import EditableTable from "./EditableTable";
 import EditBodyTabs from "./EditBodyTabs";
@@ -72,13 +72,26 @@ class EditTransferModal extends React.Component{
         }
     }
 
+    //读取缓存，且比较时间戳是否过期
+    // sessionStorageGet = name => {
+    //     const storage = sessionStorage.getItem(name);
+    //     return storage;
+    // };
+
+
     /***
      * 查询接口详细信息
      */
     queryInterFace = async () =>{
+
+        var jsessionid = sessionStorage.getItem("sessionId")
+
+        // var jsessionid = localStorage.getItem("sessionId")
+        console.log("jsessionid==="+JSON.stringify(jsessionid))
         console.log("useCase==="+JSON.stringify(this.props.useCase))
         const res = await get('/interface/findByName',{
-            interfaceName:this.props.useCase.interfaceName
+            interfaceName:this.props.useCase.interfaceName,
+            jsessionid: jsessionid
         })
         if(res.code === 0) {
             this.setState({
@@ -133,17 +146,26 @@ class EditTransferModal extends React.Component{
 
     };
     createCaseAndExecute = async (values) => {
+        var jsessionid = sessionStorage.getItem("sessionId")
+        // var  job = JSON.parse(jsessionid)
+        // console.log("job==="+JSON.stringify(job))
+        // var jsid = job.data
+        console.log("jsessionid==="+JSON.stringify(jsessionid))
+        // let cook =isAuthenticated();
+        // var user = jwt_decode(cook)
+        // console.log("cook==="+JSON.stringify(cook))
+        // var email = JSON.stringify(user.sub)
+        // console.log("email==="+email)
 
-        let cook =isAuthenticated();
-        var user = jwt_decode(cook)
-        console.log("cook==="+JSON.stringify(cook))
-        var email = JSON.stringify(user.sub)
-        console.log("email==="+email)
-
-        console.log("编辑保存的values==="+JSON.stringify(values))
         values.storeImgS = this.state.storeImgs;
-        const res = await post('/execute/update', {
+        values.jsessionid = jsessionid
+        console.log("编辑保存的values==="+JSON.stringify(values))
+
+
+        const res = await tokenPostServer('/execute/update', {
+        // const res = await post('/execute/update', {
             ...values,
+            // jsessionid: jsid,
             // lastExecuteUser:email,
         });
         console.log("res==="+JSON.stringify(res))

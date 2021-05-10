@@ -1,5 +1,5 @@
 import React from "react";
-import {del, get, patch} from "../../utils/ajax";
+import {tokenGetData, get, patch} from "../../utils/ajax";
 import {
     Table,
     Card,
@@ -38,7 +38,7 @@ class Index extends React.Component{
         this.setState({
             tradesLoading: true,
         });
-        const res = await get('/env/queryPage', {
+        const res = await tokenGetData('/env/queryPage', {
             pageNum: pageNum,
             pageSize: this.state.pagination.pageSize,
             envName: fields.envName || ''
@@ -51,7 +51,8 @@ class Index extends React.Component{
         }
         this.setState({
             tradesLoading: false,
-            trades: res.data.entity,
+            // trades: res.data.entity,
+            trades: res.data,
             pagination: {
                 ...pagination,
                 total: res.data.total,

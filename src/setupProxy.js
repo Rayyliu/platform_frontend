@@ -3,8 +3,8 @@ const {createProxyMiddleware} = require('http-proxy-middleware');
 module.exports = function (app) {
     app.use(
         createProxyMiddleware('/platform_server', {
-            target: 'http://10.244.76.32:8147',
-            // target: 'http://localhost:8081',
+            // target: 'http://10.244.76.32:8147',
+            target: 'http://localhost:8082',
             changeOrigin: true,
                 pathRewrite:{
                 //user
@@ -54,7 +54,8 @@ module.exports = function (app) {
 
     app.use(
         createProxyMiddleware('/platform_data', {
-            target: 'http://10.244.76.32:8146',
+            // target: 'http://10.244.76.32:8146',
+                target: 'http://localhost:8081',
             changeOrigin: true,
             pathRewrite:{
                 //env表
@@ -69,7 +70,22 @@ module.exports = function (app) {
 
                 //plan表
                 '^/platform_data/plan/add' : '/plan/add',
-                '^/platform_data/plan/queryPage' : '/plan/queryPage'
+                '^/platform_data/plan/queryPage' : '/plan/queryPage',
+
+                //project表
+                '^/platform_data/project/queryProject' : '/project/query',
+
+                //env表
+                '^/platform_data/env/queryPage' : '/env/queryPage',
+
+                //interface表
+                '^/platform_data/interface/queryPage' : '/interface/queryPage',
+
+                //case表
+                '^/platform_data/execute/queryPage' : '/execute/queryPage',
+
+                //redis
+                '^/platform_data/redis/get' : '/redis/get',
             }
         }
         ))

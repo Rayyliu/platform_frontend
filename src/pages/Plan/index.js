@@ -1,5 +1,5 @@
 import React from "react";
-import {post,del, get, getDataUrl} from "../../utils/ajax";
+import {post,tokenGetData, get, getDataUrl} from "../../utils/ajax";
 import {
     Table,
     Card,
@@ -13,6 +13,7 @@ import {
 import EditPlanModal from "./EditPlanModal";
 import CreatePlanModal from "./CreatePlanModal";
 import {Form} from "antd/lib/index";
+import {isAuthenticated} from "../../utils/session";
 
 @Form.create()
 class Plan extends React.Component{
@@ -32,6 +33,7 @@ class Plan extends React.Component{
     };
 
     componentDidMount() {
+        sessionStorage.setItem("sessionId",this.getSessionId())
         this.getPlans()
     }
     getPlans = async (pageNum = 1) => {
@@ -41,12 +43,20 @@ class Plan extends React.Component{
         this.setState({
             usersLoading: true,
         });
-        const res = await getDataUrl('/plan/queryPage', {
+
+        var jsessionid = sessionStorage.getItem("sessionId")
+        console.log("planjsessionid==="+JSON.stringify(jsessionid))
+
+            // const res = await getDataUrl('/plan/queryPage', {
+        const res = await tokenGetData('/plan/queryPage', {
             pageNum: pageNum,
             pageSize: this.state.pagination.pageSize,
-            planName: fields.planName || ''
+            planName: fields.planName || '',
+            // jsessionid: jsessionid
 
         });
+
+        console.log("res=="+JSON.stringify(res))
         if (res.code !== 0) {
             this.setState({
                 plans: res.data,
@@ -66,14 +76,24 @@ class Plan extends React.Component{
     };
 
 
+    //获取sessionId
+    getSessionId=()=>{
+        let cook =isAuthenticated();
+        let sessionId = cook.replace("Bearer ","")
+        console.log("sessionId==="+JSON.stringify(sessionId))
+        return sessionId;
+    }
+
     /**
      * 执行测试计划
      */
     executePlan=async(record)=>{
+        var jsessionid = localStorage.getItem("sessionId")
         console.log("record==="+JSON.stringify(record))
         // record.planContent=JSON.stringify(record.planContent)
         const res = await post('/plan/execute',{
-            ...record
+            jsessionid: jsessionid,
+            ...record,
         })
     }
     /**

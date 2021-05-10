@@ -1,5 +1,5 @@
 import React from "react";
-import {del, get} from "../../utils/ajax";
+import {del, get,tokenGetServer,tokenGetData} from "../../utils/ajax";
 import {
     Table,
     Card,
@@ -37,7 +37,8 @@ class Banners extends React.Component{
         this.setState({
             usersLoading: true,
         });
-        const res = await get('/project/queryProject', {
+        // const res = await get('/project/queryProject', {
+        const res = await tokenGetData('/project/queryProject', {
             page: page,
             pageSize: this.state.pagination.pageSize
         });

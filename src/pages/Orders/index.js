@@ -7,7 +7,7 @@ import {
 } from 'antd'
 import moment from 'moment'
 import ExportJsonExcel from "js-export-excel"
-import {get} from "../../utils/ajax";
+import {get,tokenGetData} from "../../utils/ajax";
 import CreateInterFaceModal from "./CreateInterFaceModal";
 import {Modal} from "antd/lib/index";
 import EditInterFaceModal from "./EditInterFaceModal";
@@ -37,7 +37,7 @@ class Interfaces extends React.Component{
         this.setState({
             interfacesLoading: true,
         });
-        const res = await get('/interface/queryPage', {
+        const res = await tokenGetData('/interface/queryPage', {
             pageNum: pageNum,
             pageSize: this.state.pagination.pageSize,
             // search: fields.search || ''
@@ -52,7 +52,7 @@ class Interfaces extends React.Component{
         }
         this.setState({
             interfacesLoading: false,
-            interfaces: res.data.entity,
+            interfaces: res.data,
             pagination: {
                 ...pagination,
                 total: res.data.total,

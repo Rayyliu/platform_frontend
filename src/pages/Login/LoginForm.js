@@ -56,19 +56,19 @@ class LoginForm extends React.Component {
             return
         }
         console.log("values==="+JSON.stringify(values))
-        const res = await get(`/user/findByUsername?userName=${values.username}`);
-        if (res.code !== 0) {
-            this.props.form.setFields({
-                username: {
-                    value: values.username,
-                    errors: [new Error('用户名不存在')]
-                }
-            });
-            console.log("res=="+JSON.stringify(res))
-            this._createCode();
-            this.props.form.resetFields('captcha');
-            return
-        }
+        // const res = await get(`/user/findByUsername?userName=${values.username}`);
+        // if (res.code !== 0) {
+        //     this.props.form.setFields({
+        //         username: {
+        //             value: values.username,
+        //             errors: [new Error('用户名不存在')]
+        //         }
+        //     });
+        //     console.log("res=="+JSON.stringify(res))
+        //     this._createCode();
+        //     this.props.form.resetFields('captcha');
+        //     return
+        // }
         const res2 = await post('/login', {
             email: values.username,
             password: values.password
@@ -76,9 +76,9 @@ class LoginForm extends React.Component {
         console.log("res2==="+JSON.stringify(res2))
         if (res2.code !== 0) {
             this.props.form.setFields({
-                password:{
+                username:{
                     value: '',
-                    errors: [new Error(res2.msg)]
+                    errors: [new Error(res2.message)]
                 }
             });
             this._createCode();
@@ -86,7 +86,9 @@ class LoginForm extends React.Component {
             return
         }
         // localStorage.setItem('username', values.username);
-        await authenticateSuccess('Bearer '+res2.data.token);
+        // await authenticateSuccess('Bearer '+res2.data.token);
+        await authenticateSuccess('Bearer '+res2.data);
+        console.log("返回session=="+'Bearer '+res2.data)
         // await this.initMenus(res2.data.token);
         this.initMenus(menu);
         // await this.init(res2.data.token);

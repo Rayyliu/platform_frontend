@@ -20,8 +20,8 @@ class CreatePlanModal extends Component {
 
     componentDidMount() {
         // this.queryPlan()
-        this.queryProject();
-        this.queryEnv()
+        // this.queryProject();
+        // this.queryEnv()
     }
 
 

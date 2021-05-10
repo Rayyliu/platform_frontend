@@ -4,7 +4,7 @@ import {isAuthenticated, logout} from '../utils/session'
 import history from './history'
 
 const BASE_URL = process.env.REACT_APP_BASE_URL_DEV || '';
-const DATA_URL = 'http://10.244.201.32:3000/platform_data';
+const DATA_URL = 'http://10.244.201.130:3000/platform_data';
 
 
 /**
@@ -312,17 +312,130 @@ export async function postDataUrl(url, param) {
     return reslut
 }
 
-//获取
-export async function toeknGet(url,token,param) {
-    const completeUrl = handleURL(url, param);
+//自定义header，添加sessionId，调用platform_data
+export async function tokenGetData(url,param) {
+    const completeUrl = handleURL(url, param,true);
     const response = await fetch(completeUrl, {
         credentials: 'include',
+        method: 'GET',
         xhrFields: {
             withCredentials: true       //跨域
         },
         headers: {
             Authorization: `${isAuthenticated()}`,
         }
+    });
+    const reslut = await response.json();
+    if (!response.ok) {
+        if(response.status === 200){
+            if (reslut.code !== 0){
+                message.error(reslut.msg || '网络错误')
+            }
+        }else{
+            if (response.status === 403){
+                if (reslut.message){
+                    logout();
+                    history.push('/login');
+                    message.error('登录失效')
+                }else{
+                    message.error(reslut.msg || '网络错误')
+                }
+            }
+        }
+    }
+    return reslut
+}
+
+
+
+//自定义header，添加sessionId，调用platform_data
+export async function tokenGetServer(url,param) {
+    const completeUrl = handleURL(url, param);
+    const response = await fetch(completeUrl, {
+        credentials: 'include',
+        method: 'GET',
+        xhrFields: {
+            withCredentials: true       //跨域
+        },
+        headers: {
+            Authorization: `${isAuthenticated()}`,
+        }
+    });
+    const reslut = await response.json();
+    if (!response.ok) {
+        if(response.status === 200){
+            if (reslut.code !== 0){
+                message.error(reslut.msg || '网络错误')
+            }
+        }else{
+            if (response.status === 403){
+                if (reslut.message){
+                    logout();
+                    history.push('/login');
+                    message.error('登录失效')
+                }else{
+                    message.error(reslut.msg || '网络错误')
+                }
+            }
+        }
+    }
+    return reslut
+}
+
+
+
+//获取
+export async function tokenPostData(url,param) {
+    const completeUrl = handleUrl(url,true);
+    const response = await fetch(completeUrl, {
+        credentials: 'include',
+        method: 'POST',
+        xhrFields: {
+            withCredentials: true       //跨域
+        },
+        headers: {
+            Authorization: `${isAuthenticated()}`,
+        },
+        body: JSON.stringify(param)
+
+    });
+    const reslut = await response.json();
+    if (!response.ok) {
+        if(response.status === 200){
+            if (reslut.code !== 0){
+                message.error(reslut.msg || '网络错误')
+            }
+        }else{
+            if (response.status === 403){
+                if (reslut.message){
+                    logout();
+                    history.push('/login');
+                    message.error('登录失效')
+                }else{
+                    message.error(reslut.msg || '网络错误')
+                }
+            }
+        }
+    }
+    return reslut
+}
+
+
+//获取
+export async function tokenPostServer(url,param) {
+    const completeUrl = handleUrl(url);
+    const response = await fetch(completeUrl, {
+        credentials: 'include',
+        method: 'POST',
+        xhrFields: {
+            withCredentials: true       //跨域
+        },
+        headers: {
+            Authorization: `${isAuthenticated()}`,
+            "content-type": "application/json",
+        },
+        body: JSON.stringify(param)
+
     });
     const reslut = await response.json();
     if (!response.ok) {

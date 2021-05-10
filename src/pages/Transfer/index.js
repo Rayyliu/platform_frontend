@@ -5,7 +5,7 @@ import {
     Button,
     message, Col, Input,Empty, Form, Carousel, Descriptions, Tag, Modal, notification, Popconfirm, Icon,Switch,Tooltip
 } from 'antd'
-import {del, get, post,getDataUrl} from "../../utils/ajax";
+import {tokenGetData, get, post,getDataUrl} from "../../utils/ajax";
 import './style.css'
 import CreateTransferIndex from "./CreateTransferIndex";
 import EditTransferModal from "./EditTransferModal";
@@ -40,6 +40,7 @@ class Index extends React.Component{
         if (!this.state.isAddAndUpdate){
             this.getCaseExecuteRecord()
         }
+        sessionStorage.setItem("sessionId",this.getSessionId())
     }
     getCaseExecuteRecord = async (pageNum = 1) => {
         const { pagination } = this.state;
@@ -48,7 +49,7 @@ class Index extends React.Component{
         this.setState({
             casesLoading: true,
         });
-        const res = await get('/single/case/queryPage', {
+        const res = await tokenGetData('/execute/queryPage', {
             pageNum: pageNum,
             pageSize: this.state.pagination.pageSize,
             caseName: fields.caseName || ''
@@ -63,7 +64,7 @@ class Index extends React.Component{
         }
         this.setState({
             casesLoading: false,
-            cases: res.data.entity,
+            cases: res.data,
             pagination: {
                 ...pagination,
                 total: res.data.total,
@@ -72,15 +73,48 @@ class Index extends React.Component{
         })
     };
 
+
+    //获取sessionId
+    getSessionId=()=>{
+    let cook =isAuthenticated();
+        let sessionId = cook.replace("Bearer ","")
+        console.log("sessionId==="+JSON.stringify(sessionId))
+        return sessionId;
+}
+    //设置缓存
+
+
+
     executeCase=async(values)=>{
         console.log("运行时的values==="+JSON.stringify(values))
         let cook =isAuthenticated();
-        var user = jwt_decode(cook)
         console.log("cook==="+JSON.stringify(cook))
-        var email = JSON.stringify(user.sub)
+        let sessionId = cook.replace("Bearer ","")
+        console.log("sessionId==="+JSON.stringify(sessionId))
+
+        // this.localStorageSet("sessionId",sessionId)
+        // var sid = localStorage.getItem("sessionId").data;
+        // console.log("sid======"+JSON.stringify(sid))
+        // localStorage.setItem("sessionId",sessionId)
+
+        const result = await tokenGetData('/redis/get',{
+            redisKey:   sessionId
+        });
+        if(result.code!==0){
+            console.log("未登录")
+        }
+        console.log("result==="+JSON.stringify(result))
+
+
+        var username = result.data.username
+        console.log("username=="+JSON.stringify(username))
+        // var user = jwt_decode(cook)
+        // console.log("cook==="+JSON.stringify(cook))
+        // var email = JSON.stringify(user.sub)
 
         const interfaceRes = await get('/interface/findByName', {
             interfaceName: values.interfaceName,
+            jsessionid:  sessionId
         });
         console.log("interfaceRes==="+JSON.stringify(interfaceRes))
 
@@ -92,8 +126,9 @@ class Index extends React.Component{
         console.log("valuesArr==="+JSON.stringify(valuesArr))
         const res = await post('/single/case/execute', {
             // ...values,
+            jsessionid:  sessionId,
             valuesArr,
-            lastExecuteUser:email,
+            lastExecuteUser:username,
             add:false,
             valid:true
         });
@@ -198,6 +233,7 @@ class Index extends React.Component{
      * 编辑发布信息页面
      * */
     editCaseInfo = (record)=>{
+        console.log("进入编辑button")
         console.log("record==="+JSON.stringify(record))
         this.setState({
             isAddAndUpdate: true,

@@ -23,6 +23,7 @@ function _getCookie(name) {
         end = document.cookie.length
       }
       console.log("document.cookie==="+JSON.stringify(document.cookie))
+        console.log("session==="+unescape(document.cookie.substring(start, end)))
       return unescape(document.cookie.substring(start, end))
     }
   }
